@@ -5,178 +5,255 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Initiation - The 60-Day Ascent</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&display=swap" rel="stylesheet">
   
   <style>
     body { 
       background-color: #030305; 
       font-family: 'Space Grotesk', sans-serif; 
-      overflow: hidden;
       color: #e2e8f0;
+      overflow-x: hidden;
     }
     
     /* Liquid Background Blobs */
     @keyframes morph {
       0% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; transform: translate(0, 0) scale(1); }
-      50% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; transform: translate(50px, -50px) scale(1.1); }
+      50% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; transform: translate(3vw, -3vh) scale(1.1); }
       100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; transform: translate(0, 0) scale(1); }
     }
     .liquid-blob-1 {
-      position: absolute; top: 10%; left: 20%; width: 500px; height: 500px;
+      position: fixed; top: -10%; left: -10%; width: 50vw; height: 50vw; min-width: 400px; min-height: 400px;
       background: linear-gradient(135deg, #c026d3, #4f46e5);
-      filter: blur(80px); opacity: 0.4;
+      filter: blur(100px); opacity: 0.35;
       animation: morph 12s infinite ease-in-out alternate;
+      z-index: 0; pointer-events: none;
     }
     .liquid-blob-2 {
-      position: absolute; bottom: 10%; right: 10%; width: 600px; height: 600px;
+      position: fixed; bottom: -10%; right: -10%; width: 60vw; height: 60vw; min-width: 500px; min-height: 500px;
       background: linear-gradient(135deg, #06b6d4, #3b82f6);
-      filter: blur(90px); opacity: 0.3;
+      filter: blur(120px); opacity: 0.25;
       animation: morph 15s infinite ease-in-out alternate-reverse;
+      z-index: 0; pointer-events: none;
     }
 
     /* Advanced Liquid Glass Panel */
     .liquid-glass {
-      background: rgba(15, 15, 20, 0.4);
+      background: rgba(10, 10, 15, 0.55);
       backdrop-filter: blur(24px) saturate(150%);
       -webkit-backdrop-filter: blur(24px) saturate(150%);
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-      border-left: 1px solid rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.08);
       box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), inset 0 0 20px rgba(192, 38, 211, 0.05);
     }
 
     /* Dynamic Island */
     .dynamic-island {
-      background: #000;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(10px);
       border: 1px solid rgba(192, 38, 211, 0.3);
-      box-shadow: 0 0 20px rgba(192, 38, 211, 0.2), inset 0 0 10px rgba(192, 38, 211, 0.1);
+      box-shadow: 0 0 20px rgba(192, 38, 211, 0.2);
       transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
-    .dynamic-island:hover {
-      transform: scale(1.05) translateY(2px);
-      box-shadow: 0 0 30px rgba(192, 38, 211, 0.5);
-      border-color: rgba(192, 38, 211, 0.8);
-    }
-
-    /* Holographic Floating Cards */
-    .holo-card {
-      background: linear-gradient(145deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%);
-      border: 1px solid rgba(255,255,255,0.05);
+    
+    /* Input Fields */
+    .task-input {
+      background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,255,255,0.1);
       transition: all 0.3s ease;
     }
-    .holo-card:hover {
-      transform: translateY(-5px);
-      border-color: rgba(6, 182, 212, 0.4);
-      box-shadow: 0 10px 30px -10px rgba(6, 182, 212, 0.3);
-      background: linear-gradient(145deg, rgba(6, 182, 212, 0.05) 0%, rgba(255,255,255,0.01) 100%);
+    .task-input:focus {
+      outline: none;
+      background: rgba(0,0,0,0.6);
     }
-    
-    .neon-text-cyan { text-shadow: 0 0 10px rgba(6, 182, 212, 0.8); }
-    .neon-text-purple { text-shadow: 0 0 10px rgba(192, 38, 211, 0.8); }
+    .anchor-input:focus { border-color: #c026d3; box-shadow: 0 0 15px rgba(192,38,211,0.3); }
+    .flex-input:focus { border-color: #06b6d4; box-shadow: 0 0 15px rgba(6,182,212,0.3); }
+
+    /* Custom Scrollbar for Tasks */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(6,182,212,0.5); }
   </style>
 </head>
-<body class="flex flex-col items-center justify-center min-h-screen relative">
+<body class="relative min-h-[100dvh] flex flex-col items-center py-20 px-4 sm:px-6">
 
-  <!-- Ambient Liquid Background -->
-  <div class="liquid-blob-1 pointer-events-none"></div>
-  <div class="liquid-blob-2 pointer-events-none"></div>
+  <div class="liquid-blob-1"></div>
+  <div class="liquid-blob-2"></div>
 
-  <!-- Dynamic Island (Top Center) -->
-  <div class="absolute top-8 z-50">
-    <div class="dynamic-island rounded-full px-6 py-2 flex items-center gap-3 cursor-default">
-      <div class="w-2 h-2 rounded-full bg-fuchsia-500 animate-pulse shadow-[0_0_8px_#c026d3]"></div>
-      <span class="text-xs font-bold tracking-[0.2em] text-gray-300">SYSTEM LOCKED // AWAITING INITIATION</span>
-      <svg class="w-4 h-4 text-fuchsia-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+  <div class="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-md">
+    <div id="dynamic-island" class="dynamic-island rounded-full px-5 py-3 flex items-center justify-between cursor-default">
+      <div class="flex items-center gap-3">
+        <div id="di-dot" class="w-2.5 h-2.5 rounded-full bg-fuchsia-500 animate-pulse shadow-[0_0_8px_#c026d3]"></div>
+        <span id="di-text" class="text-[11px] sm:text-xs font-bold tracking-[0.2em] text-gray-200 transition-all duration-300">SYSTEM LOCKED // AWAITING INPUT</span>
+      </div>
+      <div id="di-counter" class="text-xs font-mono text-fuchsia-400 font-bold">0/10</div>
     </div>
   </div>
 
-  <!-- Main Liquid Glass Container -->
-  <main class="liquid-glass relative z-10 w-full max-w-6xl rounded-[2rem] p-8 md:p-12 mx-4 mt-12 flex flex-col lg:flex-row gap-12 border border-white/10">
+  <main class="liquid-glass relative z-10 w-full max-w-7xl rounded-3xl p-6 sm:p-8 lg:p-12 flex flex-col lg:flex-row gap-10 lg:gap-16">
     
-    <!-- LEFT SIDE: The Rules / Lore -->
-    <section class="flex-1 flex flex-col justify-between">
-      <div>
-        <h1 class="text-5xl font-bold tracking-tight mb-2 text-white">THE 60-DAY <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 to-cyan-400">ASCENT.</span></h1>
-        <p class="text-gray-400 text-sm tracking-widest uppercase mb-8 border-b border-white/10 pb-4">10 Levels. 10 Tasks. Absolute Consistency.</p>
+    <section class="flex-1 flex flex-col justify-center">
+      <div class="mb-8">
+        <h1 class="text-4xl sm:text-5xl font-bold tracking-tight mb-2 text-white uppercase">Level 01 <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 to-cyan-400">Initiation.</span></h1>
+        <p class="text-gray-400 text-sm tracking-widest uppercase mb-8 border-b border-white/10 pb-4">The 21-Day Primer</p>
         
         <div class="space-y-6">
-          <div class="flex gap-4">
-            <div class="text-fuchsia-400 font-bold text-xl">01</div>
-            <div>
-              <h3 class="text-lg font-semibold text-gray-200 mb-1">The Level 1 Primer</h3>
-              <p class="text-sm text-gray-400 leading-relaxed">Survive 21 days. Select exactly 10 tasks. As you conquer levels, timelines shrink but the pressure multiplies.</p>
+          <div class="group">
+            <div class="flex items-center gap-3 mb-1">
+              <svg class="w-5 h-5 text-fuchsia-400 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+              <h3 class="text-lg font-semibold text-gray-200">The Immutable Anchor</h3>
             </div>
+            <p class="text-sm text-gray-400 leading-relaxed pl-8">Task 01 is permanently locked. This is your core discipline. Break the anchor, the system resets. No exceptions.</p>
           </div>
-          <div class="flex gap-4">
-            <div class="text-cyan-400 font-bold text-xl">02</div>
-            <div>
-              <h3 class="text-lg font-semibold text-gray-200 mb-1">The Immutable Anchor</h3>
-              <p class="text-sm text-gray-400 leading-relaxed">Task #1 is permanently locked. Miss your anchor, the system resets. No exceptions.</p>
+          
+          <div class="group">
+            <div class="flex items-center gap-3 mb-1">
+              <svg class="w-5 h-5 text-cyan-400 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
+              <h3 class="text-lg font-semibold text-gray-200">Strategic Flexibility</h3>
             </div>
+            <p class="text-sm text-gray-400 leading-relaxed pl-8">Tasks 02-10 grant 4 flex-options (swap, re-sequence, replace) unlocking on alternate days. Covers exactly 45% of your timeline.</p>
           </div>
-          <div class="flex gap-4">
-            <div class="text-purple-400 font-bold text-xl">03</div>
-            <div>
-              <h3 class="text-lg font-semibold text-gray-200 mb-1">Strategic Flexibility</h3>
-              <p class="text-sm text-gray-400 leading-relaxed">For tasks 2-10, you are granted 4 flex-options (swap, re-sequence, replace) unlocking on alternate days to cover 45% of the phase.</p>
+
+          <div class="group">
+            <div class="flex items-center gap-3 mb-1">
+              <svg class="w-5 h-5 text-green-400 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+              <h3 class="text-lg font-semibold text-gray-200">The 60-Day Ascent</h3>
             </div>
+            <p class="text-sm text-gray-400 leading-relaxed pl-8">Survive this 21-day primer to unlock Level 02. As designations rise, timelines shrink, and consistency demands escalate.</p>
           </div>
         </div>
       </div>
+    </section>
 
-      <!-- Action Button -->
-      <div class="mt-12">
-        <a href="home.html" class="group relative inline-flex items-center justify-center px-8 py-4 font-bold text-white transition-all duration-300 bg-fuchsia-600/20 border border-fuchsia-500 rounded-full hover:bg-fuchsia-500 hover:shadow-[0_0_40px_rgba(192,38,211,0.6)] overflow-hidden">
-          <span class="absolute inset-0 w-full h-full -mt-1 rounded-lg opacity-30 bg-gradient-to-b from-transparent via-transparent to-black"></span>
-          <span class="relative tracking-[0.15em] flex items-center gap-2">
-            INITIALIZE LEVEL 01 
-            <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
+    <section class="flex-1 flex flex-col bg-black/40 rounded-2xl p-6 border border-white/5 relative shadow-inner">
+      <div class="flex justify-between items-end mb-6 border-b border-white/10 pb-4">
+        <div>
+          <h2 class="text-xl font-bold text-white tracking-wide">TASK MATRIX</h2>
+          <p class="text-xs text-gray-500 uppercase tracking-widest mt-1">Configure your 10 commitments</p>
+        </div>
+        <div class="text-right">
+          <span class="text-[10px] text-fuchsia-400 border border-fuchsia-500/30 bg-fuchsia-500/10 px-2 py-1 rounded">21 DAYS LOCKED</span>
+        </div>
+      </div>
+
+      <div class="flex-1 overflow-y-auto pr-2 space-y-3 max-h-[50vh] lg:max-h-[400px]">
+        
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <svg class="h-4 w-4 text-fuchsia-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          </div>
+          <input type="text" placeholder="Anchor Task (e.g., Brush Teeth) - Compulsory" class="task-input anchor-input input-field w-full pl-10 pr-10 py-3 rounded-lg text-sm text-white placeholder-gray-600 focus:bg-fuchsia-900/10 border-l-2 border-l-fuchsia-500 font-medium">
+          <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+            <svg class="h-4 w-4 text-fuchsia-500 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+          </div>
+        </div>
+
+        <div id="flex-tasks-container" class="space-y-3"></div>
+
+      </div>
+
+      <div class="mt-6 pt-4 border-t border-white/10">
+        <button id="init-btn" onclick="window.location.href='home.html'" disabled class="w-full relative inline-flex items-center justify-center px-8 py-4 font-bold text-white transition-all duration-300 bg-gray-800 border border-gray-600 rounded-xl opacity-50 cursor-not-allowed overflow-hidden">
+          <span id="btn-text" class="relative tracking-[0.15em] flex items-center gap-2">
+            AWAITING MATRIX CONFIGURATION
+            <svg class="w-5 h-5 hidden" id="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
           </span>
-        </a>
+        </button>
       </div>
     </section>
 
-    <!-- RIGHT SIDE: Gamified Visuals -->
-    <section class="flex-1 grid grid-cols-2 gap-4 lg:pl-8 border-t lg:border-t-0 lg:border-l border-white/10 pt-8 lg:pt-0">
-      
-      <!-- Big Card spanning 2 columns -->
-      <div class="holo-card col-span-2 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between min-h-[160px]">
-        <div class="absolute right-0 top-0 opacity-10">
-           <svg class="w-32 h-32 -mt-4 -mr-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-        </div>
-        <div class="text-xs font-bold text-gray-500 tracking-widest mb-2">CURRENT TIER</div>
-        <h3 class="text-3xl font-bold text-white neon-text-cyan">LEVEL 01</h3>
-        <div class="mt-4 flex items-center gap-3">
-          <div class="w-full bg-gray-800 rounded-full h-2">
-            <div class="bg-cyan-400 h-2 rounded-full shadow-[0_0_10px_#06b6d4]" style="width: 5%"></div>
-          </div>
-          <span class="text-xs text-cyan-400 font-mono">0/21 DAYS</span>
-        </div>
-      </div>
-
-      <!-- Square Card 1 -->
-      <div class="holo-card rounded-2xl p-5 flex flex-col items-center justify-center text-center gap-3 group">
-        <div class="w-12 h-12 rounded-full bg-fuchsia-500/10 border border-fuchsia-500/30 flex items-center justify-center group-hover:shadow-[0_0_15px_#c026d3] transition-all">
-          <svg class="w-6 h-6 text-fuchsia-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-        </div>
-        <div>
-          <h4 class="text-sm font-bold text-gray-200">The Anchor</h4>
-          <p class="text-[10px] text-gray-500 uppercase mt-1">Task 01 / Locked</p>
-        </div>
-      </div>
-
-      <!-- Square Card 2 -->
-      <div class="holo-card rounded-2xl p-5 flex flex-col items-center justify-center text-center gap-3 group">
-        <div class="w-12 h-12 rounded-full bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center group-hover:shadow-[0_0_15px_#06b6d4] transition-all">
-          <svg class="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-        </div>
-        <div>
-          <h4 class="text-sm font-bold text-gray-200">Flexibility</h4>
-          <p class="text-[10px] text-gray-500 uppercase mt-1">4 Tokens / 45% Uptime</p>
-        </div>
-      </div>
-
-    </section>
   </main>
 
+  <script>
+    // 1. Generate Tasks 2-10 dynamically to keep HTML clean
+    const taskContainer = document.getElementById('flex-tasks-container');
+    for (let i = 2; i <= 10; i++) {
+      const taskNum = i < 10 ? `0${i}` : `${i}`;
+      taskContainer.innerHTML += `
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <span class="text-xs font-bold text-gray-500">${taskNum}</span>
+          </div>
+          <input type="text" placeholder="Flex Task ${taskNum}" class="task-input flex-input input-field w-full pl-10 pr-4 py-3 rounded-lg text-sm text-white placeholder-gray-600 focus:bg-cyan-900/10 border-l-2 border-l-cyan-900 focus:border-l-cyan-400">
+        </div>
+      `;
+    }
+
+    // 2. Dynamic Island & Validation Logic
+    const allInputs = document.querySelectorAll('.input-field');
+    const diIsland = document.getElementById('dynamic-island');
+    const diText = document.getElementById('di-text');
+    const diCounter = document.getElementById('di-counter');
+    const diDot = document.getElementById('di-dot');
+    
+    const initBtn = document.getElementById('init-btn');
+    const btnText = document.getElementById('btn-text');
+    const btnIcon = document.getElementById('btn-icon');
+
+    allInputs.forEach(input => {
+      input.addEventListener('input', () => {
+        // Count filled inputs
+        let filledCount = 0;
+        allInputs.forEach(inp => {
+          if (inp.value.trim().length > 0) filledCount++;
+        });
+
+        // Update Dynamic Island Counter
+        diCounter.innerText = `${filledCount}/10`;
+
+        if (filledCount === 0) {
+          diText.innerText = 'SYSTEM LOCKED // AWAITING INPUT';
+          updateIslandColor('fuchsia', 'gray');
+          lockButton();
+        } 
+        else if (filledCount > 0 && filledCount < 10) {
+          diText.innerText = 'CONFIGURING MATRIX...';
+          updateIslandColor('cyan', 'cyan');
+          lockButton();
+        } 
+        else if (filledCount === 10) {
+          diText.innerText = 'MATRIX LOCKED // READY FOR ASCENT';
+          updateIslandColor('green', 'green');
+          unlockButton();
+        }
+      });
+    });
+
+    function updateIslandColor(dotColor, borderColorClass) {
+      // Reset dot colors
+      diDot.className = 'w-2.5 h-2.5 rounded-full animate-pulse shadow-lg';
+      if(dotColor === 'fuchsia') diDot.classList.add('bg-fuchsia-500', 'shadow-[0_0_8px_#c026d3]');
+      if(dotColor === 'cyan') diDot.classList.add('bg-cyan-400', 'shadow-[0_0_8px_#06b6d4]');
+      if(dotColor === 'green') diDot.classList.add('bg-green-400', 'shadow-[0_0_8px_#4ade80]');
+      
+      // Update Island Border
+      diIsland.style.borderColor = 
+        borderColorClass === 'fuchsia' ? 'rgba(192, 38, 211, 0.3)' : 
+        borderColorClass === 'cyan' ? 'rgba(6, 182, 212, 0.5)' : 
+        'rgba(74, 222, 128, 0.5)';
+      
+      diIsland.style.boxShadow = 
+        borderColorClass === 'fuchsia' ? '0 0 20px rgba(192, 38, 211, 0.2)' : 
+        borderColorClass === 'cyan' ? '0 0 20px rgba(6, 182, 212, 0.3)' : 
+        '0 0 20px rgba(74, 222, 128, 0.3)';
+    }
+
+    function lockButton() {
+      initBtn.disabled = true;
+      initBtn.className = "w-full relative inline-flex items-center justify-center px-8 py-4 font-bold text-white transition-all duration-300 bg-gray-800 border border-gray-600 rounded-xl opacity-50 cursor-not-allowed overflow-hidden";
+      btnText.innerHTML = `
+        AWAITING MATRIX CONFIGURATION
+        <svg class="w-5 h-5 hidden" id="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
+      `;
+    }
+
+    function unlockButton() {
+      initBtn.disabled = false;
+      initBtn.className = "group w-full relative inline-flex items-center justify-center px-8 py-4 font-bold text-white transition-all duration-300 bg-green-500/20 border border-green-400 rounded-xl hover:bg-green-500 hover:shadow-[0_0_30px_rgba(74,222,128,0.5)] overflow-hidden cursor-pointer";
+      btnText.innerHTML = `
+        INITIALIZE LEVEL 01
+        <svg class="w-5 h-5 block group-hover:translate-x-1 transition-transform" id="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
+      `;
+    }
+  </script>
 </body>
 </html>
