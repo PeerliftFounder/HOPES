@@ -2,310 +2,505 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Initiation - The 60-Day Ascent</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Hopes | Configure your goals</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   
   <style>
+    :root {
+      --accent-mint: #00E59B;
+      --accent-purple: #9D4EDD;
+    }
+    
     body { 
-      background-color: #030305; 
-      font-family: 'Space Grotesk', sans-serif; 
-      color: #e2e8f0;
+      font-family: 'Plus Jakarta Sans', sans-serif; 
+      color: #ffffff;
       overflow-x: hidden;
-    }
-    
-    /* Liquid Background Blobs */
-    @keyframes morph {
-      0% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; transform: translate(0, 0) scale(1); }
-      50% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; transform: translate(3vw, -3vh) scale(1.1); }
-      100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; transform: translate(0, 0) scale(1); }
-    }
-    .liquid-blob-1 {
-      position: fixed; top: -10%; left: -10%; width: 50vw; height: 50vw; min-width: 400px; min-height: 400px;
-      background: linear-gradient(135deg, #c026d3, #4f46e5);
-      filter: blur(100px); opacity: 0.35;
-      animation: morph 12s infinite ease-in-out alternate;
-      z-index: 0; pointer-events: none;
-    }
-    .liquid-blob-2 {
-      position: fixed; bottom: -10%; right: -10%; width: 60vw; height: 60vw; min-width: 500px; min-height: 500px;
-      background: linear-gradient(135deg, #06b6d4, #3b82f6);
-      filter: blur(120px); opacity: 0.25;
-      animation: morph 15s infinite ease-in-out alternate-reverse;
-      z-index: 0; pointer-events: none;
+      -webkit-font-smoothing: antialiased;
+      background-color: #050507;
     }
 
-    /* Advanced Liquid Glass Panel */
-    .liquid-glass {
-      background: rgba(10, 10, 15, 0.55);
-      backdrop-filter: blur(24px) saturate(150%);
-      -webkit-backdrop-filter: blur(24px) saturate(150%);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), inset 0 0 20px rgba(192, 38, 211, 0.05);
+    /* Dynamic Changing Liquid Glass Background */
+    @keyframes liquidTheme {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .liquid-bg {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2;
+      background: linear-gradient(-45deg, #050507, #1a0b2e, #0a192f, #130a1f, #050507);
+      background-size: 400% 400%;
+      animation: liquidTheme 18s ease infinite;
     }
 
-    /* Dynamic Island */
-    .dynamic-island {
-      background: rgba(0, 0, 0, 0.8);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(192, 38, 211, 0.3);
-      box-shadow: 0 0 20px rgba(192, 38, 211, 0.2);
-      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    /* Ambient Live Stage */
+    .ambient-stage {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+      pointer-events: none; 
     }
     
-    /* Input Fields */
-    .task-input {
+    /* Borderless, sun-like diffusing aura in a pill shape */
+    .neon-pill-spinner {
+      position: absolute;
+      width: 45vmin; height: 110vmin; 
+      border-radius: 999px;
+      background: linear-gradient(180deg, rgba(0, 229, 155, 0.25) 0%, rgba(157, 78, 221, 0.25) 100%);
+      filter: blur(50px); 
+      animation: spin360 20s linear infinite;
+    }
+
+    /* Custom Silhouette - NOW HEAVILY BLURRED AND BLENDED */
+    .zen-person {
+      position: absolute;
+      width: 42vmin; height: 42vmin;
+      opacity: 0.55; /* Lowered opacity so background bleeds through */
+      filter: drop-shadow(0 0 20px rgba(157, 78, 221, 0.6)) blur(8px); /* Added heavy blur */
+      mix-blend-mode: screen; /* Melts the colors into the glowing pill */
+      animation: floatZen 8s ease-in-out infinite;
+      margin-top: 15vmin; 
+    }
+    
+    @keyframes spin360 {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    @keyframes floatZen {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-25px); }
+    }
+
+    /* Premium Compact Surface Cards */
+    .surface-card {
+      background: linear-gradient(145deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-top: 1px solid rgba(255,255,255,0.15);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+      border-radius: 24px;
+    }
+
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* Compact Task Inputs */
+    .task-input-container {
       background: rgba(0,0,0,0.3);
-      border: 1px solid rgba(255,255,255,0.1);
-      transition: all 0.3s ease;
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 16px;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .task-input:focus {
-      outline: none;
-      background: rgba(0,0,0,0.6);
+    .task-input-container:focus-within {
+      background: rgba(255,255,255,0.04);
+      border-color: rgba(255,255,255,0.2);
+      box-shadow: 0 0 15px rgba(0, 229, 155, 0.05);
+      transform: translateY(-2px);
     }
-    .anchor-input:focus { border-color: #c026d3; box-shadow: 0 0 15px rgba(192,38,211,0.3); }
-    .flex-input:focus { border-color: #06b6d4; box-shadow: 0 0 15px rgba(6,182,212,0.3); }
+    .clean-input { background: transparent; border: none; outline: none; color: white; width: 100%; }
+    .clean-input::placeholder { color: rgba(255,255,255,0.3); }
 
-    /* Custom Scrollbar for Tasks */
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); }
-    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
-    ::-webkit-scrollbar-thumb:hover { background: rgba(6,182,212,0.5); }
+    /* Typeable Time Inputs */
+    .time-type-box {
+      width: 70px; height: 70px;
+      background: rgba(0,0,0,0.4);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      text-align: center;
+      font-size: 2rem;
+      font-family: monospace;
+      color: white;
+      transition: all 0.3s;
+      outline: none;
+    }
+    .time-type-box:focus {
+      background: rgba(0,229,155,0.05);
+      border-color: var(--accent-mint);
+      box-shadow: 0 0 15px rgba(0,229,155,0.2);
+    }
+    .time-type-box::-webkit-outer-spin-button,
+    .time-type-box::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    .time-type-box[type=number] { -moz-appearance: textfield; }
+
+    /* Modals */
+    .modal-overlay { transition: opacity 0.3s ease; }
+    .modal-content { transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s; }
   </style>
 </head>
-<body class="relative min-h-[100dvh] flex flex-col items-center py-20 px-4 sm:px-6">
+<body class="relative min-h-[100dvh] pt-20 pb-12"> 
 
-  <div class="liquid-blob-1"></div>
-  <div class="liquid-blob-2"></div>
+  <!-- Shifting Liquid Background -->
+  <div class="liquid-bg"></div>
+  
+  <!-- Ambient Live Stage (Sun-diffusing Aura & Blurred Silhouette) -->
+  <div class="ambient-stage">
+    <div class="neon-pill-spinner"></div>
+    <div class="zen-person">
+      <!-- Custom SVG: Kokra Hair, Fit Slim Body, Full Clothes, Colored, Facing Back -->
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" class="w-full h-full">
+        <defs>
+          <linearGradient id="hoodieGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#9D4EDD"/>
+            <stop offset="100%" stop-color="#5A189A"/>
+          </linearGradient>
+          <linearGradient id="pantsGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#4A5568"/>
+            <stop offset="100%" stop-color="#1A202C"/>
+          </linearGradient>
+        </defs>
 
-  <div class="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-md">
-    <div id="dynamic-island" class="dynamic-island rounded-full px-5 py-3 flex items-center justify-between cursor-default">
-      <div class="flex items-center gap-3">
-        <div id="di-dot" class="w-2.5 h-2.5 rounded-full bg-fuchsia-500 animate-pulse shadow-[0_0_8px_#c026d3]"></div>
-        <span id="di-text" class="text-[11px] sm:text-xs font-bold tracking-[0.2em] text-gray-200 transition-all duration-300">SYSTEM LOCKED // AWAITING INPUT</span>
-      </div>
-      <div id="di-counter" class="text-xs font-mono text-fuchsia-400 font-bold">0/10</div>
+        <!-- Crossed Legs (Lotus Pose) -->
+        <path d="M 50 75 C 25 72, 10 78, 12 86 C 14 94, 30 95, 50 90 Z" fill="url(#pantsGrad)" />
+        <path d="M 50 75 C 75 72, 90 78, 88 86 C 86 94, 70 95, 50 90 Z" fill="url(#pantsGrad)" />
+        <path d="M 35 76 C 45 74, 55 74, 65 76 C 60 90, 40 90, 35 76 Z" fill="#1A202C" opacity="0.6"/>
+
+        <!-- Torso (Fit Hoodie - V-Taper) -->
+        <path d="M 32 38 C 25 45, 32 65, 35 80 C 45 82, 55 82, 65 80 C 68 65, 75 45, 68 38 C 60 30, 40 30, 32 38 Z" fill="url(#hoodieGrad)" />
+        
+        <!-- Left Arm -->
+        <path d="M 32 38 C 18 45, 16 65, 23 82 C 26 88, 30 84, 32 78 C 28 65, 30 50, 35 44 Z" fill="#7B2CBF" />
+        <!-- Right Arm -->
+        <path d="M 68 38 C 82 45, 84 65, 77 82 C 74 88, 70 84, 68 78 C 72 65, 70 50, 65 44 Z" fill="#7B2CBF" />
+
+        <!-- Hood Drape (Covers back of neck) -->
+        <path d="M 40 32 C 40 22, 60 22, 60 32 C 60 42, 55 46, 50 46 C 45 46, 40 42, 40 32 Z" fill="#3C096C" />
+
+        <!-- Curly Kokra Hair -->
+        <circle cx="50" cy="20" r="10" fill="#0D0D12" />
+        <circle cx="43" cy="14" r="4.5" fill="#0D0D12" />
+        <circle cx="50" cy="11" r="5" fill="#0D0D12" />
+        <circle cx="57" cy="14" r="4.5" fill="#0D0D12" />
+        <circle cx="39" cy="20" r="4.5" fill="#0D0D12" />
+        <circle cx="61" cy="20" r="4.5" fill="#0D0D12" />
+        <circle cx="41" cy="27" r="4.5" fill="#0D0D12" />
+        <circle cx="59" cy="27" r="4.5" fill="#0D0D12" />
+        <circle cx="50" cy="29" r="5" fill="#0D0D12" />
+        <circle cx="45" cy="29" r="4" fill="#0D0D12" />
+        <circle cx="55" cy="29" r="4" fill="#0D0D12" />
+      </svg>
     </div>
   </div>
 
-  <main class="liquid-glass relative z-10 w-full max-w-7xl rounded-3xl p-6 sm:p-8 lg:p-12 flex flex-col lg:flex-row gap-10 lg:gap-16">
-    
-    <section class="flex-1 flex flex-col justify-center">
-      <div class="mb-8">
-        <h1 class="text-4xl sm:text-5xl font-bold tracking-tight mb-2 text-white uppercase">Level 01 <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 to-cyan-400">Initiation.</span></h1>
-        <p class="text-gray-400 text-sm tracking-widest uppercase mb-8 border-b border-white/10 pb-4">The 21-Day Primer</p>
-        
-        <div class="space-y-6">
-          <div class="group">
-            <div class="flex items-center gap-3 mb-1">
-              <svg class="w-5 h-5 text-fuchsia-400 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-              <h3 class="text-lg font-semibold text-gray-200">The Immutable Anchor</h3>
-            </div>
-            <p class="text-sm text-gray-400 leading-relaxed pl-8">Task 01 is permanently locked. This is your core discipline. Break the anchor, the system resets. No exceptions.</p>
-          </div>
-          
-          <div class="group">
-            <div class="flex items-center gap-3 mb-1">
-              <svg class="w-5 h-5 text-cyan-400 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
-              <h3 class="text-lg font-semibold text-gray-200">Strategic Flexibility</h3>
-            </div>
-            <p class="text-sm text-gray-400 leading-relaxed pl-8">Tasks 02-10 grant 4 flex-options (swap, re-sequence, replace) unlocking on alternate days. Covers exactly 45% of your timeline.</p>
-          </div>
+  <!-- Dynamic Island (Top Center) -->
+  <div id="dynamic-island" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-black/80 backdrop-blur-xl border border-white/10 rounded-full px-4 py-2 flex items-center gap-3 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden shadow-2xl justify-center whitespace-nowrap">
+    <div id="di-status" class="w-2 h-2 rounded-full bg-[var(--accent-purple)] shadow-[0_0_8px_#9D4EDD] animate-pulse flex-shrink-0"></div>
+    <span id="di-text" class="text-xs font-bold tracking-[0.2em] text-white flex-shrink-0 mt-0.5">0 / 4</span>
+    <div id="di-emojis" class="flex items-center gap-1 text-sm transition-all duration-500 w-0 opacity-0 overflow-hidden"></div>
+  </div>
 
-          <div class="group">
-            <div class="flex items-center gap-3 mb-1">
-              <svg class="w-5 h-5 text-green-400 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-              <h3 class="text-lg font-semibold text-gray-200">The 60-Day Ascent</h3>
-            </div>
-            <p class="text-sm text-gray-400 leading-relaxed pl-8">Survive this 21-day primer to unlock Level 02. As designations rise, timelines shrink, and consistency demands escalate.</p>
+  <!-- Emoji Selector Modal -->
+  <div id="emoji-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-md opacity-0 pointer-events-none modal-overlay">
+    <div id="emoji-content" class="surface-card p-5 w-[90%] max-w-sm scale-95 opacity-0 modal-content">
+      <h3 class="text-[10px] font-bold text-gray-400 mb-4 text-center uppercase tracking-[0.2em]">Select Identifier</h3>
+      <div class="grid grid-cols-4 gap-2 text-2xl text-center" id="emoji-grid"></div>
+      <button onclick="closeEmojiModal()" class="w-full mt-5 py-2.5 rounded-lg bg-white/5 text-gray-300 text-sm font-bold border border-white/10 hover:bg-white/10 transition">Close</button>
+    </div>
+  </div>
+
+  <!-- Keyboard Typeable Time Modal -->
+  <div id="time-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-md opacity-0 pointer-events-none modal-overlay">
+    <div id="time-content" class="surface-card p-6 w-[90%] max-w-xs scale-95 opacity-0 modal-content text-center">
+      <h3 class="text-[10px] font-bold text-[var(--accent-mint)] mb-6 uppercase tracking-[0.2em]">Type 24H Time</h3>
+      
+      <div class="flex justify-center items-center gap-3 mb-8">
+        <input type="number" id="type-hours" placeholder="00" min="0" max="23" class="time-type-box" oninput="validateTimeInput(this, 23, 'type-mins')">
+        <span class="text-3xl text-gray-500 font-bold">:</span>
+        <input type="number" id="type-mins" placeholder="00" min="0" max="59" class="time-type-box" oninput="validateTimeInput(this, 59, null)">
+      </div>
+
+      <button onclick="confirmTime()" class="w-full py-3 rounded-lg font-bold text-black bg-[var(--accent-mint)] shadow-[0_0_15px_rgba(0,229,155,0.3)] hover:shadow-[0_0_25px_rgba(0,229,155,0.5)] transition uppercase tracking-widest text-sm">Confirm</button>
+      <button onclick="closeTimeModal()" class="w-full mt-3 py-2.5 rounded-lg bg-transparent text-gray-400 text-sm font-bold hover:text-white transition">Cancel</button>
+    </div>
+  </div>
+
+  <main class="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 pt-2 md:pt-4">
+    
+    <header class="flex flex-col items-center mb-8 md:mb-10">
+      <div class="w-10 h-1 bg-white/10 rounded-full mb-4"></div>
+      <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight mb-2">Configure <span class="text-[var(--accent-mint)]">Hopes</span></h1>
+      <p class="text-gray-400 text-xs md:text-sm font-medium">Establish your 60-day baseline.</p>
+    </header>
+
+    <!-- Compact Rules Section -->
+    <section class="mb-10 relative w-full">
+      <div id="carousel" class="flex md:grid md:grid-cols-3 overflow-x-auto md:overflow-visible snap-x snap-mandatory md:snap-none gap-4 pb-2 -mx-4 px-4 md:mx-0 md:px-0 hide-scrollbar">
+        
+        <div class="surface-card p-5 flex-shrink-0 w-[85%] md:w-auto snap-center relative overflow-hidden">
+          <div class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-4">
+            <svg class="w-5 h-5 text-[var(--accent-purple)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
           </div>
+          <h4 class="text-lg font-bold mb-2">Start Small</h4>
+          <p class="text-xs text-gray-400 leading-relaxed font-medium">Add just 4 commitments to enter the dashboard. Master these core habits before expanding your matrix.</p>
         </div>
+        
+        <div class="surface-card p-5 flex-shrink-0 w-[85%] md:w-auto snap-center relative overflow-hidden">
+          <div class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-4">
+            <svg class="w-5 h-5 text-[var(--accent-mint)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+          </div>
+          <h4 class="text-lg font-bold mb-2">The Anchor</h4>
+          <p class="text-xs text-gray-400 leading-relaxed font-medium">Habit 1 is your non-negotiable foundation for level-1 (21 days). It can't be altered during this phase.</p>
+        </div>
+        
+        <div class="surface-card p-5 flex-shrink-0 w-[85%] md:w-auto snap-center relative overflow-hidden">
+          <div class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-4">
+            <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
+          </div>
+          <h4 class="text-lg font-bold mb-2">Flexibility</h4>
+          <p class="text-xs text-gray-400 leading-relaxed font-medium">The rest can be swapped later (limited to 3 swaps in an interval 3 days). Don't make unnecessary inputs.</p>
+        </div>
+
+      </div>
+      <div class="flex md:hidden justify-center gap-2 mt-3" id="carousel-dots">
+        <div class="w-5 h-1 rounded-full bg-[var(--accent-purple)] transition-all duration-300"></div>
+        <div class="w-1.5 h-1 rounded-full bg-white/20 transition-all duration-300"></div>
+        <div class="w-1.5 h-1 rounded-full bg-white/20 transition-all duration-300"></div>
       </div>
     </section>
 
-    <section class="flex-1 flex flex-col bg-black/40 rounded-2xl p-6 border border-white/5 relative shadow-inner">
-      <div class="flex justify-between items-end mb-6 border-b border-white/10 pb-4">
-        <div>
-          <h2 class="text-xl font-bold text-white tracking-wide">TASK MATRIX</h2>
-          <p class="text-xs text-gray-500 uppercase tracking-widest mt-1">Configure your 10 commitments</p>
+    <!-- COMPACT TASK MATRIX -->
+    <section class="max-w-2xl mx-auto space-y-6" id="matrix-container">
+      
+      <!-- Anchor Task Container -->
+      <div class="relative">
+        <div class="flex items-center gap-2 mb-2 pl-1">
+          <span class="w-2 h-2 rounded-full bg-[var(--accent-purple)] shadow-[0_0_8px_#9D4EDD]"></span>
+          <h3 class="text-xs font-bold uppercase tracking-widest text-white">The Anchor</h3>
+          <span class="text-[9px] bg-[var(--accent-purple)]/20 text-purple-300 px-2 py-0.5 rounded border border-[var(--accent-purple)]/30 ml-auto font-bold tracking-widest">COMPULSORY</span>
         </div>
-        <div class="text-right">
-          <label for="duration-select" class="sr-only">Lock duration</label>
-          <select id="duration-select" class="text-[10px] text-fuchsia-400 border border-fuchsia-500/30 bg-fuchsia-500/10 px-2 py-1 rounded">
-            <option value="7">7 DAYS LOCKED</option>
-            <option value="14">14 DAYS LOCKED</option>
-            <option value="21" selected>21 DAYS LOCKED</option>
-            <option value="30">30 DAYS LOCKED</option>
-            <option value="45">45 DAYS LOCKED</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="flex-1 overflow-y-auto pr-2 space-y-3 max-h-[50vh] lg:max-h-[400px]">
         
-        <div class="relative">
-          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <svg class="h-4 w-4 text-fuchsia-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        <div class="task-input-container p-2.5 flex flex-col sm:flex-row gap-2.5">
+          <div class="flex items-center gap-3 w-full">
+            <button onclick="openEmojiModal('emoji-btn-1')" id="emoji-btn-1" class="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-xl hover:bg-white/10 transition-colors flex-shrink-0">🔒</button>
+            <input type="text" placeholder="Your unbreakable habit..." class="clean-input text-sm font-semibold task-check">
           </div>
-          <input type="text" placeholder="Anchor Task (e.g., Brush Teeth) - Compulsory" class="task-input anchor-input input-field w-full pl-10 pr-10 py-3 rounded-lg text-sm text-white placeholder-gray-600 focus:bg-fuchsia-900/10 border-l-2 border-l-fuchsia-500 font-medium">
-          <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
-            <svg class="h-4 w-4 text-fuchsia-500 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+          <div class="bg-black/50 rounded-lg px-3 py-2 sm:py-0 border border-white/5 flex items-center justify-between sm:w-auto w-full">
+            <span class="text-[10px] text-gray-500 sm:hidden block font-bold">TIME:</span>
+            <button type="button" onclick="openTimeModal('time-btn-1')" id="time-btn-1" data-selected="false" class="clean-input text-xs font-mono task-time w-auto text-gray-500 hover:text-white transition-colors">--:--</button>
           </div>
         </div>
-
-        <div id="flex-tasks-container" class="space-y-3"></div>
-
       </div>
 
-      <div class="mt-6 pt-4 border-t border-white/10">
-        <button id="init-btn" class="w-full relative inline-flex items-center justify-center px-8 py-4 font-bold text-white transition-all duration-300 bg-gray-800 border border-gray-600 rounded-xl opacity-50 cursor-not-allowed overflow-hidden" aria-disabled="true">
-          <span id="btn-text" class="relative tracking-[0.15em] flex items-center gap-2">
-            AWAITING MATRIX CONFIGURATION
-            <svg class="w-5 h-5 hidden" id="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
-          </span>
+      <!-- Flex Tasks Divider -->
+      <div class="flex items-center gap-2 mb-2 pl-1 pt-4">
+        <span class="w-2 h-2 rounded-full bg-[var(--accent-mint)] shadow-[0_0_8px_#00E59B]"></span>
+        <h3 class="text-xs font-bold uppercase tracking-widest text-gray-200">Habits</h3>
+        <span class="text-[9px] text-gray-500 ml-auto font-bold tracking-widest">3 SLOTS</span>
+      </div>
+
+      <!-- Flex Tasks Injected via JS -->
+      <div id="flex-tasks" class="space-y-3"></div>
+
+      <!-- Compact Lodge Button -->
+      <div class="pt-6 pb-12 flex justify-center">
+        <button id="lodge-btn" disabled class="w-full md:w-auto md:min-w-[250px] py-3.5 px-6 rounded-xl font-bold text-white bg-white/5 border border-white/10 opacity-50 cursor-not-allowed transition-all duration-500 tracking-[0.2em] uppercase text-xs">
+          Awaiting Input
         </button>
       </div>
-    </section>
 
+    </section>
   </main>
 
   <script>
-    // 1. Generate Tasks 2-10 dynamically to keep HTML clean
-    const taskContainer = document.getElementById('flex-tasks-container');
-    for (let i = 2; i <= 10; i++) {
-      const taskNum = i < 10 ? `0${i}` : `${i}`;
-      taskContainer.innerHTML += `
-        <div class="relative">
-          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <span class="text-xs font-bold text-gray-500">${taskNum}</span>
+    /* --- EMOJI MODAL --- */
+    const emojis = ['🔒', '🎯', '📚', '🏃', '🧘', '💧', '🥗', '💻', '🌅', '🌙', '🏋️', '📝', '🚗', '🙏', '💊', '📖'];
+    const emojiGrid = document.getElementById('emoji-grid');
+    const emojiModal = document.getElementById('emoji-modal');
+    const emojiContent = document.getElementById('emoji-content');
+    let currentEmojiTarget = null;
+
+    emojis.forEach(emoji => {
+      const btn = document.createElement('button');
+      btn.className = 'emoji-btn p-2 rounded-xl text-2xl bg-white/5 hover:bg-white/10 border border-white/5 transition-transform active:scale-90';
+      btn.innerText = emoji;
+      btn.onclick = () => selectEmoji(emoji);
+      emojiGrid.appendChild(btn);
+    });
+
+    function openEmojiModal(buttonId) {
+      currentEmojiTarget = buttonId;
+      emojiModal.classList.remove('opacity-0', 'pointer-events-none');
+      setTimeout(() => {
+        emojiContent.classList.remove('scale-95', 'opacity-0');
+        emojiContent.classList.add('scale-100', 'opacity-100');
+      }, 10);
+    }
+    
+    function closeEmojiModal() {
+      emojiContent.classList.remove('scale-100', 'opacity-100');
+      emojiContent.classList.add('scale-95', 'opacity-0');
+      setTimeout(() => emojiModal.classList.add('opacity-0', 'pointer-events-none'), 300);
+    }
+    
+    function selectEmoji(emoji) {
+      if(currentEmojiTarget) {
+        document.getElementById(currentEmojiTarget).innerText = emoji;
+        checkCompletion(); 
+      }
+      closeEmojiModal();
+    }
+
+    /* --- TYPEABLE TIME MODAL LOGIC --- */
+    const timeModal = document.getElementById('time-modal');
+    const timeContent = document.getElementById('time-content');
+    const inputHours = document.getElementById('type-hours');
+    const inputMins = document.getElementById('type-mins');
+    let currentTimeTarget = null;
+
+    function openTimeModal(buttonId) {
+      currentTimeTarget = document.getElementById(buttonId);
+      inputHours.value = '';
+      inputMins.value = '';
+      
+      timeModal.classList.remove('opacity-0', 'pointer-events-none');
+      setTimeout(() => {
+        timeContent.classList.remove('scale-95', 'opacity-0');
+        timeContent.classList.add('scale-100', 'opacity-100');
+        inputHours.focus(); 
+      }, 100);
+    }
+
+    function closeTimeModal() {
+      timeContent.classList.remove('scale-100', 'opacity-100');
+      timeContent.classList.add('scale-95', 'opacity-0');
+      setTimeout(() => timeModal.classList.add('opacity-0', 'pointer-events-none'), 300);
+    }
+
+    function validateTimeInput(input, maxVal, nextInputId) {
+      let val = parseInt(input.value);
+      if (val > maxVal) input.value = maxVal;
+      if (input.value.length === 2 && nextInputId) {
+        document.getElementById(nextInputId).focus();
+      }
+    }
+
+    function confirmTime() {
+      let h = inputHours.value || "00";
+      let m = inputMins.value || "00";
+      
+      if (h.length === 1) h = "0" + h;
+      if (m.length === 1) m = "0" + m;
+
+      if(currentTimeTarget) {
+        currentTimeTarget.innerText = `${h}:${m}`;
+        currentTimeTarget.dataset.selected = "true";
+        currentTimeTarget.classList.replace('text-gray-500', 'text-[var(--accent-mint)]');
+        checkCompletion();
+      }
+      closeTimeModal();
+    }
+
+    /* --- GENERATE FLEX TASKS --- */
+    const flexTasksContainer = document.getElementById('flex-tasks');
+    for (let i = 2; i <= 4; i++) {
+      flexTasksContainer.innerHTML += `
+        <div class="task-input-container p-2.5 flex flex-col sm:flex-row gap-2.5">
+          <div class="flex items-center gap-3 w-full">
+            <button onclick="openEmojiModal('emoji-btn-${i}')" id="emoji-btn-${i}" class="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-xl hover:bg-white/10 transition-colors flex-shrink-0 text-gray-400">➕</button>
+            <input type="text" placeholder="Flex habit 0${i}..." class="clean-input text-sm font-medium task-check">
           </div>
-          <input type="text" placeholder="Flex Task ${taskNum}" class="task-input flex-input input-field w-full pl-10 pr-4 py-3 rounded-lg text-sm text-white placeholder-gray-600 focus:bg-cyan-900/10 border-l-2 border-l-cyan-900 focus:border-l-cyan-400">
+          <div class="bg-black/50 rounded-lg px-3 py-2 sm:py-0 border border-white/5 flex items-center justify-between sm:w-auto w-full">
+            <span class="text-[10px] text-gray-600 sm:hidden block font-bold">TIME:</span>
+            <button type="button" onclick="openTimeModal('time-btn-${i}')" id="time-btn-${i}" data-selected="false" class="clean-input text-xs font-mono task-time w-auto text-gray-500 hover:text-white transition-colors">--:--</button>
+          </div>
         </div>
       `;
     }
 
-    // 2. Dynamic Island & Validation Logic
-    const allInputs = document.querySelectorAll('.input-field');
+    /* --- RESPONSIVE CAROUSEL --- */
+    const carousel = document.getElementById('carousel');
+    const cards = document.querySelectorAll('.surface-card');
+    const dots = document.getElementById('carousel-dots').children;
+    let slideIndex = 0;
+    let autoScrollInterval;
+
+    function updateCarousel() {
+      if(window.innerWidth >= 768) return; 
+      const targetCard = cards[slideIndex];
+      const scrollPosition = targetCard.offsetLeft - (carousel.clientWidth / 2) + (targetCard.clientWidth / 2);
+      carousel.scrollTo({ left: scrollPosition, behavior: 'smooth' });
+
+      Array.from(dots).forEach((dot, index) => {
+        dot.className = index === slideIndex ? 'w-5 h-1 rounded-full bg-[var(--accent-purple)] transition-all duration-300' : 'w-1.5 h-1 rounded-full bg-white/20 transition-all duration-300';
+      });
+    }
+
+    function startAutoScroll() {
+      autoScrollInterval = setInterval(() => {
+        if (window.innerWidth < 768) {
+          slideIndex = (slideIndex + 1) % 3;
+          updateCarousel();
+        }
+      }, 4000);
+    }
+    carousel.addEventListener('touchstart', () => clearInterval(autoScrollInterval), {passive: true});
+    carousel.addEventListener('touchend', startAutoScroll, {passive: true});
+    startAutoScroll();
+
+    /* --- DYNAMIC ISLAND & VALIDATION --- */
+    const lodgeBtn = document.getElementById('lodge-btn');
     const diIsland = document.getElementById('dynamic-island');
     const diText = document.getElementById('di-text');
-    const diCounter = document.getElementById('di-counter');
-    const diDot = document.getElementById('di-dot');
-    
-    const initBtn = document.getElementById('init-btn');
-    const btnText = document.getElementById('btn-text');
-    const btnIcon = document.getElementById('btn-icon');
+    const diStatus = document.getElementById('di-status');
+    const diEmojis = document.getElementById('di-emojis');
 
-    allInputs.forEach(input => {
-      input.addEventListener('input', () => {
-        // Count filled inputs
-        let filledCount = 0;
-        allInputs.forEach(inp => {
-          if (inp.value.trim().length > 0) filledCount++;
-        });
+    function checkCompletion() {
+      const allTextInputs = document.querySelectorAll('.task-check');
+      const allTimeButtons = document.querySelectorAll('.task-time');
+      const allEmojiButtons = [
+        document.getElementById('emoji-btn-1'),
+        document.getElementById('emoji-btn-2'),
+        document.getElementById('emoji-btn-3'),
+        document.getElementById('emoji-btn-4')
+      ];
+      
+      let completed = 0;
+      let activeEmojis = [];
 
-        // Update Dynamic Island Counter
-        diCounter.innerText = `${filledCount}/10`;
-
-        // Require at least 3 filled inputs to initialize
-        if (filledCount === 0) {
-          diText.innerText = 'SYSTEM LOCKED // AWAITING INPUT';
-          updateIslandColor('fuchsia', 'gray');
-          lockButton();
-        } 
-        else if (filledCount > 0 && filledCount < 3) {
-          diText.innerText = 'CONFIGURING MATRIX... (fill 3 to initialize)';
-          updateIslandColor('cyan', 'cyan');
-          lockButton();
-        } 
-        else if (filledCount >= 3) {
-          diText.innerText = 'MATRIX READY // INITIALIZE';
-          updateIslandColor('green', 'green');
-          unlockButton();
+      for(let i = 0; i < allTextInputs.length; i++) {
+        if(allTextInputs[i].value.trim() !== '' && allTimeButtons[i].dataset.selected === 'true') {
+          completed++;
+          activeEmojis.push(allEmojiButtons[i].innerText);
         }
-      });
-    });
-
-    function updateIslandColor(dotColor, borderColorClass) {
-      // Reset dot colors
-      diDot.className = 'w-2.5 h-2.5 rounded-full animate-pulse shadow-lg';
-      if(dotColor === 'fuchsia') diDot.classList.add('bg-fuchsia-500', 'shadow-[0_0_8px_#c026d3]');
-      if(dotColor === 'cyan') diDot.classList.add('bg-cyan-400', 'shadow-[0_0_8px_#06b6d4]');
-      if(dotColor === 'green') diDot.classList.add('bg-green-400', 'shadow-[0_0_8px_#4ade80]');
+      }
       
-      // Update Island Border
-      diIsland.style.borderColor = 
-        borderColorClass === 'fuchsia' ? 'rgba(192, 38, 211, 0.3)' : 
-        borderColorClass === 'cyan' ? 'rgba(6, 182, 212, 0.5)' : 
-        'rgba(74, 222, 128, 0.5)';
-      
-      diIsland.style.boxShadow = 
-        borderColorClass === 'fuchsia' ? '0 0 20px rgba(192, 38, 211, 0.2)' : 
-        borderColorClass === 'cyan' ? '0 0 20px rgba(6, 182, 212, 0.3)' : 
-        '0 0 20px rgba(74, 222, 128, 0.3)';
-    }
+      diText.innerText = `${completed} / 4`;
 
-    function lockButton() {
-      initBtn.setAttribute('aria-disabled', 'true');
-      initBtn.className = "w-full relative inline-flex items-center justify-center px-8 py-4 font-bold text-white transition-all duration-300 bg-gray-800 border border-gray-600 rounded-xl opacity-50 cursor-not-allowed overflow-hidden";
-      btnText.innerHTML = `
-        AWAITING MATRIX CONFIGURATION
-        <svg class="w-5 h-5 hidden" id="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
-      `;
-    }
-
-    function unlockButton() {
-      initBtn.setAttribute('aria-disabled', 'false');
-      initBtn.className = "group w-full relative inline-flex items-center justify-center px-8 py-4 font-bold text-white transition-all duration-300 bg-green-500/20 border border-green-400 rounded-xl hover:bg-green-500 hover:shadow-[0_0_30px_rgba(74,222,128,0.5)] overflow-hidden cursor-pointer";
-      btnText.innerHTML = `
-        INITIALIZE LEVEL 01
-        <svg class="w-5 h-5 block group-hover:translate-x-1 transition-transform" id="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
-      `;
-    }
-
-    // Handle click on init button: allow initialize only if >=3 inputs filled, otherwise show disclaimer
-    initBtn.addEventListener('click', (e) => {
-      // Count filled inputs
-      let filledCount = 0;
-      allInputs.forEach(inp => {
-        if (inp.value.trim().length > 0) filledCount++;
-      });
-
-      if (filledCount < 3) {
-        e.preventDefault();
-        // Small disclaimer - can be replaced with a nicer UI later
-        alert('Please fill at least 3 inputs to continue.');
-        // reinforce dynamic island message
-        diText.innerText = 'COMPLETE AT LEAST 3 INPUTS TO INITIALIZE';
-        updateIslandColor('cyan', 'cyan');
-        return;
+      if (completed > 0) {
+        diEmojis.innerHTML = activeEmojis.join('<span class="w-1"></span>');
+        diEmojis.classList.remove('w-0', 'opacity-0');
+        diEmojis.classList.add('w-auto', 'opacity-100', 'ml-1', 'pl-2', 'border-l', 'border-white/20');
+      } else {
+        diEmojis.innerHTML = '';
+        diEmojis.classList.add('w-0', 'opacity-0');
+        diEmojis.classList.remove('w-auto', 'opacity-100', 'ml-1', 'pl-2', 'border-l', 'border-white/20');
       }
 
-      // Proceed to home once requirement met
-      // include selected duration as a query param (optional)
-      const durationSelect = document.getElementById('duration-select');
-      const selectedDuration = durationSelect ? durationSelect.value : '21';
-      window.location.href = `home.html?duration=${selectedDuration}`;
+      if (completed === 4) {
+        diStatus.className = 'w-2 h-2 rounded-full bg-[var(--accent-mint)] shadow-[0_0_8px_#00E59B] flex-shrink-0';
+        diIsland.classList.add('shadow-[0_0_20px_rgba(0,229,155,0.2)]', 'border-[var(--accent-mint)]/50');
+        diIsland.classList.remove('border-white/10');
+        
+        lodgeBtn.disabled = false;
+        lodgeBtn.innerText = "Lodge Matrix";
+        lodgeBtn.className = "w-full md:w-auto md:min-w-[250px] py-3.5 px-6 rounded-xl font-extrabold text-black bg-[var(--accent-mint)] shadow-[0_0_20px_rgba(0,229,155,0.3)] cursor-pointer transition-all duration-500 tracking-[0.2em] uppercase text-xs transform hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(0,229,155,0.5)]";
+        lodgeBtn.onclick = () => window.location.href = 'home.html';
+      } else {
+        diStatus.className = 'w-2 h-2 rounded-full bg-[var(--accent-purple)] shadow-[0_0_8px_#9D4EDD] animate-pulse flex-shrink-0';
+        diIsland.classList.remove('shadow-[0_0_20px_rgba(0,229,155,0.2)]', 'border-[var(--accent-mint)]/50');
+        diIsland.classList.add('border-white/10');
+        
+        lodgeBtn.disabled = true;
+        lodgeBtn.innerText = "Awaiting Input";
+        lodgeBtn.className = "w-full md:w-auto md:min-w-[250px] py-3.5 px-6 rounded-xl font-bold text-white bg-white/5 border border-white/10 opacity-50 cursor-not-allowed transition-all duration-500 tracking-[0.2em] uppercase text-xs";
+      }
+    }
+
+    document.querySelectorAll('.task-check').forEach(input => {
+      input.addEventListener('input', checkCompletion);
     });
 
-    // Wire duration select to update ARIA label or other UI if needed
-    const durationSelect = document.getElementById('duration-select');
-    if (durationSelect) {
-      durationSelect.addEventListener('change', () => {
-        // Keep the select visible; could also update other UI elements here
-        // Example: update dynamic island text briefly
-        diText.innerText = `LOCK SET // ${durationSelect.value} DAYS`;
-        // restore island state after a short delay
-        setTimeout(() => {
-          // Reflect current filled state
-          let filledCount = 0;
-          allInputs.forEach(inp => { if (inp.value.trim().length > 0) filledCount++; });
-          if (filledCount >= 3) diText.innerText = 'MATRIX READY // INITIALIZE';
-          else if (filledCount > 0) diText.innerText = 'CONFIGURING MATRIX... (fill 3 to initialize)';
-          else diText.innerText = 'SYSTEM LOCKED // AWAITING INPUT';
-        }, 1200);
-      });
-    }
   </script>
 </body>
 </html>
