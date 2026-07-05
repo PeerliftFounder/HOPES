@@ -2,36 +2,849 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Home - Step 3</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Hopes | Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
   <style>
-    body { background-color: #050505; color: white; }
-    .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
-    .neon-green { box-shadow: 0 0 15px rgba(34, 197, 94, 0.4); }
+    :root {
+      --accent-mint: #00E59B;
+      --accent-purple: #9D4EDD;
+      --bg-deep: #050507;
+    }
+    
+    body { 
+      font-family: 'Plus Jakarta Sans', sans-serif; 
+      color: #ffffff;
+      background-color: var(--bg-deep);
+      min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Clean Glowing Liquid Background */
+    @keyframes liquidTheme {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .liquid-bg {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2;
+      background: linear-gradient(-45deg, #050507, #1a0b2e, #0a192f, #130a1f, #050507);
+      background-size: 400% 400%;
+      animation: liquidTheme 18s ease infinite;
+    }
+    /* Increased glow intensity since the pill is removed */
+    .mesh-overlay {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1;
+      background-image: 
+        radial-gradient(circle at 20% 40%, rgba(157, 78, 221, 0.15) 0%, transparent 60%),
+        radial-gradient(circle at 80% 60%, rgba(0, 229, 155, 0.1) 0%, transparent 60%);
+      filter: blur(40px);
+      pointer-events: none;
+    }
+
+    /* Premium Surface Cards */
+    .surface-card {
+      background: linear-gradient(145deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-top: 1px solid rgba(255,255,255,0.15);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+      border-radius: 24px;
+    }
+
+    /* Mobile Container Lock */
+    .app-container {
+      max-width: 420px;
+      margin: 0 auto;
+      min-height: 100vh;
+      position: relative;
+      background: rgba(5, 5, 7, 0.4);
+      box-shadow: 0 0 50px rgba(0,0,0,0.5);
+    }
+
+    /* Speedometer Progress Ring */
+    .progress-ring__circle {
+      transition: stroke-dashoffset 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+      transform: rotate(-90deg);
+      transform-origin: 50% 50%;
+    }
+    .progress-ring__bg {
+      stroke: rgba(255,255,255,0.05);
+      stroke-dasharray: 4 6;
+    }
+
+    /* Custom Circular Checkboxes */
+    .task-check-wrapper {
+      position: relative;
+      display: inline-block;
+      width: 24px; height: 24px;
+      flex-shrink: 0;
+    }
+    .task-checkbox { opacity: 0; width: 0; height: 0; position: absolute; }
+    .task-custom-check {
+      position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      border: 2px solid rgba(255,255,255,0.2);
+      border-radius: 50%;
+      transition: all 0.3s ease;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+    }
+    .task-checkbox:checked ~ .task-custom-check {
+      background-color: var(--accent-mint);
+      border-color: var(--accent-mint);
+      box-shadow: 0 0 15px rgba(0, 229, 155, 0.4);
+    }
+    .task-checkbox:checked ~ .task-custom-check::after {
+      content: '✓'; color: #000; font-size: 14px; font-weight: 800;
+    }
+
+    /* Bottom Nav Bar */
+    .nav-bar {
+      background: rgba(10, 10, 15, 0.65);
+      backdrop-filter: blur(30px) saturate(200%);
+      -webkit-backdrop-filter: blur(30px) saturate(200%);
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding-bottom: env(safe-area-inset-bottom, 16px);
+    }
+    .nav-item {
+      font-size: 1.5rem;
+      transition: transform 0.2s, opacity 0.3s;
+      cursor: pointer;
+      position: relative;
+      user-select: none;
+      -webkit-touch-callout: none;
+    }
+    .nav-item:active { transform: scale(0.85); }
+
+    /* Long-Press Tooltip */
+    .nav-tooltip {
+      position: absolute; top: -45px; left: 50%;
+      transform: translateX(-50%) translateY(10px) scale(0.9);
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.2);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: white;
+      pointer-events: none;
+      opacity: 0;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .nav-tooltip.visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0) scale(1);
+    }
+
+    /* Level Up Pill */
+    .level-up-pill {
+      transform: translate(-50%, 150px); 
+      opacity: 0;
+      transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .level-up-pill.active {
+      transform: translate(-50%, 0); 
+      opacity: 1;
+    }
+
+    /* Input Configurations for Modals */
+    .task-input-container {
+      background: rgba(0,0,0,0.4);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 16px;
+      transition: all 0.3s;
+    }
+    .task-input-container:focus-within {
+      border-color: rgba(255,255,255,0.2);
+      box-shadow: 0 0 15px rgba(0, 229, 155, 0.05);
+    }
+    .clean-input { background: transparent; border: none; outline: none; color: white; width: 100%; }
+    
+    .time-type-box {
+      width: 70px; height: 70px;
+      background: rgba(0,0,0,0.4);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      text-align: center;
+      font-size: 2rem;
+      font-family: monospace;
+      color: white;
+      outline: none;
+    }
+    .time-type-box:focus {
+      border-color: var(--accent-mint);
+      box-shadow: 0 0 15px rgba(0,229,155,0.2);
+    }
+    .time-type-box::-webkit-outer-spin-button, .time-type-box::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    .time-type-box[type=number] { -moz-appearance: textfield; }
+
+    /* BULLETPROOF VIRTUAL TOUR HIGHLIGHTING (No Blackout Bug) */
+    body.tour-active { overflow: hidden; }
+    .tour-highlight {
+      position: relative !important;
+      z-index: 9999 !important;
+      /* Uses a massive box-shadow to darken the rest of the screen without needing a separate div */
+      box-shadow: 0 0 0 4px var(--accent-mint), 0 0 0 9999px rgba(0,0,0,0.85) !important;
+      background-color: var(--bg-deep) !important; /* Prevents transparency issues */
+      pointer-events: none !important;
+      border-radius: inherit;
+      transition: all 0.4s ease;
+      scroll-margin-top: 150px; 
+    }
+
+    /* Modals & Layout Tweaks */
+    .modal-overlay { transition: opacity 0.3s ease; }
+    .modal-content { transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s; }
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
-<body class="min-h-screen relative overflow-hidden font-sans p-8">
-  
-  <!-- Neon dimming focus light -->
-  <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-green-600/10 rounded-full blur-[120px] pointer-events-none"></div>
+<body class="relative min-h-[100dvh] pb-[60vh]"> 
 
-  <nav class="glass px-6 py-4 rounded-xl flex justify-between items-center mb-10 relative z-10">
-    <div class="text-xl font-bold tracking-widest text-gray-200">WORKSPACE</div>
-    <a href="index.html" class="text-sm text-gray-400 hover:text-white transition">Log Out</a>
+  <div class="liquid-bg"></div>
+  <div class="mesh-overlay"></div>
+
+  <!-- DYNAMIC TOUR DIALOGUE CARD -->
+  <div id="tour-card" class="fixed left-1/2 -translate-x-1/2 w-[90%] max-w-[380px] bg-black/90 backdrop-blur-xl border border-[var(--accent-mint)]/30 rounded-2xl p-5 shadow-[0_20px_50px_rgba(0,0,0,0.9)] pointer-events-none opacity-0 z-[10000] transition-all duration-500 ease-in-out">
+    <div class="flex justify-between items-center mb-3">
+      <span class="text-[10px] font-extrabold tracking-[0.2em] text-[var(--accent-mint)] uppercase" id="tour-step-indicator">STEP 1 / 6</span>
+      <button onclick="endTour()" class="text-[10px] text-gray-500 hover:text-white font-bold tracking-wider uppercase pointer-events-auto">Skip</button>
+    </div>
+    <p class="text-sm text-gray-200 leading-relaxed font-medium mb-5" id="tour-text">Welcome to your dashboard onboarding sequence.</p>
+    <div class="flex justify-end pointer-events-auto">
+      <button id="tour-next-btn" onclick="nextTourStep()" class="bg-white text-black px-5 py-2 rounded-lg text-xs font-extrabold uppercase tracking-wider hover:scale-95 transition-transform">Next</button>
+    </div>
+  </div>
+
+  <!-- EMOJI MODAL (For Expansion Matrix) -->
+  <div id="emoji-modal" class="fixed inset-0 z-[120] flex items-center justify-center bg-black/70 backdrop-blur-md opacity-0 pointer-events-none modal-overlay">
+    <div id="emoji-content" class="surface-card p-5 w-[90%] max-w-sm scale-95 opacity-0 modal-content">
+      <h3 class="text-[10px] font-bold text-gray-400 mb-4 text-center uppercase tracking-[0.2em]">Select Identifier</h3>
+      <div class="grid grid-cols-4 gap-2 text-2xl text-center" id="emoji-grid"></div>
+      <button onclick="closeEmojiModal()" class="w-full mt-5 py-2.5 rounded-lg bg-white/5 text-gray-300 text-sm font-bold border border-white/10 hover:bg-white/10 transition">Close</button>
+    </div>
+  </div>
+
+  <!-- TIME MODAL (For Expansion Matrix) -->
+  <div id="time-modal" class="fixed inset-0 z-[120] flex items-center justify-center bg-black/70 backdrop-blur-md opacity-0 pointer-events-none modal-overlay">
+    <div id="time-content" class="surface-card p-6 w-[90%] max-w-xs scale-95 opacity-0 modal-content text-center">
+      <h3 class="text-[10px] font-bold text-[var(--accent-mint)] mb-6 uppercase tracking-[0.2em]">Type 24H Time</h3>
+      <div class="flex justify-center items-center gap-3 mb-8">
+        <input type="number" id="type-hours" placeholder="00" min="0" max="23" class="time-type-box" oninput="validateTimeInput(this, 23, 'type-mins')">
+        <span class="text-3xl text-gray-500 font-bold">:</span>
+        <input type="number" id="type-mins" placeholder="00" min="0" max="59" class="time-type-box" oninput="validateTimeInput(this, 59, null)">
+      </div>
+      <button onclick="confirmTime()" class="w-full py-3 rounded-lg font-bold text-black bg-[var(--accent-mint)] shadow-[0_0_15px_rgba(0,229,155,0.3)] transition uppercase tracking-widest text-sm">Confirm</button>
+      <button onclick="closeTimeModal()" class="w-full mt-3 py-2.5 rounded-lg bg-transparent text-gray-400 text-sm font-bold transition">Cancel</button>
+    </div>
+  </div>
+
+  <!-- SINGLE EDIT MANAGEMENT MODAL -->
+  <div id="edit-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-md transition-all duration-300" style="opacity: 0; pointer-events: none;">
+    <div id="edit-content" class="bg-[#0a0a0f] border border-white/10 p-6 w-[90%] max-w-sm rounded-3xl shadow-2xl transform scale-95 transition-transform duration-300">
+      <h3 class="text-[11px] font-bold text-[var(--accent-mint)] mb-3 text-center uppercase tracking-[0.2em]">⚡ Single Daily Edit</h3>
+      <p class="text-[11px] text-gray-400 mb-6 text-center leading-relaxed">Modifying this slot locks your editor completely for the next 24 hours.</p>
+      
+      <div class="space-y-5 mb-8">
+        <div>
+          <label class="text-[10px] font-bold text-[var(--accent-purple)] tracking-wider block mb-2 uppercase" id="edit-target-label">FLEX HABIT</label>
+          <input type="text" id="edit-new-name" class="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-3 text-sm font-semibold text-white outline-none focus:border-[var(--accent-mint)] transition-colors placeholder-gray-600">
+        </div>
+        <div>
+          <label class="text-[10px] font-bold text-gray-500 tracking-wider block mb-2">NEW TIMESTAMP (24H)</label>
+          <div class="flex items-center gap-3">
+            <input type="number" id="edit-hours" placeholder="00" min="0" max="23" class="w-16 bg-black/60 border border-white/10 rounded-xl p-3 text-center font-mono text-base outline-none focus:border-[var(--accent-mint)] transition-colors">
+            <span class="text-gray-500 font-bold text-lg">:</span>
+            <input type="number" id="edit-mins" placeholder="00" min="0" max="59" class="w-16 bg-black/60 border border-white/10 rounded-xl p-3 text-center font-mono text-base outline-none focus:border-[var(--accent-mint)] transition-colors">
+          </div>
+        </div>
+      </div>
+
+      <button onclick="executeSingleEdit()" class="w-full py-4 rounded-xl font-extrabold text-black bg-[var(--accent-mint)] shadow-[0_0_20px_rgba(0,229,155,0.3)] uppercase tracking-widest text-xs hover:scale-[0.98] transition-transform">
+        Save Task
+      </button>
+      <button onclick="closeEditModal()" class="w-full mt-2 py-3 rounded-lg bg-transparent text-gray-500 text-xs font-bold hover:text-white transition-colors uppercase tracking-wider">
+        Cancel
+      </button>
+    </div>
+  </div>
+
+  <!-- APPLICATION CONTAINER -->
+  <div class="app-container flex flex-col pt-16 px-5 z-10">
+    
+    <!-- Header -->
+    <header class="mb-8">
+      <h1 class="text-3xl font-extrabold tracking-tight text-white mb-1">
+        <span id="greeting-text">Good evening</span>, <span class="text-[var(--accent-mint)]" id="user-name">Shubhradeep</span> <span class="text-2xl">👋</span>
+      </h1>
+      <p class="text-sm text-gray-400 font-medium">Small steps today, better tomorrow.</p>
+    </header>
+
+    <!-- Speedometer Card -->
+    <section id="tour-speedo-card" class="surface-card p-6 mb-8 flex items-center justify-between transition-all duration-300 rounded-2xl">
+      <div>
+        <h2 id="tour-txt-protocol" class="text-lg font-bold text-white mb-1 transition-all duration-300 rounded px-1 -ml-1">Level 1 Protocol</h2>
+        <p class="text-xs text-gray-400 mb-3">Complete base tasks to unlock.</p>
+        <div class="flex">
+          <span id="tour-txt-days" class="px-2.5 py-1 bg-[var(--accent-purple)]/20 border border-[var(--accent-purple)]/30 rounded text-[10px] font-bold tracking-widest text-[var(--accent-purple)] transition-all duration-300">21 DAYS</span>
+        </div>
+      </div>
+
+      <div id="tour-txt-percent" class="relative w-24 h-24 flex items-center justify-center transition-all duration-300 rounded-full">
+        <svg class="w-full h-full absolute inset-0" viewBox="0 0 100 100">
+          <circle class="progress-ring__bg" stroke-width="8" fill="transparent" r="42" cx="50" cy="50" />
+          <circle id="speedometer" class="progress-ring__circle text-[var(--accent-mint)]" stroke-width="8" stroke-linecap="round" fill="transparent" r="42" cx="50" cy="50" stroke="currentColor" />
+        </svg>
+        <div class="text-center relative z-10 flex flex-col items-center">
+          <span class="text-xl font-extrabold text-white" id="task-percent">0%</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Base Matrix -->
+    <section id="tour-target-base" class="mb-6 transition-all duration-300 rounded-2xl p-2 -mx-2">
+      <div class="flex items-center justify-between mb-4 pl-1">
+        <h3 class="text-xs font-bold uppercase tracking-widest text-gray-300">Base Matrix</h3>
+        <span class="text-[10px] text-gray-500 font-bold">4 TASKS</span>
+      </div>
+
+      <div class="space-y-3" id="daily-tasks">
+        
+        <!-- Task 1 (Anchor - Never Clickable) -->
+        <div>
+          <div class="bg-black/60 border border-white/5 rounded-2xl p-4 flex items-center gap-4 relative overflow-hidden transition-all duration-300 task-row">
+            <div class="absolute left-0 top-0 w-1 h-full bg-[var(--accent-purple)]"></div>
+            <label class="task-check-wrapper">
+              <input type="checkbox" class="task-checkbox logic-check">
+              <div class="task-custom-check"></div>
+            </label>
+            <div class="flex-1">
+              <h4 class="text-sm font-bold text-white mb-0.5" id="task-name-1">Loading...</h4>
+              <p class="text-[10px] text-gray-500 font-medium flex items-center gap-1">
+                <span class="text-[var(--accent-purple)]">🔒 Anchor</span> • <span id="task-time-1">--:--</span>
+              </p>
+            </div>
+            <div class="text-2xl opacity-70" id="task-emoji-1">🔄</div>
+          </div>
+          
+          <div class="mt-2 flex justify-start pl-1">
+            <span id="single-edit-status" class="text-[9px] bg-[var(--accent-mint)]/10 text-[var(--accent-mint)] border border-[var(--accent-mint)]/20 px-2.5 py-1 rounded-md font-bold tracking-wider uppercase transition-all duration-500 shadow-[0_0_10px_rgba(0,229,155,0.05)] inline-block">
+              ⚡ Single Edit Available
+            </span>
+          </div>
+        </div>
+
+        <!-- Flex Tasks (Data populated from JS) -->
+        <div class="bg-black/60 border border-white/5 rounded-2xl p-4 flex items-center gap-4 transition-all duration-300 task-row flex-task-row cursor-pointer hover:bg-white/10" onclick="handleTaskClick(2, event)">
+          <label class="task-check-wrapper" onclick="event.stopPropagation()">
+            <input type="checkbox" class="task-checkbox logic-check">
+            <div class="task-custom-check"></div>
+          </label>
+          <div class="flex-1">
+            <h4 class="text-sm font-bold text-white mb-0.5" id="task-name-2">Loading...</h4>
+            <p class="text-[10px] text-gray-500 font-medium" id="task-time-2">--:--</p>
+          </div>
+          <div class="text-2xl opacity-70" id="task-emoji-2">🔄</div>
+        </div>
+
+        <div class="bg-black/60 border border-white/5 rounded-2xl p-4 flex items-center gap-4 transition-all duration-300 task-row flex-task-row cursor-pointer hover:bg-white/10" onclick="handleTaskClick(3, event)">
+          <label class="task-check-wrapper" onclick="event.stopPropagation()">
+            <input type="checkbox" class="task-checkbox logic-check">
+            <div class="task-custom-check"></div>
+          </label>
+          <div class="flex-1">
+            <h4 class="text-sm font-bold text-white mb-0.5" id="task-name-3">Loading...</h4>
+            <p class="text-[10px] text-gray-500 font-medium" id="task-time-3">--:--</p>
+          </div>
+          <div class="text-2xl opacity-70" id="task-emoji-3">🔄</div>
+        </div>
+
+        <div class="bg-black/60 border border-white/5 rounded-2xl p-4 flex items-center gap-4 transition-all duration-300 task-row flex-task-row cursor-pointer hover:bg-white/10" onclick="handleTaskClick(4, event)">
+          <label class="task-check-wrapper" onclick="event.stopPropagation()">
+            <input type="checkbox" class="task-checkbox logic-check">
+            <div class="task-custom-check"></div>
+          </label>
+          <div class="flex-1">
+            <h4 class="text-sm font-bold text-white mb-0.5" id="task-name-4">Loading...</h4>
+            <p class="text-[10px] text-gray-500 font-medium" id="task-time-4">--:--</p>
+          </div>
+          <div class="text-2xl opacity-70" id="task-emoji-4">🔄</div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Expansion Matrix -->
+    <section id="tour-target-expansion" class="bg-black/40 border border-white/5 p-5 transition-all duration-300 rounded-2xl opacity-40 pointer-events-none">
+      <div class="flex items-center gap-2 mb-3">
+        <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+        <h3 class="text-xs font-bold uppercase tracking-widest text-gray-400">Expansion Matrix</h3>
+      </div>
+      <div class="border border-white/10 border-dashed rounded-xl p-4 text-center">
+        <p class="text-[10px] text-gray-500 tracking-widest uppercase font-bold">Awaiting Level 1 Clear</p>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Level Up Prompt Pill -->
+  <div id="level-up-pill" class="level-up-pill fixed bottom-28 left-1/2 w-[90%] max-w-[380px] z-40 bg-gradient-to-r from-[var(--accent-purple)] to-[var(--accent-mint)] p-[1px] rounded-2xl shadow-[0_10px_40px_rgba(0,229,155,0.3)] pointer-events-auto">
+    <div class="bg-black/90 backdrop-blur-md rounded-2xl p-4 flex items-center justify-between">
+      <div class="flex-1">
+        <h4 class="text-sm font-extrabold text-white">Base Locked.</h4>
+        <p class="text-[10px] text-gray-400 font-medium leading-tight mt-0.5 pr-2">Commit your next 6 tasks to continue.</p>
+      </div>
+      <button onclick="openExpansionModal()" class="bg-[var(--accent-mint)] text-black px-4 py-2 rounded-xl text-xs font-extrabold uppercase tracking-wider hover:scale-95 transition-transform pointer-events-auto">
+        Continue
+      </button>
+    </div>
+  </div>
+
+  <!-- Bottom Navigation Bar -->
+  <nav class="nav-bar fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[420px] z-50 rounded-t-3xl">
+    <div class="flex justify-around items-center px-6 py-4 max-w-[420px] mx-auto">
+      <div class="nav-item bg-white/10 p-3 rounded-full border border-white/5 shadow-inner" onmousedown="showTooltip('tt-dash')" onmouseup="hideTooltip('tt-dash')" ontouchstart="showTooltip('tt-dash')" ontouchend="hideTooltip('tt-dash')">
+        <div id="tt-dash" class="nav-tooltip" style="top: -55px;">DASHBOARD</div>🏠
+      </div>
+      <div id="nav-swap-btn" class="nav-item opacity-20 pointer-events-none" onmousedown="showTooltip('tt-swap')" onmouseup="hideTooltip('tt-swap')" ontouchstart="showTooltip('tt-swap')" ontouchend="hideTooltip('tt-swap')">
+        <div id="tt-swap" class="nav-tooltip">SWAP LOCKED</div>🔀
+      </div>
+      <div class="nav-item" onmousedown="showTooltip('tt-prof')" onmouseup="hideTooltip('tt-prof')" ontouchstart="showTooltip('tt-prof')" ontouchend="hideTooltip('tt-prof')">
+        <div id="tt-prof" class="nav-tooltip">PROFILE</div>👤
+      </div>
+      <div class="nav-item" onmousedown="showTooltip('tt-graph')" onmouseup="hideTooltip('tt-graph')" ontouchstart="showTooltip('tt-graph')" ontouchend="hideTooltip('tt-graph')">
+        <div id="tt-graph" class="nav-tooltip">GRAPH</div>📈
+      </div>
+      <div class="nav-item" onmousedown="showTooltip('tt-comm')" onmouseup="showTooltip('tt-comm')" ontouchstart="showTooltip('tt-comm')" ontouchend="hideTooltip('tt-comm')">
+        <div id="tt-comm" class="nav-tooltip">COMMUNITY</div>🌍
+      </div>
+    </div>
   </nav>
 
-  <main class="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
-    <div class="glass p-8 rounded-2xl h-64 flex flex-col justify-center items-center neon-green border-t border-green-500/30">
-      <h3 class="text-2xl mb-2">Welcome In.</h3>
-      <p class="text-gray-400 text-sm">System successfully lodged.</p>
-    </div>
-    
-    <div class="glass p-8 rounded-2xl h-64 col-span-1 md:col-span-2">
-      <!-- Empty space for your future features -->
-      <p class="text-gray-500 italic">Feature dashboard pending...</p>
-    </div>
-  </main>
+  <!-- EXPANSION MATRIX MODAL -->
+  <div id="expansion-modal" class="fixed inset-0 z-[80] flex items-end sm:items-center justify-center bg-black/90 backdrop-blur-md opacity-0 pointer-events-none modal-overlay transition-all duration-300">
+    <div id="expansion-content" class="bg-[#0a0a0f] border border-white/10 w-full max-w-[420px] h-[85vh] sm:h-[80vh] rounded-t-3xl sm:rounded-3xl p-5 flex flex-col translate-y-full sm:translate-y-0 sm:scale-95 modal-content shadow-[0_-20px_50px_rgba(0,0,0,0.8)] transition-transform duration-500">
+      <div class="w-12 h-1.5 bg-white/20 rounded-full mx-auto mb-6 shrink-0"></div>
+      <div class="flex justify-between items-center mb-6 shrink-0">
+        <div>
+          <h2 class="text-xl font-extrabold text-[var(--accent-mint)]">Expand Matrix</h2>
+          <p class="text-xs text-gray-400">Configure Slots 05 to 10</p>
+        </div>
+        <button onclick="closeExpansionModal()" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-gray-400 hover:text-white">✕</button>
+      </div>
 
+      <!-- Expansion Inputs Container -->
+      <div class="flex-1 overflow-y-auto hide-scrollbar space-y-3 pr-1" id="extended-tasks-container"></div>
+
+      <div class="pt-6 shrink-0 border-t border-white/10 mt-4">
+        <button onclick="lockFinalMatrix()" class="w-full py-4 rounded-xl font-extrabold text-black bg-[var(--accent-mint)] shadow-[0_0_20px_rgba(0,229,155,0.3)] uppercase tracking-widest text-sm hover:scale-[0.98] transition-transform">
+          Lock Final Matrix
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* --- DATA SYNCHRONIZATION FROM LOCK.HTML --- */
+    window.addEventListener('DOMContentLoaded', () => {
+      try {
+        const savedData = localStorage.getItem('hopes_base_matrix');
+        if (savedData) {
+          const tasks = JSON.parse(savedData);
+          tasks.forEach((task, index) => {
+            const i = index + 1; // Maps 0-3 array to 1-4 DOM IDs
+            const nameEl = document.getElementById(`task-name-${i}`);
+            const timeEl = document.getElementById(`task-time-${i}`);
+            const emojiEl = document.getElementById(`task-emoji-${i}`);
+
+            if (nameEl && task.name) nameEl.innerText = task.name;
+            if (timeEl && task.time) timeEl.innerText = task.time;
+            if (emojiEl && task.emoji) emojiEl.innerText = task.emoji;
+          });
+        }
+      } catch (e) {
+        console.error("No saved tasks found from lock.html.");
+      }
+
+      // Starts tour slightly after load to ensure DOM is ready
+      setTimeout(startVirtualTour, 500);
+    });
+
+    /* --- EMOJI MODAL LOGIC (For Expansion Matrix) --- */
+    const emojis = ['🔒', '🎯', '📚', '🏃', '🧘', '💧', '🥗', '💻', '🌅', '🌙', '🏋️', '📝', '🚗', '🙏', '💊', '📖'];
+    const emojiGrid = document.getElementById('emoji-grid');
+    const emojiModal = document.getElementById('emoji-modal');
+    const emojiContent = document.getElementById('emoji-content');
+    let currentEmojiTarget = null;
+
+    emojis.forEach(emoji => {
+      const btn = document.createElement('button');
+      btn.className = 'p-2 rounded-xl text-2xl bg-white/5 hover:bg-white/10 border border-white/5 transition-transform active:scale-90';
+      btn.innerText = emoji;
+      btn.onclick = () => selectEmoji(emoji);
+      emojiGrid.appendChild(btn);
+    });
+
+    function openEmojiModal(buttonId) {
+      currentEmojiTarget = buttonId;
+      emojiModal.classList.remove('opacity-0', 'pointer-events-none');
+      setTimeout(() => emojiContent.classList.replace('scale-95', 'scale-100'), 10);
+    }
+    
+    function closeEmojiModal() {
+      emojiContent.classList.replace('scale-100', 'scale-95');
+      setTimeout(() => emojiModal.classList.add('opacity-0', 'pointer-events-none'), 200);
+    }
+    
+    function selectEmoji(emoji) {
+      if(currentEmojiTarget) { document.getElementById(currentEmojiTarget).innerText = emoji; }
+      closeEmojiModal();
+    }
+
+    /* --- TYPEABLE TIME MODAL LOGIC (For Expansion Matrix) --- */
+    const timeModal = document.getElementById('time-modal');
+    const timeContent = document.getElementById('time-content');
+    const inputHours = document.getElementById('type-hours');
+    const inputMins = document.getElementById('type-mins');
+    let currentTimeTarget = null;
+
+    function openTimeModal(buttonId) {
+      currentTimeTarget = document.getElementById(buttonId);
+      inputHours.value = ''; inputMins.value = '';
+      timeModal.classList.remove('opacity-0', 'pointer-events-none');
+      setTimeout(() => {
+        timeContent.classList.replace('scale-95', 'scale-100');
+        inputHours.focus(); 
+      }, 100);
+    }
+
+    function closeTimeModal() {
+      timeContent.classList.replace('scale-100', 'scale-95');
+      setTimeout(() => timeModal.classList.add('opacity-0', 'pointer-events-none'), 200);
+    }
+
+    function validateTimeInput(input, maxVal, nextInputId) {
+      let val = parseInt(input.value);
+      if (val > maxVal) input.value = maxVal;
+      if (input.value.length === 2 && nextInputId) { document.getElementById(nextInputId).focus(); }
+    }
+
+    function confirmTime() {
+      let h = inputHours.value || "00";
+      let m = inputMins.value || "00";
+      if (h.length === 1) h = "0" + h;
+      if (m.length === 1) m = "0" + m;
+
+      if(currentTimeTarget) {
+        currentTimeTarget.innerText = `${h}:${m}`;
+        currentTimeTarget.classList.replace('text-gray-500', 'text-[var(--accent-mint)]');
+      }
+      closeTimeModal();
+    }
+
+    /* --- EXPANSION MODAL GENERATOR --- */
+    const expandModal = document.getElementById('expansion-modal');
+    const expandContent = document.getElementById('expansion-content');
+    const extendedContainer = document.getElementById('extended-tasks-container');
+
+    // Generating inputs for tasks 5 to 10
+    for(let i = 5; i <= 10; i++) {
+      let num = i < 10 ? `0${i}` : i;
+      extendedContainer.innerHTML += `
+        <div class="task-input-container p-3 flex flex-col sm:flex-row gap-3 border border-white/5 rounded-xl bg-black/40">
+          <div class="flex items-center gap-3 w-full">
+            <button onclick="openEmojiModal('ext-emoji-${i}')" id="ext-emoji-${i}" class="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-2xl flex-shrink-0 text-gray-500 hover:text-white transition-colors">➕</button>
+            <input type="text" id="ext-name-${i}" placeholder="Habit ${num}..." class="clean-input text-sm font-semibold w-full">
+          </div>
+          <div class="bg-black/50 rounded-lg px-3 py-2 sm:py-0 border border-white/5 flex items-center justify-between sm:w-auto w-full">
+            <span class="text-[10px] text-gray-600 sm:hidden block font-bold">TIME:</span>
+            <button type="button" onclick="openTimeModal('ext-time-${i}')" id="ext-time-${i}" class="clean-input text-xs font-mono w-auto text-gray-500 hover:text-white transition-colors">--:--</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function openExpansionModal() {
+      expandModal.classList.remove('opacity-0', 'pointer-events-none');
+      setTimeout(() => expandContent.classList.remove('translate-y-full', 'sm:scale-95'), 10);
+    }
+    function closeExpansionModal() {
+      expandContent.classList.add('translate-y-full', 'sm:scale-95');
+      setTimeout(() => expandModal.classList.add('opacity-0', 'pointer-events-none'), 300);
+    }
+
+    /* --- LOCK FINAL MATRIX --- */
+    function lockFinalMatrix() {
+      let injectedHtml = '';
+      for(let i=5; i<=10; i++) {
+        let name = document.getElementById(`ext-name-${i}`).value.trim();
+        let time = document.getElementById(`ext-time-${i}`).innerText;
+        let emoji = document.getElementById(`ext-emoji-${i}`).innerText;
+
+        if(!name || time === '--:--' || emoji === '➕') {
+          return alert(`Please completely fill out all parameters for Habit 0${i}.`);
+        }
+
+        injectedHtml += `
+          <div class="bg-black/60 border border-white/5 rounded-2xl p-4 flex items-center gap-4 transition-all duration-300 task-row">
+            <label class="task-check-wrapper">
+              <input type="checkbox" class="task-checkbox logic-check" onchange="updateTotalProgress()">
+              <div class="task-custom-check"></div>
+            </label>
+            <div class="flex-1">
+              <h4 class="text-sm font-bold text-white mb-0.5">${name}</h4>
+              <p class="text-[10px] text-gray-500 font-medium">${time}</p>
+            </div>
+            <div class="text-2xl opacity-70">${emoji}</div>
+          </div>
+        `;
+      }
+
+      // Inject validated code into dashboard
+      const expSection = document.getElementById('tour-target-expansion');
+      expSection.classList.remove('opacity-40', 'pointer-events-none', 'bg-black/40', 'p-5');
+      expSection.innerHTML = `
+        <div class="flex items-center gap-2 mb-4 pl-1">
+          <svg class="w-3.5 h-3.5 text-[var(--accent-mint)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+          <h3 class="text-xs font-bold uppercase tracking-widest text-gray-200">Expansion Matrix</h3>
+        </div>
+        <div class="space-y-3">
+          ${injectedHtml}
+        </div>
+      `;
+
+      closeExpansionModal();
+      document.getElementById('level-up-pill').style.display = 'none';
+    }
+
+    // Secondary listener for dynamically added inputs
+    function updateTotalProgress() {
+      let checkedCount = document.querySelectorAll('.logic-check:checked').length;
+      setProgress(checkedCount);
+    }
+
+    /* --- DYNAMIC GREETING --- */
+    const hour = new Date().getHours();
+    let greeting = "Good evening";
+    if (hour < 12) greeting = "Good morning";
+    else if (hour < 18) greeting = "Good afternoon";
+    document.getElementById('greeting-text').innerText = greeting;
+
+    /* --- PERCENTAGE SPEEDOMETER MATH --- */
+    const circle = document.getElementById('speedometer');
+    const radius = circle.r.baseVal.value;
+    const circumference = radius * 2 * Math.PI; 
+    
+    circle.style.strokeDasharray = `${circumference} ${circumference}`;
+    circle.style.strokeDashoffset = circumference;
+
+    function setProgress(completedCount) {
+      const percent = completedCount * 10; 
+      const offset = circumference - (percent / 100) * circumference;
+      circle.style.strokeDashoffset = offset;
+      document.getElementById('task-percent').innerText = percent + '%';
+
+      const pill = document.getElementById('level-up-pill');
+      const swapBtn = document.getElementById('nav-swap-btn');
+      
+      // Reveal the prompt pill if exactly 4 base tasks are checked
+      if (completedCount === 4 && document.getElementById('extended-tasks-container').innerHTML.includes('input')) {
+        pill.classList.add('active');
+        circle.classList.add('drop-shadow-[0_0_10px_rgba(0,229,155,0.8)]');
+        swapBtn.classList.remove('opacity-20', 'pointer-events-none');
+        swapBtn.querySelector('.nav-tooltip').innerText = "SWAP";
+      } else if(completedCount < 4) {
+        pill.classList.remove('active');
+        circle.classList.remove('drop-shadow-[0_0_10px_rgba(0,229,155,0.8)]');
+        swapBtn.classList.add('opacity-20', 'pointer-events-none');
+        swapBtn.querySelector('.nav-tooltip').innerText = "SWAP LOCKED";
+      }
+    }
+
+    // Attach base logic
+    document.querySelectorAll('.logic-check').forEach((box, index) => {
+      box.addEventListener('change', () => {
+        let checkedCount = document.querySelectorAll('.logic-check:checked').length;
+        setProgress(checkedCount);
+        const taskRows = document.querySelectorAll('.task-row');
+        if(box.checked) {
+          taskRows[index].classList.add('opacity-50', 'border-[var(--accent-mint)]/30');
+          taskRows[index].querySelector('h4').classList.add('line-through', 'text-gray-400');
+        } else {
+          taskRows[index].classList.remove('opacity-50', 'border-[var(--accent-mint)]/30');
+          taskRows[index].querySelector('h4').classList.remove('line-through', 'text-gray-400');
+        }
+      });
+    });
+
+    setProgress(0);
+
+    /* --- LONG-PRESS NAV TOOLTIPS --- */
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.addEventListener('contextmenu', e => e.preventDefault());
+    });
+    function showTooltip(id) { document.getElementById(id).classList.add('visible'); }
+    function hideTooltip(id) { document.getElementById(id).classList.remove('visible'); }
+
+    /* --- SINGLE EDIT PROTOCOL --- */
+    const editModalSys = document.getElementById('edit-modal');
+    const editContentSys = document.getElementById('edit-content');
+    
+    let singleEditSpent = false;
+    let activeEditTaskId = null;
+    let isTourRunning = false; 
+
+    function handleTaskClick(taskId, event) {
+      if (singleEditSpent || isTourRunning) return;
+      if (event.target.closest('.task-check-wrapper')) return;
+
+      activeEditTaskId = taskId;
+      const currentName = document.getElementById(`task-name-${taskId}`).innerText;
+      const currentTime = document.getElementById(`task-time-${taskId}`).innerText;
+
+      document.getElementById('edit-target-label').innerText = `FLEX HABIT 0${taskId}`;
+      document.getElementById('edit-new-name').value = currentName;
+
+      if(currentTime && currentTime.includes(':')) {
+        const parts = currentTime.split(':');
+        document.getElementById('edit-hours').value = parts[0];
+        document.getElementById('edit-mins').value = parts[1];
+      }
+      openEditModalSys();
+    }
+
+    function openEditModalSys() {
+      editModalSys.style.opacity = '1';
+      editModalSys.style.pointerEvents = 'auto';
+      setTimeout(() => editContentSys.classList.replace('scale-95', 'scale-100'), 10);
+    }
+    
+    function closeEditModal() {
+      editContentSys.classList.replace('scale-100', 'scale-95');
+      setTimeout(() => {
+        editModalSys.style.opacity = '0';
+        editModalSys.style.pointerEvents = 'none';
+      }, 200);
+    }
+    
+    function executeSingleEdit() {
+      const newName = document.getElementById('edit-new-name').value.trim();
+      let hr = document.getElementById('edit-hours').value || "00";
+      let mn = document.getElementById('edit-mins').value || "00";
+
+      if(!newName) return alert("Please specify a habit name.");
+      if(hr.length === 1) hr = "0" + hr;
+      if(mn.length === 1) mn = "0" + mn;
+
+      document.getElementById(`task-name-${activeEditTaskId}`).innerText = newName;
+      document.getElementById(`task-time-${activeEditTaskId}`).innerText = `${hr}:${mn}`;
+
+      singleEditSpent = true;
+      const statusBadge = document.getElementById('single-edit-status');
+      statusBadge.innerText = "🔒 Edit Spent Today";
+      statusBadge.className = "text-[9px] bg-white/10 text-gray-500 border border-white/10 px-2.5 py-1 rounded-md font-bold tracking-wider uppercase transition-all duration-500 inline-block";
+      
+      document.querySelectorAll('.flex-task-row').forEach(row => {
+        row.classList.remove('cursor-pointer', 'hover:bg-white/10');
+      });
+      closeEditModal();
+    }
+
+    /* --- APPLE STYLE ONBOARDING VIRTUAL TOUR ENGINE --- */
+    let currentStep = 1;
+    const tourLayer = document.getElementById('tour-layer');
+    const tourCard = document.getElementById('tour-card');
+    const tourText = document.getElementById('tour-text');
+    const tourIndicator = document.getElementById('tour-step-indicator');
+    const nextBtn = document.getElementById('tour-next-btn');
+
+    const tourSteps = {
+      1: {
+        elementId: "tour-txt-protocol",
+        text: "Level 1 Protocol acts as your base command architecture. It handles setting your unbreakable foundation constraints."
+      },
+      2: {
+        elementId: "tour-txt-days",
+        text: "This baseline configuration will execute un-halted for a continuous 21 days to cement neuro-habit locking pathways."
+      },
+      3: {
+        elementId: "tour-txt-percent",
+        text: "This live circular telemetry tracker displays your accurate daily absolute completion metric."
+      },
+      4: {
+        elementId: "tour-target-base",
+        text: "The Base Matrix aggregates your 4 mission-critical habits. Complete these to unlock bottom-nav Swap capabilities."
+      },
+      5: {
+        elementId: "single-edit-status",
+        text: "You are granted ONE fluid modification per day to your Flex Habits. Simply tap any flex task to edit its parameters. Once spent, the matrix locks for 24 hours."
+      },
+      6: {
+        elementId: "tour-target-expansion",
+        text: "The Expansion Matrix unlocks slots 05 through 10, bringing additional options only after the primary 4 tasks are locked."
+      }
+    };
+
+    function startVirtualTour() {
+      isTourRunning = true;
+      document.body.classList.add('tour-active');
+      tourLayer.classList.remove('opacity-0');
+      executeTourStep(1);
+    }
+
+    function executeTourStep(step) {
+      document.querySelectorAll('.tour-highlight').forEach(el => {
+        el.classList.remove('tour-highlight');
+      });
+      
+      const config = tourSteps[step];
+      const element = document.getElementById(config.elementId);
+      
+      if(element) {
+        element.classList.add('tour-highlight');
+        
+        if (step >= 5) {
+          tourCard.style.bottom = 'auto';
+          tourCard.style.top = '80px';
+        } else {
+          tourCard.style.top = 'auto';
+          tourCard.style.bottom = '48px';
+        }
+
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+
+      tourIndicator.innerText = `STEP ${step} / 6`;
+      tourText.innerText = config.text;
+      nextBtn.innerText = step === 6 ? "Finish" : "Next";
+    }
+
+    function nextTourStep() {
+      if(currentStep < 6) {
+        currentStep++;
+        executeTourStep(currentStep);
+      } else {
+        endTour();
+      }
+    }
+
+    function endTour() {
+      document.querySelectorAll('.tour-highlight').forEach(el => {
+        el.classList.remove('tour-highlight');
+      });
+      document.body.classList.remove('tour-active');
+      tourLayer.classList.add('opacity-0');
+      isTourRunning = false;
+      
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+  </script>
 </body>
 </html>
