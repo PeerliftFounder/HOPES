@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Hopes | Configure your goals</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   
   <style>
     :root {
@@ -51,13 +51,12 @@
       animation: spin360 20s linear infinite;
     }
 
-    /* Reverted to the heavily blurred, subtle melted effect */
     .zen-person {
       position: absolute;
       width: 42vmin; height: 42vmin;
-      opacity: 0.45; /* Lowered opacity */
-      filter: drop-shadow(0 0 20px rgba(157, 78, 221, 0.6)) blur(8px); /* Restored the heavy blur */
-      mix-blend-mode: screen; /* Melts the image into the background light */
+      opacity: 0.45; 
+      filter: drop-shadow(0 0 20px rgba(157, 78, 221, 0.6)) blur(8px); 
+      mix-blend-mode: screen; 
       animation: floatZen 8s ease-in-out infinite;
       margin-top: 15vmin; 
     }
@@ -180,6 +179,25 @@
     </div>
   </div>
 
+  <!-- IMMERSIVE INITIATION SEQUENCE OVERLAY (CONCEPT OF LEVELS) -->
+  <div id="initiation-overlay" class="fixed inset-0 z-[200] bg-black/95 flex items-center justify-center p-5">
+    <!-- Centered Ambient Neon Glow Core -->
+    <div class="absolute w-72 h-72 rounded-full bg-gradient-to-r from-[var(--accent-purple)] to-[var(--accent-mint)] opacity-20 filter blur-[80px] pointer-events-none"></div>
+    
+    <div class="surface-card p-6 w-full max-w-[380px] border border-white/10 relative z-10 text-center transition-all duration-500" id="initiation-card">
+      <div id="initiation-content-wrapper" class="min-h-[220px] flex flex-col justify-center">
+        <!-- Content gets injected dynamically by JavaScript -->
+      </div>
+      
+      <!-- Staggered Next Button Container -->
+      <div class="mt-6 flex justify-center">
+        <button id="initiation-next-btn" onclick="advanceInitiation()" class="w-full py-3.5 rounded-xl font-extrabold text-black bg-[var(--accent-mint)] shadow-[0_0_20px_rgba(0,229,155,0.3)] uppercase tracking-widest text-xs transition-opacity duration-300">
+          Continue
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Dynamic Island -->
   <div id="dynamic-island" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-black/80 backdrop-blur-xl border border-white/10 rounded-full px-4 py-2 flex items-center gap-3 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden shadow-2xl justify-center whitespace-nowrap">
     <div id="di-status" class="w-2 h-2 rounded-full bg-[var(--accent-purple)] shadow-[0_0_8px_#9D4EDD] animate-pulse flex-shrink-0"></div>
@@ -238,7 +256,7 @@
             <svg class="w-5 h-5 text-[var(--accent-mint)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
           </div>
           <h4 class="text-lg font-bold mb-2">The Anchor</h4>
-          <p class="text-xs text-gray-400 leading-relaxed font-medium">Habit 1 is your <span class="font-bold"> non-negotiable foundation for level-1 (21days)</span>. It can't be altered during this phase anyway.</p>
+          <p class="text-xs text-gray-400 leading-relaxed font-medium">Habit 1 is your <span class="font-bold"> non-negotiable foundation for level-1 (7 days)</span>. It can't be altered during this phase anyway.</p>
         </div>
         
         <div class="surface-card p-5 flex-shrink-0 w-full md:w-auto snap-item relative overflow-hidden carousel-card">
@@ -315,6 +333,91 @@
   </main>
 
   <script>
+    /* --- INITIATION FLOW PROTOCOL --- */
+    let currentIntroStep = 1;
+    const totalIntroSteps = 6;
+    
+    const initiationRules = {
+      1: {
+        title: "🛡️ LEVEL 1 INITIATION",
+        text: "Welcome to <span class='font-black text-[var(--accent-mint)]'>Hopes</span>. Level 1 establishes a rigorous <span class='font-bold text-[var(--accent-purple)]'>7-day operational period</span>. It is designed to evaluate your true execution consistency metrics before launching advanced matrices."
+      },
+      2: {
+        title: "📊 CORE BASE ALLOCATION",
+        text: "You are required to follow a structure of <span class='font-bold text-white'>10 habits everyday</span>. However, to eliminate friction, you will initially log only <span class='font-bold text-[var(--accent-mint)]'>4 baseline tasks</span> to clear the gate and launch into the matrix dashboard."
+      },
+      3: {
+        title: "🔒 THE CONSTANT ANCHOR",
+        text: "Your very first slot is <span class='font-bold text-[var(--accent-purple)]'>The Anchor Task</span>. This configuration stands constant and non-negotiable for the next 7 days. <span class='font-bold text-red-400 text-xs tracking-wider block mt-2'>ABSOLUTELY NO EDITS OR TIMESTAMP CHANGING ALLOWED.</span>"
+      },
+      4: {
+        title: "⚡ SINGLE EDIT CONSTRAINT",
+        text: "For the remaining 3 base habits, you are granted exactly <span class='font-bold text-[var(--accent-mint)]'>1 single edit feature combined</span>. Modifying any detail of Task 2, 3, or 4 completely spending your allocation, banning all edits for Day 1."
+      },
+      5: {
+        title: "🔥 UNBROKEN STREAK GATE",
+        text: "Upon finishing your initial 4 tasks on Day 1, you will immediately unlock the commitment module for the <span class='font-bold text-white'>remaining 6 tasks</span>. Failing to input them before the midnight marker <span class='font-bold text-red-500'>resets your baseline streak back to 0</span>."
+      },
+      6: {
+        title: "🔄 THE SWAP SYSTEM",
+        text: "Beginning on Day 2, all slots except the Anchor task loosen up. You can modify or swap tasks straight from your dashboard view box, capped securely at <span class='font-bold text-[var(--accent-mint)]'>2 swaps per day</span>."
+      }
+    };
+
+    function renderInitiationStep(step) {
+      const wrapper = document.getElementById('initiation-content-wrapper');
+      const nextBtn = document.getElementById('initiation-next-btn');
+      
+      // Temporarily drop visibility to handle a smooth layout transition
+      nextBtn.style.opacity = '0';
+      nextBtn.disabled = true;
+      
+      if(step <= totalIntroSteps) {
+        const rule = initiationRules[step];
+        wrapper.innerHTML = `
+          <h2 class="text-xs font-black tracking-[0.2em] text-[var(--accent-purple)] uppercase mb-4">${rule.title}</h2>
+          <p class="text-sm text-gray-300 leading-relaxed font-medium px-2">${rule.text}</p>
+          <span class="text-[9px] font-bold text-gray-600 block mt-6 tracking-[0.3em]">PHASE ${step} / ${totalIntroSteps}</span>
+        `;
+        
+        // Force focus constraint: display button after 1.5 seconds delay
+        setTimeout(() => {
+          nextBtn.style.opacity = '1';
+          nextBtn.disabled = false;
+        }, 1500);
+      } else {
+        // Render SIGH OF RELIEF conclusion frame
+        wrapper.innerHTML = `
+          <h2 class="text-base font-black tracking-wide text-[var(--accent-mint)] mb-3">🍃 RELAX.</h2>
+          <p class="text-sm text-gray-300 leading-relaxed font-medium px-4">It's not as hard as it seems to be. You do not need to memorize or track any of these protocols yourself. We will guide you through every alignment marker.</p>
+          <span class="text-[10px] text-[var(--accent-purple)] font-bold tracking-[0.2em] uppercase mt-5 block">Consistency over perfection.</span>
+        `;
+        nextBtn.innerText = "Continue to Commit";
+        nextBtn.style.opacity = '1';
+        nextBtn.disabled = false;
+      }
+    }
+
+    function advanceInitiation() {
+      if(currentIntroStep <= totalIntroSteps) {
+        currentIntroStep++;
+        renderInitiationStep(currentIntroStep);
+      } else {
+        // Complete Initiation: Dissolve layer out of viewport frames safely
+        const overlay = document.getElementById('initiation-overlay');
+        overlay.style.transition = 'opacity 0.5s ease';
+        overlay.style.opacity = '0';
+        setTimeout(() => {
+          overlay.style.display = 'none';
+        }, 500);
+      }
+    }
+
+    // Launch overlay execution flow immediately on runtime load
+    window.addEventListener('DOMContentLoaded', () => {
+      renderInitiationStep(1);
+    });
+
     /* --- EMOJI MODAL --- */
     const emojis = ['🔒', '🎯', '📚', '🏃', '🧘', '💧', '🥗', '💻', '🌅', '🌙', '🏋️', '📝', '🚗', '🙏', '💊', '📖'];
     const emojiGrid = document.getElementById('emoji-grid');
@@ -516,16 +619,16 @@
         lodgeBtn.disabled = false;
         lodgeBtn.innerText = "Lodge Matrix";
         lodgeBtn.className = "w-full md:w-auto md:min-w-[250px] py-3.5 px-6 rounded-xl font-extrabold text-black bg-[var(--accent-mint)] shadow-[0_0_20px_rgba(0,229,155,0.3)] cursor-pointer transition-all duration-500 tracking-[0.2em] uppercase text-xs transform hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(0,229,155,0.5)]";
-        // Grab the 4 tasks and save them locally before switching pages
-let savedTasks = [];
-for(let i = 0; i < 4; i++) {
-  savedTasks.push({
-    name: allTextInputs[i].value.trim(),
-    time: allTimeButtons[i].innerText,
-    emoji: allEmojiButtons[i].innerText
-  });
-}
-localStorage.setItem('hopes_base_matrix', JSON.stringify(savedTasks));
+        
+        let savedTasks = [];
+        for(let i = 0; i < 4; i++) {
+          savedTasks.push({
+            name: allTextInputs[i].value.trim(),
+            time: allTimeButtons[i].innerText,
+            emoji: allEmojiButtons[i].innerText
+          });
+        }
+        localStorage.setItem('hopes_base_matrix', JSON.stringify(savedTasks));
         lodgeBtn.onclick = () => window.location.href = 'home.html';
       } else {
         diStatus.className = 'w-2 h-2 rounded-full bg-[var(--accent-purple)] shadow-[0_0_8px_#9D4EDD] animate-pulse flex-shrink-0';
