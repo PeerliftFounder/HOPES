@@ -516,6 +516,16 @@
         lodgeBtn.disabled = false;
         lodgeBtn.innerText = "Lodge Matrix";
         lodgeBtn.className = "w-full md:w-auto md:min-w-[250px] py-3.5 px-6 rounded-xl font-extrabold text-black bg-[var(--accent-mint)] shadow-[0_0_20px_rgba(0,229,155,0.3)] cursor-pointer transition-all duration-500 tracking-[0.2em] uppercase text-xs transform hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(0,229,155,0.5)]";
+        // Grab the 4 tasks and save them locally before switching pages
+let savedTasks = [];
+for(let i = 0; i < 4; i++) {
+  savedTasks.push({
+    name: allTextInputs[i].value.trim(),
+    time: allTimeButtons[i].innerText,
+    emoji: allEmojiButtons[i].innerText
+  });
+}
+localStorage.setItem('hopes_base_matrix', JSON.stringify(savedTasks));
         lodgeBtn.onclick = () => window.location.href = 'home.html';
       } else {
         diStatus.className = 'w-2 h-2 rounded-full bg-[var(--accent-purple)] shadow-[0_0_8px_#9D4EDD] animate-pulse flex-shrink-0';
