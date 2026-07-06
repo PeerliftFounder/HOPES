@@ -213,11 +213,20 @@
     <!-- 7-DAY DATE TRACKER INJECTED HERE -->
     <div id="week-tracker" class="flex justify-between items-center mb-6 w-full px-1"></div>
 
-    <header class="mb-8">
-      <h1 class="text-3xl font-extrabold tracking-tight text-white mb-1">
-        <span id="greeting-text">Good evening</span>, <span class="text-[var(--accent-mint)]" id="user-name">...</span> <span class="text-2xl">👋</span>
-      </h1>
-      <p class="text-sm text-gray-400 font-medium">Small steps today, better tomorrow.</p>
+    <!-- HEADER WITH LOGOUT BUTTON INJECTED HERE -->
+    <header class="mb-8 flex justify-between items-start">
+      <div>
+        <h1 class="text-3xl font-extrabold tracking-tight text-white mb-1">
+          <span id="greeting-text">Good evening</span>, <span class="text-[var(--accent-mint)]" id="user-name">...</span> <span class="text-2xl">👋</span>
+        </h1>
+        <p class="text-sm text-gray-400 font-medium">Small steps today, better tomorrow.</p>
+      </div>
+      
+      <!-- LOGOUT BUTTON -->
+      <button id="logout-btn" class="mt-1 w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-all shadow-[0_0_15px_rgba(0,0,0,0.2)] active:scale-95" aria-label="Log Out">
+        <!-- Minimalist Logout SVG Icon -->
+        <svg class="w-4 h-4 translate-x-[1px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+      </button>
     </header>
 
     <!-- Speedometer Card -->
@@ -558,7 +567,7 @@
       }
     }
 
-    /* --- EXPANSION MODAL GENERATOR (Updated to slots 5 to 7) --- */
+    /* --- EXPANSION MODAL GENERATOR --- */
     const expandModal = document.getElementById('expansion-modal');
     const expandContent = document.getElementById('expansion-content');
     const extendedContainer = document.getElementById('extended-tasks-container');
@@ -808,7 +817,7 @@
   <!-- ========================================== -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
     import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -826,6 +835,15 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
     const loader = document.getElementById('page-loader');
+
+    // Secure Logout Function
+    document.getElementById('logout-btn').addEventListener('click', async () => {
+      try {
+        await signOut(auth);
+      } catch (error) {
+        console.error("Logout failed", error);
+      }
+    });
 
     // Auth Guard & Database Fetch
     onAuthStateChanged(auth, async (user) => {
