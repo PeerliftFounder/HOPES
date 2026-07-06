@@ -134,9 +134,20 @@
     /* Modals */
     .modal-overlay { transition: opacity 0.3s ease; }
     .modal-content { transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s; }
+
+    /* Loading Overlay Check */
+    #page-loader {
+      position: fixed; inset: 0; background-color: #050507; z-index: 99999;
+      display: flex; justify-content: center; align-items: center;
+      transition: opacity 0.5s ease;
+    }
   </style>
 </head>
 <body class="relative min-h-[100dvh] pt-20 pb-12"> 
+
+  <div id="page-loader">
+    <div class="w-10 h-10 border-4 border-white/10 border-t-[var(--accent-mint)] rounded-full animate-spin"></div>
+  </div>
 
   <!-- Shifting Liquid Background -->
   <div class="liquid-bg"></div>
@@ -179,15 +190,13 @@
     </div>
   </div>
 
-  <!-- IMMERSIVE INITIATION SEQUENCE OVERLAY (CONCEPT OF LEVELS) -->
+  <!-- IMMERSIVE INITIATION SEQUENCE OVERLAY -->
   <div id="initiation-overlay" class="fixed inset-0 z-[200] bg-black/95 flex items-center justify-center p-5">
     <!-- Centered Ambient Neon Glow Core -->
     <div class="absolute w-72 h-72 rounded-full bg-gradient-to-r from-[var(--accent-purple)] to-[var(--accent-mint)] opacity-20 filter blur-[80px] pointer-events-none"></div>
     
     <div class="surface-card p-6 w-full max-w-[380px] border border-white/10 relative z-10 text-center transition-all duration-500" id="initiation-card">
-      <div id="initiation-content-wrapper" class="min-h-[220px] flex flex-col justify-center">
-        <!-- Content gets injected dynamically by JavaScript -->
-      </div>
+      <div id="initiation-content-wrapper" class="min-h-[220px] flex flex-col justify-center"></div>
       
       <!-- Staggered Next Button Container -->
       <div class="mt-6 flex justify-center">
@@ -242,7 +251,6 @@
     <section class="mb-10 relative w-full">
       <div id="carousel" class="flex md:grid md:grid-cols-4 overflow-x-auto md:overflow-visible snap-carousel gap-4 pb-2 hide-scrollbar">
         
-        <!-- Changed from w-[85%] to w-full so exactly one card shows at a time -->
         <div class="surface-card p-5 flex-shrink-0 w-full md:w-auto snap-item relative overflow-hidden carousel-card">
           <div class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-4">
             <svg class="w-5 h-5 text-[var(--accent-purple)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
@@ -277,7 +285,6 @@
 
       </div>
       
-      <!-- Native Synced Indicators -->
       <div class="flex md:hidden justify-center gap-2 mt-3" id="carousel-dots">
         <div class="w-5 h-1 rounded-full bg-[var(--accent-purple)] transition-all duration-300"></div>
         <div class="w-1.5 h-1 rounded-full bg-white/20 transition-all duration-300"></div>
@@ -289,7 +296,6 @@
     <!-- COMPACT TASK MATRIX -->
     <section class="max-w-2xl mx-auto space-y-6" id="matrix-container">
       
-      <!-- Anchor Task Container -->
       <div class="relative">
         <div class="flex items-center gap-2 mb-2 pl-1">
           <span class="w-2 h-2 rounded-full bg-[var(--accent-purple)] shadow-[0_0_8px_#9D4EDD]"></span>
@@ -302,7 +308,6 @@
             <button onclick="openEmojiModal('emoji-btn-1')" id="emoji-btn-1" class="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-xl hover:bg-white/10 transition-colors flex-shrink-0">🔒</button>
             <input type="text" placeholder="Your unbreakable habit..." class="clean-input text-sm font-semibold task-check">
           </div>
-          <!-- Clean Mobile-First Add Time Button -->
           <div class="flex items-center justify-end sm:w-auto w-full">
             <button type="button" onclick="openTimeModal('time-btn-1')" id="time-btn-1" data-selected="false" class="w-full sm:w-auto bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg px-4 py-2.5 text-xs font-bold task-time text-gray-400 transition-colors flex items-center justify-center gap-2">
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -312,17 +317,14 @@
         </div>
       </div>
 
-      <!-- Flex Tasks Divider -->
       <div class="flex items-center gap-2 mb-2 pl-1 pt-4">
         <span class="w-2 h-2 rounded-full bg-[var(--accent-mint)] shadow-[0_0_8px_#00E59B]"></span>
         <h3 class="text-xs font-bold uppercase tracking-widest text-gray-200">Habits</h3>
         <span class="text-[9px] text-gray-500 ml-auto font-bold tracking-widest">3 SLOTS</span>
       </div>
 
-      <!-- Flex Tasks Injected via JS -->
       <div id="flex-tasks" class="space-y-3"></div>
 
-      <!-- Compact Lodge Button -->
       <div class="pt-6 pb-12 flex justify-center">
         <button id="lodge-btn" disabled class="w-full md:w-auto md:min-w-[250px] py-3.5 px-6 rounded-xl font-bold text-white bg-white/5 border border-white/10 opacity-50 cursor-not-allowed transition-all duration-500 tracking-[0.2em] uppercase text-xs">
           Awaiting Input
@@ -338,39 +340,19 @@
     const totalIntroSteps = 6;
     
     const initiationRules = {
-      1: {
-        title: "🛡️ LEVEL 1 INITIATION",
-        text: "Welcome to <span class='font-black text-[var(--accent-mint)]'>Hopes</span>. Level 1 establishes a <span class='font-bold text-[var(--accent-purple)]'>7-day operational period</span>. It is designed to evaluate your true execution consistency."
-      },
-      2: {
-        title: "📊 CORE BASE ALLOCATION",
-        text: "You are required to follow a structure of <span class='font-bold text-white'>7 habits everyday</span>. However, to eliminate doubts, you will initially log only <span class='font-bold text-[var(--accent-mint)]'>4 baseline habits</span> to clear the gate and launch into the Hopes dashboard."
-      },
-      3: {
-        title: "🔒 THE CONSTANT ANCHOR",
-        text: "Your very first slot is <span class='font-bold text-[var(--accent-purple)]'>The Anchor Habit</span>. This habit stands constant and non-negotiable for the next 7 days. <span class='font-bold text-red-400 text-xs tracking-wider block mt-2'>ABSOLUTELY NO EDITS OR TIMESTAMP CHANGING ALLOWED.</span>"
-      },
-      4: {
-        title: "⚡ SINGLE EDIT CONSTRAINT",
-        text: "For the remaining 3 base habits, you are granted exactly <span class='font-bold text-[var(--accent-mint)]'>1 single edit feature for combined 3.</span>. Modifying any detail of Habit 2, 3, or 4 completely spends your credits for the day, banning next edits for Day 1."
-      },
-      5: {
-        title: "🔥 UNBROKEN STREAK GATE",
-        text: "Upon finishing your initial 4 habits on Day 1, you will immediately unlock the commitment section for the <span class='font-bold text-white'>remaining 3 tasks</span>. Failing to input them before the midnight, <span class='font-bold text-red-500'>resets your baseline streak back to 0</span>."
-      },
-      6: {
-        title: "🔄 THE SWAP SYSTEM",
-        text: "Beginning on Day 2, all slots except the Anchor task loosen up. You can modify or swap tasks straight from your dashboard, capped securely at <span class='font-bold text-[var(--accent-mint)]'>2 modifies per day</span>."
-      }
+      1: { title: "🛡️ LEVEL 1 INITIATION", text: "Welcome to <span class='font-black text-[var(--accent-mint)]'>Hopes</span>. Level 1 establishes a <span class='font-bold text-[var(--accent-purple)]'>7-day operational period</span>. It is designed to evaluate your true execution consistency." },
+      2: { title: "📊 CORE BASE ALLOCATION", text: "You are required to follow a structure of <span class='font-bold text-white'>7 habits everyday</span>. However, to eliminate doubts, you will initially log only <span class='font-bold text-[var(--accent-mint)]'>4 baseline habits</span> to clear the gate and launch into the Hopes dashboard." },
+      3: { title: "🔒 THE CONSTANT ANCHOR", text: "Your very first slot is <span class='font-bold text-[var(--accent-purple)]'>The Anchor Habit</span>. This habit stands constant and non-negotiable for the next 7 days. <span class='font-bold text-red-400 text-xs tracking-wider block mt-2'>ABSOLUTELY NO EDITS OR TIMESTAMP CHANGING ALLOWED.</span>" },
+      4: { title: "⚡ SINGLE EDIT CONSTRAINT", text: "For the remaining 3 base habits, you are granted exactly <span class='font-bold text-[var(--accent-mint)]'>1 single edit feature for combined 3.</span>. Modifying any detail of Habit 2, 3, or 4 completely spends your credits for the day, banning next edits for Day 1." },
+      5: { title: "🔥 UNBROKEN STREAK GATE", text: "Upon finishing your initial 4 habits on Day 1, you will immediately unlock the commitment section for the <span class='font-bold text-white'>remaining 3 tasks</span>. Failing to input them before the midnight, <span class='font-bold text-red-500'>resets your baseline streak back to 0</span>." },
+      6: { title: "🔄 THE SWAP SYSTEM", text: "Beginning on Day 2, all slots except the Anchor task loosen up. You can modify or swap tasks straight from your dashboard, capped securely at <span class='font-bold text-[var(--accent-mint)]'>2 modifies per day</span>." }
     };
 
     function renderInitiationStep(step) {
       const wrapper = document.getElementById('initiation-content-wrapper');
       const nextBtn = document.getElementById('initiation-next-btn');
       
-      // Temporarily drop visibility to handle a smooth layout transition
-      nextBtn.style.opacity = '0';
-      nextBtn.disabled = true;
+      nextBtn.style.opacity = '0'; nextBtn.disabled = true;
       
       if(step <= totalIntroSteps) {
         const rule = initiationRules[step];
@@ -379,46 +361,31 @@
           <p class="text-sm text-gray-300 leading-relaxed font-medium px-2">${rule.text}</p>
           <span class="text-[9px] font-bold text-gray-600 block mt-6 tracking-[0.3em]">PHASE ${step} / ${totalIntroSteps}</span>
         `;
-        
-        // Force focus constraint: display button after 1.5 seconds delay
-        setTimeout(() => {
-          nextBtn.style.opacity = '1';
-          nextBtn.disabled = false;
-        }, 1500);
+        setTimeout(() => { nextBtn.style.opacity = '1'; nextBtn.disabled = false; }, 1500);
       } else {
-        // Render SIGH OF RELIEF conclusion frame
         wrapper.innerHTML = `
           <h2 class="text-base font-black tracking-wide text-[var(--accent-mint)] mb-3">🍃 RELAX.</h2>
           <p class="text-sm text-gray-300 leading-relaxed font-medium px-4">It's not as hard as it seems to be. You do not need to memorize or track any of these rules yourself. We will guide you through every step.</p>
           <span class="text-[10px] text-[var(--accent-purple)] font-bold tracking-[0.2em] uppercase mt-5 block">Consistency over perfection.</span>
         `;
         nextBtn.innerText = "Continue to Commit";
-        nextBtn.style.opacity = '1';
-        nextBtn.disabled = false;
+        nextBtn.style.opacity = '1'; nextBtn.disabled = false;
       }
     }
 
     function advanceInitiation() {
       if(currentIntroStep <= totalIntroSteps) {
-        currentIntroStep++;
-        renderInitiationStep(currentIntroStep);
+        currentIntroStep++; renderInitiationStep(currentIntroStep);
       } else {
-        // Complete Initiation: Dissolve layer out of viewport frames safely
         const overlay = document.getElementById('initiation-overlay');
-        overlay.style.transition = 'opacity 0.5s ease';
-        overlay.style.opacity = '0';
-        setTimeout(() => {
-          overlay.style.display = 'none';
-        }, 500);
+        overlay.style.transition = 'opacity 0.5s ease'; overlay.style.opacity = '0';
+        setTimeout(() => { overlay.style.display = 'none'; }, 500);
       }
     }
 
-    // Launch overlay execution flow immediately on runtime load
-    window.addEventListener('DOMContentLoaded', () => {
-      renderInitiationStep(1);
-    });
+    /* --- DOM LOAD & MODALS --- */
+    window.addEventListener('DOMContentLoaded', () => { renderInitiationStep(1); });
 
-    /* --- EMOJI MODAL --- */
     const emojis = ['🔒', '🎯', '📚', '🏃', '🧘', '💧', '🥗', '💻', '🌅', '🌙', '🏋️', '📝', '🚗', '🙏', '💊', '📖'];
     const emojiGrid = document.getElementById('emoji-grid');
     const emojiModal = document.getElementById('emoji-modal');
@@ -428,35 +395,22 @@
     emojis.forEach(emoji => {
       const btn = document.createElement('button');
       btn.className = 'emoji-btn p-2 rounded-xl text-2xl bg-white/5 hover:bg-white/10 border border-white/5 transition-transform active:scale-90';
-      btn.innerText = emoji;
-      btn.onclick = () => selectEmoji(emoji);
-      emojiGrid.appendChild(btn);
+      btn.innerText = emoji; btn.onclick = () => selectEmoji(emoji); emojiGrid.appendChild(btn);
     });
 
     function openEmojiModal(buttonId) {
-      currentEmojiTarget = buttonId;
-      emojiModal.classList.remove('opacity-0', 'pointer-events-none');
-      setTimeout(() => {
-        emojiContent.classList.remove('scale-95', 'opacity-0');
-        emojiContent.classList.add('scale-100', 'opacity-100');
-      }, 10);
+      currentEmojiTarget = buttonId; emojiModal.classList.remove('opacity-0', 'pointer-events-none');
+      setTimeout(() => { emojiContent.classList.remove('scale-95', 'opacity-0'); emojiContent.classList.add('scale-100', 'opacity-100'); }, 10);
     }
-    
     function closeEmojiModal() {
-      emojiContent.classList.remove('scale-100', 'opacity-100');
-      emojiContent.classList.add('scale-95', 'opacity-0');
+      emojiContent.classList.remove('scale-100', 'opacity-100'); emojiContent.classList.add('scale-95', 'opacity-0');
       setTimeout(() => emojiModal.classList.add('opacity-0', 'pointer-events-none'), 300);
     }
-    
     function selectEmoji(emoji) {
-      if(currentEmojiTarget) {
-        document.getElementById(currentEmojiTarget).innerText = emoji;
-        checkCompletion(); 
-      }
+      if(currentEmojiTarget) { document.getElementById(currentEmojiTarget).innerText = emoji; checkCompletion(); }
       closeEmojiModal();
     }
 
-    /* --- TYPEABLE TIME MODAL LOGIC --- */
     const timeModal = document.getElementById('time-modal');
     const timeContent = document.getElementById('time-content');
     const inputHours = document.getElementById('type-hours');
@@ -464,44 +418,23 @@
     let currentTimeTarget = null;
 
     function openTimeModal(buttonId) {
-      currentTimeTarget = document.getElementById(buttonId);
-      inputHours.value = '';
-      inputMins.value = '';
-      
+      currentTimeTarget = document.getElementById(buttonId); inputHours.value = ''; inputMins.value = '';
       timeModal.classList.remove('opacity-0', 'pointer-events-none');
-      setTimeout(() => {
-        timeContent.classList.remove('scale-95', 'opacity-0');
-        timeContent.classList.add('scale-100', 'opacity-100');
-        inputHours.focus(); 
-      }, 100);
+      setTimeout(() => { timeContent.classList.remove('scale-95', 'opacity-0'); timeContent.classList.add('scale-100', 'opacity-100'); inputHours.focus(); }, 100);
     }
-
     function closeTimeModal() {
-      timeContent.classList.remove('scale-100', 'opacity-100');
-      timeContent.classList.add('scale-95', 'opacity-0');
+      timeContent.classList.remove('scale-100', 'opacity-100'); timeContent.classList.add('scale-95', 'opacity-0');
       setTimeout(() => timeModal.classList.add('opacity-0', 'pointer-events-none'), 300);
     }
-
     function validateTimeInput(input, maxVal, nextInputId) {
-      let val = parseInt(input.value);
-      if (val > maxVal) input.value = maxVal;
-      if (input.value.length === 2 && nextInputId) {
-        document.getElementById(nextInputId).focus();
-      }
+      let val = parseInt(input.value); if (val > maxVal) input.value = maxVal;
+      if (input.value.length === 2 && nextInputId) { document.getElementById(nextInputId).focus(); }
     }
-
     function confirmTime() {
-      let h = inputHours.value || "00";
-      let m = inputMins.value || "00";
-      
-      if (h.length === 1) h = "0" + h;
-      if (m.length === 1) m = "0" + m;
-
+      let h = inputHours.value || "00"; let m = inputMins.value || "00";
+      if (h.length === 1) h = "0" + h; if (m.length === 1) m = "0" + m;
       if(currentTimeTarget) {
-        const textSpan = currentTimeTarget.querySelector('span');
-        textSpan.innerText = `${h}:${m}`;
-        
-        currentTimeTarget.dataset.selected = "true";
+        currentTimeTarget.querySelector('span').innerText = `${h}:${m}`; currentTimeTarget.dataset.selected = "true";
         currentTimeTarget.classList.replace('bg-white/5', 'bg-[var(--accent-mint)]/10');
         currentTimeTarget.classList.replace('border-white/10', 'border-[var(--accent-mint)]/30');
         currentTimeTarget.classList.replace('text-gray-400', 'text-[var(--accent-mint)]');
@@ -511,7 +444,6 @@
       closeTimeModal();
     }
 
-    /* --- GENERATE FLEX TASKS --- */
     const flexTasksContainer = document.getElementById('flex-tasks');
     for (let i = 2; i <= 4; i++) {
       flexTasksContainer.innerHTML += `
@@ -526,11 +458,9 @@
               <span>Add Time</span>
             </button>
           </div>
-        </div>
-      `;
+        </div>`;
     }
 
-    /* --- NATIVE CAROUSEL OBSERVER (FOOLPROOF SYNC) --- */
     const carousel = document.getElementById('carousel');
     const cards = document.querySelectorAll('.carousel-card');
     const dots = document.getElementById('carousel-dots').children;
@@ -541,38 +471,26 @@
         if (entry.isIntersecting) {
           activeIndex = Array.from(cards).indexOf(entry.target);
           Array.from(dots).forEach((dot, index) => {
-            if(index === activeIndex) {
-              dot.className = 'w-5 h-1 rounded-full bg-[var(--accent-purple)] transition-all duration-300';
-            } else {
-              dot.className = 'w-1.5 h-1 rounded-full bg-white/20 transition-all duration-300';
-            }
+            dot.className = index === activeIndex ? 'w-5 h-1 rounded-full bg-[var(--accent-purple)] transition-all duration-300' : 'w-1.5 h-1 rounded-full bg-white/20 transition-all duration-300';
           });
         }
       });
     }, { root: carousel, threshold: 0.6 });
-
     cards.forEach(card => observer.observe(card));
 
-    /* --- AUTO SWIPE LOGIC --- */
     let autoScrollInterval;
-    
     function startAutoScroll() {
       if(window.innerWidth >= 768) return; 
-      
       autoScrollInterval = setInterval(() => {
         let nextIndex = (activeIndex + 1) % cards.length;
-        carousel.scrollTo({
-          left: cards[nextIndex].offsetLeft - (carousel.clientWidth / 2) + (cards[nextIndex].clientWidth / 2),
-          behavior: 'smooth'
-        });
+        carousel.scrollTo({ left: cards[nextIndex].offsetLeft - (carousel.clientWidth / 2) + (cards[nextIndex].clientWidth / 2), behavior: 'smooth' });
       }, 4000); 
     }
-
     carousel.addEventListener('touchstart', () => clearInterval(autoScrollInterval), {passive: true});
     carousel.addEventListener('touchend', startAutoScroll, {passive: true});
     startAutoScroll();
 
-    /* --- DYNAMIC ISLAND & VALIDATION --- */
+    /* --- DATA VALIDATION --- */
     const lodgeBtn = document.getElementById('lodge-btn');
     const diIsland = document.getElementById('dynamic-island');
     const diText = document.getElementById('di-text');
@@ -582,23 +500,14 @@
     function checkCompletion() {
       const allTextInputs = document.querySelectorAll('.task-check');
       const allTimeButtons = document.querySelectorAll('.task-time');
-      const allEmojiButtons = [
-        document.getElementById('emoji-btn-1'),
-        document.getElementById('emoji-btn-2'),
-        document.getElementById('emoji-btn-3'),
-        document.getElementById('emoji-btn-4')
-      ];
-      
-      let completed = 0;
-      let activeEmojis = [];
+      const allEmojiButtons = [ document.getElementById('emoji-btn-1'), document.getElementById('emoji-btn-2'), document.getElementById('emoji-btn-3'), document.getElementById('emoji-btn-4') ];
+      let completed = 0; let activeEmojis = [];
 
       for(let i = 0; i < allTextInputs.length; i++) {
         if(allTextInputs[i].value.trim() !== '' && allTimeButtons[i].dataset.selected === 'true') {
-          completed++;
-          activeEmojis.push(allEmojiButtons[i].innerText);
+          completed++; activeEmojis.push(allEmojiButtons[i].innerText);
         }
       }
-      
       diText.innerText = `${completed} / 4`;
 
       if (completed > 0) {
@@ -606,8 +515,7 @@
         diEmojis.classList.remove('w-0', 'opacity-0');
         diEmojis.classList.add('w-auto', 'opacity-100', 'ml-1', 'pl-2', 'border-l', 'border-white/20');
       } else {
-        diEmojis.innerHTML = '';
-        diEmojis.classList.add('w-0', 'opacity-0');
+        diEmojis.innerHTML = ''; diEmojis.classList.add('w-0', 'opacity-0');
         diEmojis.classList.remove('w-auto', 'opacity-100', 'ml-1', 'pl-2', 'border-l', 'border-white/20');
       }
 
@@ -615,36 +523,96 @@
         diStatus.className = 'w-2 h-2 rounded-full bg-[var(--accent-mint)] shadow-[0_0_8px_#00E59B] flex-shrink-0';
         diIsland.classList.add('shadow-[0_0_20px_rgba(0,229,155,0.2)]', 'border-[var(--accent-mint)]/50');
         diIsland.classList.remove('border-white/10');
-        
-        lodgeBtn.disabled = false;
-        lodgeBtn.innerText = "Lodge Matrix";
+        lodgeBtn.disabled = false; lodgeBtn.innerText = "Lodge Matrix";
         lodgeBtn.className = "w-full md:w-auto md:min-w-[250px] py-3.5 px-6 rounded-xl font-extrabold text-black bg-[var(--accent-mint)] shadow-[0_0_20px_rgba(0,229,155,0.3)] cursor-pointer transition-all duration-500 tracking-[0.2em] uppercase text-xs transform hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(0,229,155,0.5)]";
         
         let savedTasks = [];
         for(let i = 0; i < 4; i++) {
-          savedTasks.push({
-            name: allTextInputs[i].value.trim(),
-            time: allTimeButtons[i].innerText,
-            emoji: allEmojiButtons[i].innerText
-          });
+          savedTasks.push({ name: allTextInputs[i].value.trim(), time: allTimeButtons[i].innerText, emoji: allEmojiButtons[i].innerText });
         }
-        localStorage.setItem('hopes_base_matrix', JSON.stringify(savedTasks));
-        lodgeBtn.onclick = () => window.location.href = 'home.html';
+        
+        // Connect to Firebase Global Function
+        lodgeBtn.onclick = () => {
+          if (window.saveToFirebaseAndRedirect) {
+            window.saveToFirebaseAndRedirect(savedTasks);
+          }
+        };
       } else {
         diStatus.className = 'w-2 h-2 rounded-full bg-[var(--accent-purple)] shadow-[0_0_8px_#9D4EDD] animate-pulse flex-shrink-0';
         diIsland.classList.remove('shadow-[0_0_20px_rgba(0,229,155,0.2)]', 'border-[var(--accent-mint)]/50');
         diIsland.classList.add('border-white/10');
-        
-        lodgeBtn.disabled = true;
-        lodgeBtn.innerText = "Awaiting Input";
+        lodgeBtn.disabled = true; lodgeBtn.innerText = "Awaiting Input";
         lodgeBtn.className = "w-full md:w-auto md:min-w-[250px] py-3.5 px-6 rounded-xl font-bold text-white bg-white/5 border border-white/10 opacity-50 cursor-not-allowed transition-all duration-500 tracking-[0.2em] uppercase text-xs";
       }
     }
+    document.querySelectorAll('.task-check').forEach(input => { input.addEventListener('input', checkCompletion); });
+  </script>
 
-    document.querySelectorAll('.task-check').forEach(input => {
-      input.addEventListener('input', checkCompletion);
+  <!-- ========================================== -->
+  <!-- FIREBASE BACKEND INTEGRATION (MODULE V10)  -->
+  <!-- ========================================== -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getFirestore, doc, getDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyC7GXfPKhHCU78ZW4gj_fElWAa3YuKbKzM",
+      authDomain: "hopes-bfeed.firebaseapp.com",
+      databaseURL: "https://hopes-bfeed-default-rtdb.firebaseio.com",
+      projectId: "hopes-bfeed",
+      storageBucket: "hopes-bfeed.firebasestorage.app",
+      messagingSenderId: "520302281633",
+      appId: "1:520302281633:web:cc64bd0bced5bc15cc01e0",
+      measurementId: "G-5VCX0F28L6"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const loader = document.getElementById('page-loader');
+
+    // Auth Guard: Force unauthorized users to Index, and completed users to Home.
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.href = 'index.html';
+      } else {
+        const userDocRef = doc(db, "users", user.uid);
+        const userDoc = await getDoc(userDocRef);
+        if (userDoc.exists() && userDoc.data().hasCompletedSetup === true) {
+          window.location.href = 'home.html';
+        } else {
+          // Allow them to stay and configure
+          loader.style.opacity = '0';
+          setTimeout(() => { loader.style.display = 'none'; }, 500);
+        }
+      }
     });
 
+    // Global function to let UI logic securely save to DB
+    window.saveToFirebaseAndRedirect = async function(savedTasks) {
+      const lodgeBtn = document.getElementById('lodge-btn');
+      lodgeBtn.innerText = "LODGING SECURELY...";
+      lodgeBtn.disabled = true;
+      
+      try {
+        const user = auth.currentUser;
+        if(user) {
+          await updateDoc(doc(db, "users", user.uid), {
+            baseMatrix: savedTasks,
+            hasCompletedSetup: true,
+            setupDate: serverTimestamp() // Locks in precise server time
+          });
+          window.location.href = 'home.html';
+        }
+      } catch(e) {
+        console.error(e);
+        alert("Network error locking matrix. Please try again.");
+        lodgeBtn.innerText = "Lodge Matrix";
+        lodgeBtn.disabled = false;
+      }
+    }
   </script>
 </body>
 </html>
