@@ -209,7 +209,7 @@
       <div class="flex justify-between items-center mb-6 shrink-0">
         <div>
           <h2 class="text-xl font-extrabold text-[var(--accent-mint)]">Expand Matrix</h2>
-          <p class="text-xs text-gray-400">Configure Slots 05 to 10</p>
+          <p class="text-xs text-gray-400">Configure Slots 05 to 07</p>
         </div>
         <button onclick="closeExpansionModal()" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-gray-400 hover:text-white">✕</button>
       </div>
@@ -237,10 +237,11 @@
     <!-- Speedometer Card (Includes Day 1 Telemetry) -->
     <section id="tour-speedo-card" class="surface-card p-6 mb-8 flex items-center justify-between transition-all duration-300 rounded-2xl">
       <div>
-        <h2 id="tour-txt-protocol" class="text-lg font-bold text-white mb-1 px-1 -ml-1 transition-all duration-300">Level 1</h2>
+        <h2 id="tour-txt-protocol" class="text-lg font-bold text-white mb-1 px-1 -ml-1 transition-all duration-300">Level 1 Protocol</h2>
         <p class="text-xs text-gray-400 mb-3 px-1 -ml-1">Complete base tasks to unlock.</p>
         <div class="flex">
-          <span id="tour-txt-days" class="px-2.5 py-1 bg-[var(--accent-purple)]/20 border border-[var(--accent-purple)]/30 rounded text-[10px] font-bold tracking-widest text-[var(--accent-purple)] transition-all duration-300">21 DAYS</span>
+          <!-- Updated to 7 DAYS -->
+          <span id="tour-txt-days" class="px-2.5 py-1 bg-[var(--accent-purple)]/20 border border-[var(--accent-purple)]/30 rounded text-[10px] font-bold tracking-widest text-[var(--accent-purple)] transition-all duration-300">7 DAYS</span>
         </div>
       </div>
 
@@ -260,7 +261,7 @@
     <!-- Base Matrix -->
     <section id="tour-target-base" class="mb-6 transition-all duration-300 rounded-2xl p-2 -mx-2">
       <div class="flex items-center justify-between mb-4 pl-1">
-        <h3 class="text-xs font-bold uppercase tracking-widest text-gray-300">Base HABITS</h3>
+        <h3 class="text-xs font-bold uppercase tracking-widest text-gray-300">Base Matrix</h3>
         <span class="text-[10px] text-gray-500 font-bold">4 TASKS</span>
       </div>
 
@@ -335,13 +336,14 @@
         <h3 class="text-xs font-bold uppercase tracking-widest text-gray-400">Expansion Matrix</h3>
       </div>
       <div class="border border-white/10 border-dashed rounded-xl p-4 text-center">
-        <p class="text-[10px] text-gray-500 tracking-widest uppercase font-bold">Awaiting Level 1 Commit</p>
+        <p class="text-[10px] text-gray-500 tracking-widest uppercase font-bold">Awaiting Level 1 Clear</p>
       </div>
     </section>
 
   </div>
 
   <!-- Level Up Prompt Pill -->
+  <!-- Updated to ask for next 3 tasks instead of 6 -->
   <div id="level-up-pill" class="fixed bottom-28 left-1/2 -translate-x-1/2 w-[90%] max-w-[380px] z-[80] bg-gradient-to-r from-[var(--accent-purple)] to-[var(--accent-mint)] p-[1px] rounded-2xl shadow-[0_10px_40px_rgba(0,229,155,0.3)] transition-all duration-500 ease-in-out opacity-0 pointer-events-none translate-y-10">
     <div class="bg-black/95 backdrop-blur-md rounded-2xl p-4 flex items-center justify-between">
       <div class="flex-1">
@@ -413,7 +415,7 @@
     else if (hour < 18) greeting = "Good afternoon";
     document.getElementById('greeting-text').innerText = greeting;
 
-    /* --- PERCENTAGE SPEEDOMETER MATH --- */
+    /* --- PERCENTAGE SPEEDOMETER MATH (UPDATED FOR 7 TASKS TOTAL) --- */
     const circle = document.getElementById('speedometer');
     const radius = circle.r.baseVal.value;
     const circumference = radius * 2 * Math.PI; 
@@ -422,7 +424,8 @@
     circle.style.strokeDashoffset = circumference;
 
     function setProgress(completedCount) {
-      const percent = completedCount * 10; 
+      // Logic adjusted to calculate cleanly out of 7 total tasks.
+      const percent = Math.round((completedCount / 7) * 100); 
       const offset = circumference - (percent / 100) * circumference;
       circle.style.strokeDashoffset = offset;
       document.getElementById('task-percent').innerText = percent + '%';
@@ -452,7 +455,7 @@
         pill.style.display = 'none';
         swapBtn.classList.remove('opacity-20', 'pointer-events-none');
         swapBtn.querySelector('.nav-tooltip').innerText = "SWAP";
-        if (completedCount === 10) circle.classList.add('drop-shadow-[0_0_10px_rgba(0,229,155,0.8)]');
+        if (completedCount === 7) circle.classList.add('drop-shadow-[0_0_10px_rgba(0,229,155,0.8)]');
         else circle.classList.remove('drop-shadow-[0_0_10px_rgba(0,229,155,0.8)]');
       }
     }
@@ -537,13 +540,13 @@
       closeEditModal();
     }
 
-    /* --- EXPANSION MODAL GENERATOR --- */
+    /* --- EXPANSION MODAL GENERATOR (Updated to slots 5 to 7) --- */
     const expandModal = document.getElementById('expansion-modal');
     const expandContent = document.getElementById('expansion-content');
     const extendedContainer = document.getElementById('extended-tasks-container');
 
-    for(let i = 5; i <= 10; i++) {
-      let num = i < 10 ? `0${i}` : i;
+    for(let i = 5; i <= 7; i++) {
+      let num = `0${i}`;
       extendedContainer.innerHTML += `
         <div class="task-input-container p-2.5 flex flex-col sm:flex-row gap-2.5 border border-white/5 rounded-xl bg-black/40">
           <div class="flex items-center gap-3 w-full">
@@ -635,7 +638,7 @@
     /* --- LOCK FINAL MATRIX --- */
     function lockFinalMatrix() {
       let injectedHtml = '';
-      for(let i=5; i<=10; i++) {
+      for(let i=5; i<=7; i++) {
         let name = document.getElementById(`ext-name-${i}`).value.trim();
         let timeBtn = document.getElementById(`ext-time-${i}`);
         let timeSpan = timeBtn.querySelector('span');
@@ -699,7 +702,7 @@
 
     function updateTotalProgress() { setProgress(document.querySelectorAll('.logic-check:checked').length); }
 
-    /* --- APPLE STYLE ONBOARDING VIRTUAL TOUR ENGINE (RESTORED TO 6 STEPS) --- */
+    /* --- APPLE STYLE ONBOARDING VIRTUAL TOUR ENGINE --- */
     let currentStep = 1;
     const tourBackdrop = document.getElementById('tour-backdrop');
     const tourCard = document.getElementById('tour-card');
@@ -712,7 +715,7 @@
       3: { elementId: "tour-txt-percent", text: "This live tracker displays your accurate daily absolute completion percentage." },
       4: { elementId: "tour-target-base", text: "The Base Matrix aggregates your 4 habits. Complete these to unlock the rest inputs." },
       5: { elementId: "single-edit-status", text: "You are granted ONE fluid modification per day to your Base Habits. Simply tap any Base Habit to edit its text/time. Once done, the matrix locks for 24 hours and no further edits are possible." },
-      6: { elementId: "tour-target-expansion", text: "The Expansion Matrix unlocks slots 5 through 7, bringing additional options only after the base 4 habits are locked." }
+      6: { elementId: "tour-target-expansion", text: "The Expansion Matrix unlocks slots 05 through 07, bringing additional options only after the base 4 habits are locked." }
     };
 
     function startVirtualTour() {
