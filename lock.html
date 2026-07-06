@@ -551,21 +551,27 @@
   <!-- ========================================== -->
   <!-- FIREBASE BACKEND INTEGRATION (MODULE V10)  -->
   <!-- ========================================== -->
+  <!-- ========================================== -->
+  <!-- FIREBASE BACKEND INTEGRATION (MODULE V10)  -->
+  <!-- ========================================== -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import { getFirestore, doc, getDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    // Notice I changed updateDoc to setDoc below to make it bulletproof
+    import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+    // ⬇️ PASTE YOUR EXACT FIREBASE KEYS HERE ⬇️
     const firebaseConfig = {
-      apiKey: "AIzaSyC7GXfPKhHCU78ZW4gj_fElWAa3YuKbKzM",
-      authDomain: "hopes-bfeed.firebaseapp.com",
-      databaseURL: "https://hopes-bfeed-default-rtdb.firebaseio.com",
-      projectId: "hopes-bfeed",
-      storageBucket: "hopes-bfeed.firebasestorage.app",
-      messagingSenderId: "520302281633",
-      appId: "1:520302281633:web:cc64bd0bced5bc15cc01e0",
-      measurementId: "G-5VCX0F28L6"
-    };
+  apiKey: "AIzaSyC7GXfPKhHCU78ZW4gj_fElWAa3YuKbKzM",
+  authDomain: "hopes-bfeed.firebaseapp.com",
+  databaseURL: "https://hopes-bfeed-default-rtdb.firebaseio.com",
+  projectId: "hopes-bfeed",
+  storageBucket: "hopes-bfeed.firebasestorage.app",
+  messagingSenderId: "520302281633",
+  appId: "1:520302281633:web:cc64bd0bced5bc15cc01e0",
+  measurementId: "G-5VCX0F28L6"
+};
+    // ⬆️ ------------------------------------ ⬆️
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
@@ -599,15 +605,17 @@
       try {
         const user = auth.currentUser;
         if(user) {
-          await updateDoc(doc(db, "users", user.uid), {
+          // BULLETPROOF FIX: setDoc with { merge: true } forces it to save even if the file is missing
+          await setDoc(doc(db, "users", user.uid), {
             baseMatrix: savedTasks,
             hasCompletedSetup: true,
             setupDate: serverTimestamp() // Locks in precise server time
-          });
+          }, { merge: true });
+          
           window.location.href = 'home.html';
         }
       } catch(e) {
-        console.error(e);
+        console.error("Firebase Save Error:", e);
         alert("Network error locking matrix. Please try again.");
         lodgeBtn.innerText = "Lodge Matrix";
         lodgeBtn.disabled = false;
