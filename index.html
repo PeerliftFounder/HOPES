@@ -72,9 +72,31 @@
 
     .hide-scrollbar::-webkit-scrollbar { display: none; }
     .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* --- NEW: Loading Overlay so the screen stays dark while Firebase thinks --- */
+    #loading-overlay {
+      position: fixed; inset: 0; z-index: 9999;
+      background: var(--bg-deep);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      transition: opacity 0.5s ease;
+    }
+    .spinner {
+      width: 40px; height: 40px;
+      border: 4px solid rgba(255,255,255,0.1);
+      border-top-color: var(--accent-mint);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
   </style>
 </head>
 <body class="relative min-h-screen"> 
+
+  <!-- Screen block while checking if user is already logged in -->
+  <div id="loading-overlay">
+    <div class="spinner mb-4"></div>
+    <p class="text-xs font-bold tracking-widest text-[var(--accent-mint)] uppercase">Authenticating...</p>
+  </div>
 
   <div class="liquid-bg"></div>
   <div class="ambient-glow"></div>
@@ -105,7 +127,6 @@
         <h3 class="text-lg font-bold text-white mb-2">Lock in your foundation.</h3>
         <p class="text-xs text-gray-400 font-medium mb-5 leading-relaxed">Choose one primary habit that forms your daily anchor. No excuses, no changing it—just pure consistency.</p>
         
-        <!-- UI Snippet (Simulating lock.html) -->
         <div class="ui-snippet p-4 flex items-center gap-4 relative overflow-hidden">
           <div class="absolute left-0 top-0 w-1 h-full bg-[var(--accent-purple)]"></div>
           <div class="w-6 h-6 rounded-full border-2 border-[var(--accent-mint)] bg-[var(--accent-mint)] flex items-center justify-center flex-shrink-0 shadow-[0_0_10px_rgba(0,229,155,0.4)]">
@@ -126,7 +147,6 @@
         <h3 class="text-lg font-bold text-white mb-2">Life happens. Adapt.</h3>
         <p class="text-xs text-gray-400 font-medium mb-5 leading-relaxed">Missed your workout window? No problem. Use your daily flex edit to adjust your schedule without breaking your streak.</p>
         
-        <!-- UI Snippet (Simulating Single Edit) -->
         <div class="ui-snippet p-4">
           <div class="flex items-center gap-4 mb-3">
             <div class="w-6 h-6 rounded-full border-2 border-white/20 flex-shrink-0"></div>
@@ -149,7 +169,6 @@
         <h3 class="text-lg font-bold text-white mb-2">Visualize your success.</h3>
         <p class="text-xs text-gray-400 font-medium mb-5 leading-relaxed">Watch your progress ring fill up as you crush your daily targets. Complete your 7-day challenge to level up.</p>
         
-        <!-- UI Snippet (Simulating Speedometer) -->
         <div class="ui-snippet p-6 flex justify-center">
           <div class="relative w-32 h-32 flex items-center justify-center rounded-full">
             <svg class="w-full h-full absolute inset-0" viewBox="0 0 100 100">
@@ -179,7 +198,7 @@
             <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
             <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
           </svg>
-          <span class="text-sm tracking-wide">Continue with Google</span>
+          <span id="btn-text" class="text-sm tracking-wide">Continue with Google</span>
         </button>
       </div>
 
@@ -197,42 +216,111 @@
 
   </div>
 
+  <!-- Scroll Reveal Script -->
   <script>
-    /* --- SCROLL REVEAL ANIMATION --- */
-    // This script watches the hidden elements. When the user scrolls down 
-    // and the element enters the screen, it adds the 'visible' class to smoothly slide it up.
-    
     document.addEventListener("DOMContentLoaded", () => {
-      const observerOptions = {
-        root: null,
-        rootMargin: '0px',
-        threshold: 0.15 // Triggers when 15% of the element is visible
-      };
-
       const observer = new IntersectionObserver((entries, observer) => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
             entry.target.classList.add('visible');
-            // Unobserve after revealing so it doesn't animate out when scrolling back up
             observer.unobserve(entry.target);
           }
         });
-      }, observerOptions);
+      }, { root: null, rootMargin: '0px', threshold: 0.15 });
 
-      const elementsToReveal = document.querySelectorAll('.reveal-on-scroll');
-      elementsToReveal.forEach(el => observer.observe(el));
+      document.querySelectorAll('.reveal-on-scroll').forEach(el => observer.observe(el));
+    });
+  </script>
 
-      /* --- TEMPORARY LOGIN ROUTING (Before Firebase) --- */
-      const loginBtn = document.getElementById('google-login-btn');
-      loginBtn.addEventListener('click', () => {
-        // Simple visual feedback before routing
-        loginBtn.style.transform = 'scale(0.95)';
-        loginBtn.style.opacity = '0.5';
-        
-        setTimeout(() => {
+  <!-- ========================================== -->
+  <!-- FIREBASE BACKEND INTEGRATION (MODULE V10)  -->
+  <!-- ========================================== -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    // ⬇️ 👉 PASTE YOUR EXACT FIREBASE KEYS IN HERE 👈 ⬇️
+    const firebaseConfig = {
+  apiKey: "AIzaSyC7GXfPKhHCU78ZW4gj_fElWAa3YuKbKzM",
+  authDomain: "hopes-bfeed.firebaseapp.com",
+  databaseURL: "https://hopes-bfeed-default-rtdb.firebaseio.com",
+  projectId: "hopes-bfeed",
+  storageBucket: "hopes-bfeed.firebasestorage.app",
+  messagingSenderId: "520302281633",
+  appId: "1:520302281633:web:cc64bd0bced5bc15cc01e0",
+  measurementId: "G-5VCX0F28L6"
+};
+    // ⬆️ ----------------------------------------------- ⬆️
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const provider = new GoogleAuthProvider();
+
+    const loginBtn = document.getElementById('google-login-btn');
+    const btnText = document.getElementById('btn-text');
+    const loadingOverlay = document.getElementById('loading-overlay');
+
+    // The Smart Router: Automatically checks if the user is ALREADY logged in
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        // User is logged in! Let's check if they finished the Lock.html setup
+        const userDocRef = doc(db, "users", user.uid);
+        const userDoc = await getDoc(userDocRef);
+
+        if (userDoc.exists() && userDoc.data().hasCompletedSetup === true) {
+          // Setup finished -> Straight to Dashboard
+          window.location.href = 'home.html';
+        } else {
+          // Never finished setup -> Go to lock screen
           window.location.href = 'lock.html';
-        }, 300);
-      });
+        }
+      } else {
+        // Not logged in -> Hide loading screen and show the page
+        loadingOverlay.style.opacity = '0';
+        setTimeout(() => { loadingOverlay.style.display = 'none'; }, 500);
+      }
+    });
+
+    // The Login Button Click Event
+    loginBtn.addEventListener('click', async () => {
+      loginBtn.style.transform = 'scale(0.95)';
+      btnText.innerText = "Connecting...";
+
+      try {
+        // Pop up the Google Login Box
+        const result = await signInWithPopup(auth, provider);
+        const user = result.user;
+
+        // Check the database for this specific user
+        const userDocRef = doc(db, "users", user.uid);
+        const userDoc = await getDoc(userDocRef);
+
+        if (!userDoc.exists()) {
+          // If this is their VERY first time, create an invisible file for them
+          await setDoc(userDocRef, {
+            displayName: user.displayName,
+            email: user.email,
+            hasCompletedSetup: false,
+            createdAt: new Date()
+          });
+          // Send to Setup
+          window.location.href = 'lock.html';
+        } else {
+          // They have a file. Did they finish setup?
+          if (userDoc.data().hasCompletedSetup === true) {
+            window.location.href = 'home.html';
+          } else {
+            window.location.href = 'lock.html';
+          }
+        }
+      } catch (error) {
+        console.error("Login Failed:", error);
+        btnText.innerText = "Continue with Google";
+        loginBtn.style.transform = 'scale(1)';
+        alert("Authentication failed. Please try again.");
+      }
     });
   </script>
 </body>
