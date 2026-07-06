@@ -237,7 +237,7 @@
     <!-- Speedometer Card (Includes Day 1 Telemetry) -->
     <section id="tour-speedo-card" class="surface-card p-6 mb-8 flex items-center justify-between transition-all duration-300 rounded-2xl">
       <div>
-        <h2 id="tour-txt-protocol" class="text-lg font-bold text-white mb-1 px-1 -ml-1 transition-all duration-300">Level 1 Protocol</h2>
+        <h2 id="tour-txt-protocol" class="text-lg font-bold text-white mb-1 px-1 -ml-1 transition-all duration-300">Level 1</h2>
         <p class="text-xs text-gray-400 mb-3 px-1 -ml-1">Complete base tasks to unlock.</p>
         <div class="flex">
           <!-- Updated to 7 DAYS -->
@@ -710,12 +710,12 @@
     const tourIndicator = document.getElementById('tour-step-indicator');
 
     const tourSteps = {
-      1: { elementId: "tour-txt-protocol", text: "Level 1 acts as your base command architecture. It handles setting your unbreakable foundation constraints." },
+      1: { elementId: "tour-txt-protocol", text: "Level 1 acts as your base habit architecture. It handles setting your unbreakable foundation constraints." },
       2: { elementId: "tour-txt-days", text: "This baseline config will execute un-halted for a continuous 7 days to cement neuro-habits commitments." },
       3: { elementId: "tour-txt-percent", text: "This live tracker displays your accurate daily absolute completion percentage." },
       4: { elementId: "tour-target-base", text: "The Base Matrix aggregates your 4 habits. Complete these to unlock the rest inputs." },
-      5: { elementId: "single-edit-status", text: "You are granted ONE fluid modification per day to your Base Habits. Simply tap any Base Habit to edit its text/time. Once done, the matrix locks for 24 hours and no further edits are possible." },
-      6: { elementId: "tour-target-expansion", text: "The Expansion Matrix unlocks slots 05 through 07, bringing additional options only after the base 4 habits are locked." }
+      5: { elementId: "single-edit-status", text: "You are granted ONE fluid modification on Day 1 (today) to your Base Habits. Simply tap any Base Habit to edit its text/time. Once done, the matrix locks for 24 hours and no further edits are possible." },
+      6: { elementId: "tour-target-expansion", text: "The Expansion Matrix unlocks slots 5 through 7, bringing additional options only after the base 4 habits are done." }
     };
 
     function startVirtualTour() {
