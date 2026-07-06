@@ -237,7 +237,7 @@
     <!-- Speedometer Card (Includes Day 1 Telemetry) -->
     <section id="tour-speedo-card" class="surface-card p-6 mb-8 flex items-center justify-between transition-all duration-300 rounded-2xl">
       <div>
-        <h2 id="tour-txt-protocol" class="text-lg font-bold text-white mb-1 px-1 -ml-1 transition-all duration-300">Level 1 Protocol</h2>
+        <h2 id="tour-txt-protocol" class="text-lg font-bold text-white mb-1 px-1 -ml-1 transition-all duration-300">Level 1</h2>
         <p class="text-xs text-gray-400 mb-3 px-1 -ml-1">Complete base tasks to unlock.</p>
         <div class="flex">
           <span id="tour-txt-days" class="px-2.5 py-1 bg-[var(--accent-purple)]/20 border border-[var(--accent-purple)]/30 rounded text-[10px] font-bold tracking-widest text-[var(--accent-purple)] transition-all duration-300">21 DAYS</span>
@@ -260,7 +260,7 @@
     <!-- Base Matrix -->
     <section id="tour-target-base" class="mb-6 transition-all duration-300 rounded-2xl p-2 -mx-2">
       <div class="flex items-center justify-between mb-4 pl-1">
-        <h3 class="text-xs font-bold uppercase tracking-widest text-gray-300">Base Matrix</h3>
+        <h3 class="text-xs font-bold uppercase tracking-widest text-gray-300">Base HABITS</h3>
         <span class="text-[10px] text-gray-500 font-bold">4 TASKS</span>
       </div>
 
@@ -335,7 +335,7 @@
         <h3 class="text-xs font-bold uppercase tracking-widest text-gray-400">Expansion Matrix</h3>
       </div>
       <div class="border border-white/10 border-dashed rounded-xl p-4 text-center">
-        <p class="text-[10px] text-gray-500 tracking-widest uppercase font-bold">Awaiting Level 1 Clear</p>
+        <p class="text-[10px] text-gray-500 tracking-widest uppercase font-bold">Awaiting Level 1 Commit</p>
       </div>
     </section>
 
@@ -346,7 +346,7 @@
     <div class="bg-black/95 backdrop-blur-md rounded-2xl p-4 flex items-center justify-between">
       <div class="flex-1">
         <h4 class="text-sm font-extrabold text-white">Base Locked.</h4>
-        <p class="text-[10px] text-gray-400 font-medium leading-tight mt-0.5 pr-2">Commit your next 6 tasks to continue.</p>
+        <p class="text-[10px] text-gray-400 font-medium leading-tight mt-0.5 pr-2">Commit your next 3 tasks to continue.</p>
       </div>
       <button onclick="openExpansionModal()" class="bg-[var(--accent-mint)] text-black px-4 py-2 rounded-xl text-xs font-extrabold uppercase tracking-wider hover:scale-95 transition-transform pointer-events-auto">
         Continue
@@ -707,12 +707,12 @@
     const tourIndicator = document.getElementById('tour-step-indicator');
 
     const tourSteps = {
-      1: { elementId: "tour-txt-protocol", text: "Level 1 Protocol acts as your base command architecture. It handles setting your unbreakable foundation constraints." },
-      2: { elementId: "tour-txt-days", text: "This baseline configuration will execute un-halted for a continuous 21 days to cement neuro-habit locking pathways." },
-      3: { elementId: "tour-txt-percent", text: "This live circular telemetry tracker displays your accurate daily absolute completion metric." },
-      4: { elementId: "tour-target-base", text: "The Base Matrix aggregates your 4 mission-critical habits. Complete these to unlock bottom-nav Swap capabilities." },
-      5: { elementId: "single-edit-status", text: "You are granted ONE fluid modification per day to your Base Flex Habits. Simply tap any flex task to edit its parameters. Once spent, the matrix locks for 24 hours." },
-      6: { elementId: "tour-target-expansion", text: "The Expansion Matrix unlocks slots 05 through 10, bringing additional options only after the primary 4 tasks are locked." }
+      1: { elementId: "tour-txt-protocol", text: "Level 1 acts as your base command architecture. It handles setting your unbreakable foundation constraints." },
+      2: { elementId: "tour-txt-days", text: "This baseline config will execute un-halted for a continuous 7 days to cement neuro-habits commitments." },
+      3: { elementId: "tour-txt-percent", text: "This live tracker displays your accurate daily absolute completion percentage." },
+      4: { elementId: "tour-target-base", text: "The Base Matrix aggregates your 4 habits. Complete these to unlock the rest inputs." },
+      5: { elementId: "single-edit-status", text: "You are granted ONE fluid modification per day to your Base Habits. Simply tap any Base Habit to edit its text/time. Once done, the matrix locks for 24 hours and no further edits are possible." },
+      6: { elementId: "tour-target-expansion", text: "The Expansion Matrix unlocks slots 5 through 7, bringing additional options only after the base 4 habits are locked." }
     };
 
     function startVirtualTour() {
