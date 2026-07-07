@@ -229,110 +229,137 @@
       </button>
     </header>
 
-    <section id="tour-speedo-card" class="surface-card p-6 mb-8 flex items-center justify-between transition-all duration-300 rounded-2xl">
-      <div>
-        <h2 id="tour-txt-protocol" class="text-lg font-bold text-white mb-1 px-1 -ml-1 transition-all duration-300">Level 1</h2>
-        <p class="text-xs text-gray-400 mb-3 px-1 -ml-1">Complete base tasks to unlock.</p>
-        <div class="flex">
-          <span id="tour-txt-days" class="px-2.5 py-1 bg-[var(--accent-purple)]/20 border border-[var(--accent-purple)]/30 rounded text-[10px] font-bold tracking-widest text-[var(--accent-purple)] transition-all duration-300">7 DAYS</span>
-        </div>
-      </div>
-
-      <div id="tour-txt-percent" class="relative w-24 h-24 flex items-center justify-center transition-all duration-300 rounded-full">
-        <svg class="w-full h-full absolute inset-0" viewBox="0 0 100 100">
-          <circle stroke="rgba(255,255,255,0.05)" stroke-dasharray="4 6" stroke-width="8" fill="transparent" r="42" cx="50" cy="50" />
-          <circle id="speedometer" class="progress-ring__circle text-[var(--accent-mint)]" stroke-width="8" stroke-linecap="round" fill="transparent" r="42" cx="50" cy="50" stroke="currentColor" />
-        </svg>
-        <div class="text-center relative z-10 flex flex-col items-center mt-1">
-          <span class="text-[9px] text-[var(--accent-purple)] font-black tracking-[0.2em] mb-0.5" id="day-badge">DAY 1</span>
-          <span class="text-xl font-extrabold text-white leading-none" id="task-percent">0%</span>
-        </div>
-      </div>
-    </section>
-
-    <section id="tour-target-base" class="mb-6 transition-all duration-300 rounded-2xl p-2 -mx-2">
-      <div class="flex items-center justify-between mb-4 pl-1">
-        <h3 class="text-xs font-bold uppercase tracking-widest text-gray-300">Base Matrix</h3>
-        <span class="text-[10px] text-gray-500 font-bold">4 TASKS</span>
-      </div>
-
-      <div class="space-y-3" id="daily-tasks">
-        
-        <div>
-          <div class="bg-black/60 border border-white/5 rounded-2xl p-4 flex items-center gap-4 relative overflow-hidden transition-all duration-300 task-row">
-            <div class="absolute left-0 top-0 w-1 h-full bg-[var(--accent-purple)]"></div>
-            <label class="task-check-wrapper">
-              <input type="checkbox" class="task-checkbox logic-check">
-              <div class="task-custom-check"></div>
-            </label>
-            <div class="flex-1">
-              <h4 class="text-sm font-bold text-white mb-0.5" id="task-name-1">Loading...</h4>
-              <p class="text-[10px] text-gray-500 font-medium flex items-center gap-1">
-                <span class="text-[var(--accent-purple)]">🔒 Anchor</span> • <span id="task-time-1">--:--</span>
-              </p>
-              <p class="text-[10px] text-red-500 font-bold mt-0.5 tracking-wider hidden" id="task-countdown-1"></p>
+    <div id="dashboard-view" class="block w-full">
+        <section id="tour-speedo-card" class="surface-card p-6 mb-8 flex items-center justify-between transition-all duration-300 rounded-2xl">
+          <div>
+            <h2 id="tour-txt-protocol" class="text-lg font-bold text-white mb-1 px-1 -ml-1 transition-all duration-300">Level 1</h2>
+            <p class="text-xs text-gray-400 mb-3 px-1 -ml-1">Complete base tasks to unlock.</p>
+            <div class="flex">
+              <span id="tour-txt-days" class="px-2.5 py-1 bg-[var(--accent-purple)]/20 border border-[var(--accent-purple)]/30 rounded text-[10px] font-bold tracking-widest text-[var(--accent-purple)] transition-all duration-300">7 DAYS</span>
             </div>
-            <div class="text-2xl opacity-70" id="task-emoji-1">🔄</div>
           </div>
-          
-          <div class="mt-2 flex justify-start pl-1">
-            <span id="single-edit-status" class="text-[9px] bg-[var(--accent-mint)]/10 text-[var(--accent-mint)] border border-[var(--accent-mint)]/20 px-2.5 py-1 rounded-md font-bold tracking-wider uppercase transition-all duration-500 shadow-[0_0_10px_rgba(0,229,155,0.05)] inline-block">
-              ⚡ Single Edit Available
-            </span>
+
+          <div id="tour-txt-percent" class="relative w-24 h-24 flex items-center justify-center transition-all duration-300 rounded-full">
+            <svg class="w-full h-full absolute inset-0" viewBox="0 0 100 100">
+              <circle stroke="rgba(255,255,255,0.05)" stroke-dasharray="4 6" stroke-width="8" fill="transparent" r="42" cx="50" cy="50" />
+              <circle id="speedometer" class="progress-ring__circle text-[var(--accent-mint)]" stroke-width="8" stroke-linecap="round" fill="transparent" r="42" cx="50" cy="50" stroke="currentColor" />
+            </svg>
+            <div class="text-center relative z-10 flex flex-col items-center mt-1">
+              <span class="text-[9px] text-[var(--accent-purple)] font-black tracking-[0.2em] mb-0.5" id="day-badge">DAY 1</span>
+              <span class="text-xl font-extrabold text-white leading-none" id="task-percent">0%</span>
+            </div>
           </div>
+        </section>
+
+        <section id="tour-target-base" class="mb-6 transition-all duration-300 rounded-2xl p-2 -mx-2">
+          <div class="flex items-center justify-between mb-4 pl-1">
+            <h3 class="text-xs font-bold uppercase tracking-widest text-gray-300">Base Matrix</h3>
+            <span class="text-[10px] text-gray-500 font-bold">4 TASKS</span>
+          </div>
+
+          <div class="space-y-3" id="daily-tasks">
+            
+            <div>
+              <div class="bg-black/60 border border-white/5 rounded-2xl p-4 flex items-center gap-4 relative overflow-hidden transition-all duration-300 task-row">
+                <div class="absolute left-0 top-0 w-1 h-full bg-[var(--accent-purple)]"></div>
+                <label class="task-check-wrapper">
+                  <input type="checkbox" class="task-checkbox logic-check">
+                  <div class="task-custom-check"></div>
+                </label>
+                <div class="flex-1">
+                  <h4 class="text-sm font-bold text-white mb-0.5" id="task-name-1">Loading...</h4>
+                  <p class="text-[10px] text-gray-500 font-medium flex items-center gap-1">
+                    <span class="text-[var(--accent-purple)]">🔒 Anchor</span> • <span id="task-time-1">--:--</span>
+                  </p>
+                  <p class="text-[10px] text-red-500 font-bold mt-0.5 tracking-wider hidden" id="task-countdown-1"></p>
+                </div>
+                <div class="text-2xl opacity-70" id="task-emoji-1">🔄</div>
+              </div>
+              
+              <div class="mt-2 flex justify-start pl-1">
+                <span id="single-edit-status" class="text-[9px] bg-[var(--accent-mint)]/10 text-[var(--accent-mint)] border border-[var(--accent-mint)]/20 px-2.5 py-1 rounded-md font-bold tracking-wider uppercase transition-all duration-500 shadow-[0_0_10px_rgba(0,229,155,0.05)] inline-block">
+                  ⚡ Single Edit Available
+                </span>
+              </div>
+            </div>
+
+            <div class="bg-black/60 border border-white/5 rounded-2xl p-4 flex items-center gap-4 transition-all duration-300 task-row flex-task-row cursor-pointer hover:bg-white/10" onclick="handleTaskClick(2, event)">
+              <label class="task-check-wrapper" onclick="event.stopPropagation()">
+                <input type="checkbox" class="task-checkbox logic-check">
+                <div class="task-custom-check"></div>
+              </label>
+              <div class="flex-1">
+                <h4 class="text-sm font-bold text-white mb-0.5" id="task-name-2">Loading...</h4>
+                <p class="text-[10px] text-gray-500 font-medium" id="task-time-2">--:--</p>
+                <p class="text-[10px] text-red-500 font-bold mt-0.5 tracking-wider hidden" id="task-countdown-2"></p>
+              </div>
+              <div class="text-2xl opacity-70" id="task-emoji-2">🔄</div>
+            </div>
+
+            <div class="bg-black/60 border border-white/5 rounded-2xl p-4 flex items-center gap-4 transition-all duration-300 task-row flex-task-row cursor-pointer hover:bg-white/10" onclick="handleTaskClick(3, event)">
+              <label class="task-check-wrapper" onclick="event.stopPropagation()">
+                <input type="checkbox" class="task-checkbox logic-check">
+                <div class="task-custom-check"></div>
+              </label>
+              <div class="flex-1">
+                <h4 class="text-sm font-bold text-white mb-0.5" id="task-name-3">Loading...</h4>
+                <p class="text-[10px] text-gray-500 font-medium" id="task-time-3">--:--</p>
+                <p class="text-[10px] text-red-500 font-bold mt-0.5 tracking-wider hidden" id="task-countdown-3"></p>
+              </div>
+              <div class="text-2xl opacity-70" id="task-emoji-3">🔄</div>
+            </div>
+
+            <div class="bg-black/60 border border-white/5 rounded-2xl p-4 flex items-center gap-4 transition-all duration-300 task-row flex-task-row cursor-pointer hover:bg-white/10" onclick="handleTaskClick(4, event)">
+              <label class="task-check-wrapper" onclick="event.stopPropagation()">
+                <input type="checkbox" class="task-checkbox logic-check">
+                <div class="task-custom-check"></div>
+              </label>
+              <div class="flex-1">
+                <h4 class="text-sm font-bold text-white mb-0.5" id="task-name-4">Loading...</h4>
+                <p class="text-[10px] text-gray-500 font-medium" id="task-time-4">--:--</p>
+                <p class="text-[10px] text-red-500 font-bold mt-0.5 tracking-wider hidden" id="task-countdown-4"></p>
+              </div>
+              <div class="text-2xl opacity-70" id="task-emoji-4">🔄</div>
+            </div>
+
+          </div>
+        </section>
+
+        <section id="tour-target-expansion" class="mt-6 mb-12">
+          <div id="locked-expansion-ui" class="relative overflow-hidden rounded-xl bg-black/60 border border-white/5 p-6 flex flex-col items-center justify-center opacity-70">
+            <div class="absolute inset-0 bg-gradient-to-t from-[var(--accent-mint)]/5 to-transparent"></div>
+            <div class="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-3 shadow-[0_0_20px_rgba(0,229,155,0.1)]">
+              <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+            </div>
+            <h4 class="text-sm font-bold text-white mb-1">Matrix Locked</h4>
+            <p class="text-[10px] text-gray-500 tracking-widest uppercase font-bold text-center">Clear Level 1 Base to unlock 3 Expansion Slots</p>
+            <div class="absolute -bottom-4 w-3/4 h-8 bg-[var(--accent-mint)]/20 blur-xl rounded-full"></div>
+          </div>
+        </section>
+    </div>
+
+    <div id="graph-view" class="hidden w-full pb-20">
+      <div class="surface-card p-5 mt-2">
+        <h3 class="text-sm font-bold text-white mb-1">Telemetry Graph</h3>
+        <p class="text-[10px] text-gray-400 mb-4">Deviation from Baseline Matrix (IST)</p>
+        
+        <div class="flex items-center gap-4 text-[9px] font-bold text-gray-400 mb-6">
+           <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-white/30"></span> Target</div>
+           <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-[var(--accent-mint)]"></span> Early/On-Time</div>
+           <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-red-500"></span> Late</div>
         </div>
 
-        <div class="bg-black/60 border border-white/5 rounded-2xl p-4 flex items-center gap-4 transition-all duration-300 task-row flex-task-row cursor-pointer hover:bg-white/10" onclick="handleTaskClick(2, event)">
-          <label class="task-check-wrapper" onclick="event.stopPropagation()">
-            <input type="checkbox" class="task-checkbox logic-check">
-            <div class="task-custom-check"></div>
-          </label>
-          <div class="flex-1">
-            <h4 class="text-sm font-bold text-white mb-0.5" id="task-name-2">Loading...</h4>
-            <p class="text-[10px] text-gray-500 font-medium" id="task-time-2">--:--</p>
-            <p class="text-[10px] text-red-500 font-bold mt-0.5 tracking-wider hidden" id="task-countdown-2"></p>
+        <div class="relative w-full h-[280px] flex">
+          <div class="w-8 flex flex-col justify-between items-end pr-2 text-[9px] font-bold text-gray-500 pb-6 pt-1">
+              <span>24</span><span>20</span><span>16</span><span>12</span><span>08</span><span>04</span><span>00</span>
           </div>
-          <div class="text-2xl opacity-70" id="task-emoji-2">🔄</div>
-        </div>
-
-        <div class="bg-black/60 border border-white/5 rounded-2xl p-4 flex items-center gap-4 transition-all duration-300 task-row flex-task-row cursor-pointer hover:bg-white/10" onclick="handleTaskClick(3, event)">
-          <label class="task-check-wrapper" onclick="event.stopPropagation()">
-            <input type="checkbox" class="task-checkbox logic-check">
-            <div class="task-custom-check"></div>
-          </label>
-          <div class="flex-1">
-            <h4 class="text-sm font-bold text-white mb-0.5" id="task-name-3">Loading...</h4>
-            <p class="text-[10px] text-gray-500 font-medium" id="task-time-3">--:--</p>
-            <p class="text-[10px] text-red-500 font-bold mt-0.5 tracking-wider hidden" id="task-countdown-3"></p>
+          <div class="flex-1 relative border-l border-b border-white/10 pb-6">
+              <svg id="graph-svg-canvas" class="w-full h-full absolute inset-0 overflow-visible"></svg>
+              <div id="graph-x-labels" class="absolute -bottom-8 left-0 w-full h-8 text-[9px] text-gray-400"></div>
           </div>
-          <div class="text-2xl opacity-70" id="task-emoji-3">🔄</div>
         </div>
-
-        <div class="bg-black/60 border border-white/5 rounded-2xl p-4 flex items-center gap-4 transition-all duration-300 task-row flex-task-row cursor-pointer hover:bg-white/10" onclick="handleTaskClick(4, event)">
-          <label class="task-check-wrapper" onclick="event.stopPropagation()">
-            <input type="checkbox" class="task-checkbox logic-check">
-            <div class="task-custom-check"></div>
-          </label>
-          <div class="flex-1">
-            <h4 class="text-sm font-bold text-white mb-0.5" id="task-name-4">Loading...</h4>
-            <p class="text-[10px] text-gray-500 font-medium" id="task-time-4">--:--</p>
-            <p class="text-[10px] text-red-500 font-bold mt-0.5 tracking-wider hidden" id="task-countdown-4"></p>
-          </div>
-          <div class="text-2xl opacity-70" id="task-emoji-4">🔄</div>
-        </div>
-
       </div>
-    </section>
-
-    <section id="tour-target-expansion" class="bg-black/40 border border-white/5 p-5 mt-6 transition-all duration-300 rounded-2xl opacity-40 pointer-events-none">
-      <div class="flex items-center gap-2 mb-3">
-        <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-        <h3 class="text-xs font-bold uppercase tracking-widest text-gray-400">Expansion Matrix</h3>
-      </div>
-      <div class="border border-white/10 border-dashed rounded-xl p-4 text-center">
-        <p class="text-[10px] text-gray-500 tracking-widest uppercase font-bold">Awaiting Level 1 Clear</p>
-      </div>
-    </section>
+    </div>
 
   </div>
 
@@ -350,7 +377,7 @@
 
   <nav class="nav-bar fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[420px] z-50 rounded-t-3xl">
     <div class="flex justify-around items-center px-6 py-4 max-w-[420px] mx-auto">
-      <div class="nav-item bg-white/10 p-3 rounded-full border border-white/5 shadow-inner" onmousedown="showTooltip('tt-dash')" onmouseup="hideTooltip('tt-dash')" ontouchstart="showTooltip('tt-dash')" ontouchend="hideTooltip('tt-dash')">
+      <div id="nav-btn-dash" class="nav-item bg-white/10 p-3 rounded-full border border-white/5 shadow-inner" onmousedown="showTooltip('tt-dash')" onmouseup="hideTooltip('tt-dash')" ontouchstart="showTooltip('tt-dash')" ontouchend="hideTooltip('tt-dash')">
         <div id="tt-dash" class="nav-tooltip" style="top: -55px;">DASHBOARD</div>🏠
       </div>
       <div id="nav-swap-btn" class="nav-item opacity-20 pointer-events-none" onmousedown="showTooltip('tt-swap')" onmouseup="hideTooltip('tt-swap')" ontouchstart="showTooltip('tt-swap')" ontouchend="hideTooltip('tt-swap')">
@@ -359,7 +386,7 @@
       <div class="nav-item" onmousedown="showTooltip('tt-prof')" onmouseup="hideTooltip('tt-prof')" ontouchstart="showTooltip('tt-prof')" ontouchend="hideTooltip('tt-prof')">
         <div id="tt-prof" class="nav-tooltip">PROFILE</div>👤
       </div>
-      <div class="nav-item" onmousedown="showTooltip('tt-graph')" onmouseup="hideTooltip('tt-graph')" ontouchstart="showTooltip('tt-graph')" ontouchend="hideTooltip('tt-graph')">
+      <div id="nav-btn-graph" class="nav-item" onmousedown="showTooltip('tt-graph')" onmouseup="hideTooltip('tt-graph')" ontouchstart="showTooltip('tt-graph')" ontouchend="hideTooltip('tt-graph')">
         <div id="tt-graph" class="nav-tooltip">GRAPH</div>📈
       </div>
       <div class="nav-item" onmousedown="showTooltip('tt-comm')" onmouseup="showTooltip('tt-comm')" ontouchstart="showTooltip('tt-comm')" ontouchend="hideTooltip('tt-comm')">
@@ -376,6 +403,12 @@
     window.dailySwapsUsed = 0;
     window.singleEditSpent = false;
     window.isSwapModeActive = false;
+    
+    // Graph Variables mapping to Firebase
+    window.appSetupDate = null;
+    window.completionTimestamps = {}; 
+    window.dailyTimestampsHistory = [{},{},{},{},{},{},{}];
+    window.dailyTargetHistory = [{},{},{},{},{},{},{}];
 
     /* --- WEEK TRACKER LOGIC --- */
     function initWeekTracker() {
@@ -402,10 +435,7 @@
       }
       trackerContainer.innerHTML = html;
     }
-
-    window.addEventListener('DOMContentLoaded', () => {
-      initWeekTracker();
-    });
+    window.addEventListener('DOMContentLoaded', initWeekTracker);
 
     /* --- SECURE IST GREETING & CLOCK ENGINE --- */
     async function setISTGreeting() {
@@ -431,17 +461,16 @@
     setISTGreeting();
 
     /* --- LIVE IST CLOCKS & COUNTDOWNS --- */
-    function startLiveClocks() {
+    window.startLiveClocks = function() {
         setInterval(() => {
-            // Get precise current IST
             let nowIST = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"}));
             
-            // Update the Top Dashboard Clock
+            // Top Header Clock
             let timeString = nowIST.toLocaleTimeString('en-US', { hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' });
             const clockEl = document.getElementById('live-ist-clock');
             if(clockEl) clockEl.innerText = timeString;
 
-            // Update Task Countdowns (1 through 7)
+            // Red Countdowns (Tasks 1-7)
             for(let i=1; i<=7; i++) {
                 const timeEl = document.getElementById(`task-time-${i}`);
                 const countdownEl = document.getElementById(`task-countdown-${i}`);
@@ -450,9 +479,7 @@
                 if(!timeEl || !countdownEl || !checkbox) continue;
                 
                 let timeStr = timeEl.innerText;
-                
-                // Hide countdown if time isn't set yet, or if the task is already checked!
-                if(timeStr === '--:--' || timeStr.includes('Add Time') || checkbox.checked) {
+                if(timeStr === '--:--' || timeStr.includes('Add') || checkbox.checked) {
                     countdownEl.classList.add('hidden');
                     continue;
                 }
@@ -464,12 +491,10 @@
 
                     let diff = targetIST - nowIST;
                     
-                    // If target time is in the future today
                     if (diff > 0 && diff < 86400000) { 
                         let h = Math.floor(diff / 3600000);
                         let m = Math.floor((diff % 3600000) / 60000);
                         let s = Math.floor((diff % 60000) / 1000);
-                        
                         let text = '⏳ ';
                         if (h > 0) text += `${h}h `;
                         text += `${m}m ${s}s remaining`;
@@ -477,16 +502,14 @@
                         countdownEl.innerText = text;
                         countdownEl.classList.remove('hidden');
                     } else {
-                        // Time has passed
                         countdownEl.classList.add('hidden');
                     }
                 }
             }
         }, 1000);
     }
-    window.addEventListener('DOMContentLoaded', startLiveClocks);
 
-    /* --- SPEEDOMETER MATH --- */
+    /* --- SPEEDOMETER MATH & CHECKBOX SYNC --- */
     const circle = document.getElementById('speedometer');
     const radius = circle.r.baseVal.value;
     const circumference = radius * 2 * Math.PI; 
@@ -518,19 +541,16 @@
           setTimeout(() => { pill.style.display = 'none'; }, 300);
           circle.classList.remove('drop-shadow-[0_0_10px_rgba(0,229,155,0.8)]');
         }
-        
         if(window.currentDayIndex === 0) {
           swapBtn.classList.add('opacity-20', 'pointer-events-none');
           swapBtn.querySelector('.nav-tooltip').innerText = "SWAP LOCKED";
         }
       } else {
         pill.style.display = 'none';
-        
         if(window.currentDayIndex > 0) {
           swapBtn.classList.remove('opacity-20', 'pointer-events-none');
           swapBtn.querySelector('.nav-tooltip').innerText = "EDIT TASKS";
         }
-
         if (completedCount === 7) circle.classList.add('drop-shadow-[0_0_10px_rgba(0,229,155,0.8)]');
         else circle.classList.remove('drop-shadow-[0_0_10px_rgba(0,229,155,0.8)]');
       }
@@ -550,27 +570,119 @@
         let checkedCount = document.querySelectorAll('.logic-check:checked').length;
         setProgress(checkedCount);
         const taskRows = document.querySelectorAll('.task-row');
+        
+        let nowIST = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"}));
+        let timeStr = nowIST.getHours().toString().padStart(2, '0') + ':' + nowIST.getMinutes().toString().padStart(2, '0');
+
         if(box.checked) {
           taskRows[index].classList.add('opacity-50', 'border-[var(--accent-mint)]/30');
           taskRows[index].querySelector('h4').classList.add('line-through', 'text-gray-400');
+          window.completionTimestamps[index] = timeStr; // Record click time!
         } else {
           taskRows[index].classList.remove('opacity-50', 'border-[var(--accent-mint)]/30');
           taskRows[index].querySelector('h4').classList.remove('line-through', 'text-gray-400');
+          delete window.completionTimestamps[index];
         }
 
         if(window.syncCheckboxesToDatabase) {
            let checkedIndexes = [];
            document.querySelectorAll('.logic-check').forEach((b, i) => { if(b.checked) checkedIndexes.push(i); });
-           window.syncCheckboxesToDatabase(checkedIndexes);
+           window.syncCheckboxesToDatabase(checkedIndexes, window.completionTimestamps);
         }
       });
     });
     setProgress(0);
 
-    /* --- LONG-PRESS NAV TOOLTIPS --- */
+    /* --- NAV BAR TOGGLES --- */
     document.querySelectorAll('.nav-item').forEach(item => { item.addEventListener('contextmenu', e => e.preventDefault()); });
     window.showTooltip = function(id) { document.getElementById(id).classList.add('visible'); }
     window.hideTooltip = function(id) { document.getElementById(id).classList.remove('visible'); }
+
+    document.getElementById('nav-btn-dash').addEventListener('click', () => {
+        document.getElementById('dashboard-view').classList.remove('hidden');
+        document.getElementById('graph-view').classList.add('hidden');
+    });
+
+    document.getElementById('nav-btn-graph').addEventListener('click', () => {
+        document.getElementById('dashboard-view').classList.add('hidden');
+        document.getElementById('graph-view').classList.remove('hidden');
+        if(window.renderGraph) window.renderGraph(); // Paint graph fresh!
+    });
+
+    /* --- GRAPH SVG PLOTTING ENGINE --- */
+    window.getCurrentTargets = function() {
+        let t = {};
+        for(let j=1; j<=7; j++) {
+            let el = document.getElementById(`task-time-${j}`);
+            if(el && el.innerText.includes(':') && el.innerText !== '--:--') {
+                t[j-1] = el.innerText;
+            }
+        }
+        return t;
+    };
+
+    window.renderGraph = function() {
+        const svg = document.getElementById('graph-svg-canvas');
+        svg.innerHTML = ''; 
+
+        const xLabelsContainer = document.getElementById('graph-x-labels');
+        xLabelsContainer.innerHTML = '';
+        
+        const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        let setupMidnight = new Date(window.appSetupDate); 
+        let xCoords = [10, 23.3, 36.6, 50, 63.3, 76.6, 90]; 
+
+        for(let i=0; i<7; i++) {
+            let d = new Date(setupMidnight);
+            d.setDate(d.getDate() + i);
+            let dayName = dayNames[d.getDay()];
+            let dateNum = d.getDate();
+            
+            xLabelsContainer.innerHTML += `
+              <div class="text-center" style="position: absolute; left: ${xCoords[i]}%; transform: translateX(-50%);">
+                  <span>${dayName}</span><br><span class="text-white font-bold">${dateNum}</span>
+              </div>
+            `;
+
+            svg.innerHTML += `<line x1="${xCoords[i]}%" y1="0" x2="${xCoords[i]}%" y2="100%" stroke="rgba(255,255,255,0.05)" stroke-width="1" />`;
+            
+            let targets = {};
+            let completions = {};
+
+            if(i < window.currentDayIndex) {
+                targets = window.dailyTargetHistory[i] || {};
+                completions = window.dailyTimestampsHistory[i] || {};
+            } else if (i === window.currentDayIndex) {
+                targets = window.getCurrentTargets();
+                completions = window.completionTimestamps || {};
+            }
+
+            for(let taskKey in targets) {
+                let targetTimeStr = targets[taskKey];
+                if(targetTimeStr === '--:--' || targetTimeStr.includes('Add')) continue;
+                
+                let [tH, tM] = targetTimeStr.split(':').map(Number);
+                let tMins = (tH * 60) + tM;
+                // Y=100 is 00:00 (Bottom), Y=0 is 24:00 (Top)
+                let yTarget = 100 - (tMins / 1440 * 100);
+
+                svg.innerHTML += `<circle cx="${xCoords[i]}%" cy="${yTarget}%" r="2.5" fill="rgba(255,255,255,0.3)" />`;
+
+                if(completions[taskKey]) {
+                    let compTimeStr = completions[taskKey];
+                    let [cH, cM] = compTimeStr.split(':').map(Number);
+                    let cMins = (cH * 60) + cM;
+                    let yComp = 100 - (cMins / 1440 * 100);
+
+                    // Actual < Target = completed earlier. In our map, smaller Y_minutes = closer to 100% (lower down). 
+                    let color = cMins <= tMins ? 'var(--accent-mint)' : '#EF4444'; 
+
+                    svg.innerHTML += `<line x1="${xCoords[i]}%" y1="${yTarget}%" x2="${xCoords[i]}%" y2="${yComp}%" stroke="${color}" stroke-width="2" opacity="0.8" stroke-dasharray="2 2" />`;
+                    svg.innerHTML += `<circle cx="${xCoords[i]}%" cy="${yComp}%" r="4" fill="${color}" stroke="#050507" stroke-width="1.5" />`;
+                }
+            }
+        }
+    };
 
     /* --- BLOCK CLICKS DURING TOUR --- */
     document.addEventListener('click', (e) => {
@@ -595,7 +707,7 @@
       });
     });
 
-    /* --- EDIT PROTOCOL (Handles Day 1 and Day 2+) --- */
+    /* --- EDIT PROTOCOL --- */
     const editModalSys = document.getElementById('edit-modal');
     const editContentSys = document.getElementById('edit-content');
     let activeEditTaskId = null;
@@ -660,10 +772,8 @@
       }
 
       closeEditModal();
-
-      if (window.syncEditToDatabase) {
-        window.syncEditToDatabase();
-      }
+      if (window.syncEditToDatabase) window.syncEditToDatabase();
+      if (!document.getElementById('graph-view').classList.contains('hidden')) window.renderGraph();
     }
 
     /* --- EXPANSION MODAL GENERATOR --- */
@@ -775,7 +885,6 @@
       }
     }
 
-    // RED COUNTDOWN TIMER INJECTED INTO EXPANSION MATRIX HTML TOO
     window.renderExpansionMatrix = function(expandedTasksArray) {
       let injectedHtml = '';
       for(let i=0; i<expandedTasksArray.length; i++) {
@@ -811,25 +920,32 @@
 
       document.querySelectorAll('#extended-daily-tasks .logic-check').forEach((box, i) => {
         box.addEventListener('change', (e) => {
+          let idx = parseInt(e.target.closest('.task-row').querySelector('h4').id.split('-')[2]) - 1;
           const row = e.target.closest('.task-row');
+          
+          let nowIST = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"}));
+          let timeStr = nowIST.getHours().toString().padStart(2, '0') + ':' + nowIST.getMinutes().toString().padStart(2, '0');
+
           if(box.checked) {
             row.classList.add('opacity-50', 'border-[var(--accent-mint)]/30');
             row.querySelector('h4').classList.add('line-through', 'text-gray-400');
+            window.completionTimestamps[idx] = timeStr;
           } else {
             row.classList.remove('opacity-50', 'border-[var(--accent-mint)]/30');
             row.querySelector('h4').classList.remove('line-through', 'text-gray-400');
+            delete window.completionTimestamps[idx];
           }
-          updateTotalProgress();
+          window.updateTotalProgress();
           
           if(window.syncCheckboxesToDatabase) {
              let checkedIndexes = [];
-             document.querySelectorAll('.logic-check').forEach((b, idx) => { if(b.checked) checkedIndexes.push(idx); });
-             window.syncCheckboxesToDatabase(checkedIndexes);
+             document.querySelectorAll('.logic-check').forEach((b, i) => { if(b.checked) checkedIndexes.push(i); });
+             window.syncCheckboxesToDatabase(checkedIndexes, window.completionTimestamps);
           }
         });
       });
 
-      updateTotalProgress();
+      window.updateTotalProgress();
       
       const swapBtn = document.getElementById('nav-swap-btn');
       if (window.currentDayIndex > 0) {
@@ -923,6 +1039,12 @@
       if (userDoc.exists()) {
         const data = userDoc.data();
 
+        // Bind data for Graph
+        window.appSetupDate = data.setupDate ? data.setupDate.toDate() : new Date();
+        window.completionTimestamps = data.completionTimestamps || {};
+        window.dailyTimestampsHistory = data.dailyTimestampsHistory || [{},{},{},{},{},{},{}];
+        window.dailyTargetHistory = data.dailyTargetHistory || [{},{},{},{},{},{},{}];
+
         // ---- THE MIDNIGHT IST ROLLOVER ENGINE & HARSH PUNISHMENT ---- //
         let currentISTDate = new Date();
         try {
@@ -936,8 +1058,7 @@
         const currentMidnight = new Date(currentISTDate);
         currentMidnight.setHours(0,0,0,0);
 
-        const setupDate = data.setupDate ? data.setupDate.toDate() : currentISTDate;
-        const setupMidnight = new Date(setupDate);
+        const setupMidnight = new Date(window.appSetupDate);
         setupMidnight.setHours(0,0,0,0);
 
         const diffTime = currentMidnight - setupMidnight;
@@ -961,27 +1082,36 @@
             // THE HARSH RESET: The user failed to hit 100%. Complete System Reset.
             await updateDoc(userDocRef, {
               setupDate: serverTimestamp(), // Resets their 7-day clock to TODAY
-              dailyHistory: [0,0,0,0,0,0,0], // Wipes their graph
-              checkedTasks: [], // Clears the board
+              dailyHistory: [0,0,0,0,0,0,0], 
+              dailyTimestampsHistory: [{},{},{},{},{},{},{}],
+              dailyTargetHistory: [{},{},{},{},{},{},{}],
+              checkedTasks: [], 
+              completionTimestamps: {},
               dailySwapsUsed: 0,
               lastActiveDay: 0,
-              expansionMatrix: deleteField() // Deletes their unlocked slots
+              expansionMatrix: deleteField() 
             });
             
-            // Force the page to reload so the UI instantly drops them back to Day 1
             window.location.reload();
             return; 
             
           } else {
             // SUCCESS: They hit 100%. Archive the day and move forward.
             dailyHistory[lastActiveDay] = percent; 
+            window.dailyTimestampsHistory[lastActiveDay] = window.completionTimestamps;
+            window.dailyTargetHistory[lastActiveDay] = window.getCurrentTargets();
+
             checkedTasks = []; 
+            window.completionTimestamps = {};
             window.dailySwapsUsed = 0; 
             lastActiveDay = window.currentDayIndex;
 
             await updateDoc(userDocRef, {
               dailyHistory: dailyHistory,
+              dailyTimestampsHistory: window.dailyTimestampsHistory,
+              dailyTargetHistory: window.dailyTargetHistory,
               checkedTasks: checkedTasks,
+              completionTimestamps: window.completionTimestamps,
               dailySwapsUsed: 0,
               lastActiveDay: lastActiveDay
             });
@@ -1045,12 +1175,13 @@
     });
 
     // Checkbox Live DB Sync
-    window.syncCheckboxesToDatabase = async function(checkedIndexesArray) {
+    window.syncCheckboxesToDatabase = async function(checkedIndexesArray, timestampsObj) {
        const user = auth.currentUser;
        if (user) {
          try {
            await updateDoc(doc(db, "users", user.uid), {
-             checkedTasks: checkedIndexesArray
+             checkedTasks: checkedIndexesArray,
+             completionTimestamps: timestampsObj || {}
            });
          } catch(e) {}
        }
