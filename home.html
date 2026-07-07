@@ -120,6 +120,11 @@
   <div class="liquid-bg"></div>
   <div class="ambient-glow"></div>
 
+  <div id="auto-swap-banner" class="hidden fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-[var(--accent-mint)]/10 backdrop-blur-xl border border-[var(--accent-mint)]/30 rounded-full px-5 py-2 flex items-center gap-3 transition-all duration-500 shadow-[0_0_20px_rgba(0,229,155,0.2)]">
+    <span class="text-lg">⚡</span>
+    <span id="auto-swap-text" class="text-[10px] font-extrabold tracking-wider text-white uppercase">2 EDITS REMAINING TODAY</span>
+  </div>
+
   <div id="tour-backdrop" style="display: none; opacity: 0;"></div>
 
   <div id="tour-card" class="fixed left-1/2 -translate-x-1/2 w-[90%] max-w-[380px] bg-black border border-[var(--accent-mint)]/50 rounded-2xl p-5 shadow-[0_20px_50px_rgba(0,0,0,0.9)] z-[99999] transition-all duration-500 ease-in-out" style="display: none; bottom: 48px;">
@@ -204,7 +209,7 @@
     </div>
   </div>
 
-  <div class="app-container flex flex-col pt-6 px-5 z-10">
+  <div class="app-container flex flex-col pt-16 px-5 z-10">
     
     <div class="flex justify-center w-full mb-6">
       <div class="bg-black/60 border border-white/10 px-4 py-1.5 rounded-full flex items-center gap-2 shadow-[0_0_15px_rgba(0,0,0,0.5)]">
@@ -325,7 +330,7 @@
           </div>
         </section>
 
-        <section id="tour-target-expansion" class="mt-6 mb-12">
+        <section id="tour-target-expansion" class="mt-6 mb-6">
           <div id="locked-expansion-ui" class="relative overflow-hidden rounded-xl bg-black/60 border border-white/5 p-6 flex flex-col items-center justify-center opacity-70">
             <div class="absolute inset-0 bg-gradient-to-t from-[var(--accent-mint)]/5 to-transparent"></div>
             <div class="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-3 shadow-[0_0_20px_rgba(0,229,155,0.1)]">
@@ -336,26 +341,39 @@
             <div class="absolute -bottom-4 w-3/4 h-8 bg-[var(--accent-mint)]/20 blur-xl rounded-full"></div>
           </div>
         </section>
+
+        <footer class="pb-6 pt-6 mt-8 border-t border-white/5 opacity-80">
+          <div class="text-center space-y-2">
+            <p class="text-[10px] font-black tracking-[0.3em] text-[var(--accent-mint)] uppercase">Hopes 2026</p>
+            <p class="text-[9px] font-bold tracking-widest text-gray-500 uppercase">Consistency Over Perfection</p>
+            <div class="flex items-center justify-center gap-4 text-[9px] font-semibold text-gray-600 mt-2">
+              <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
+              <span>•</span>
+              <a href="#" class="hover:text-white transition-colors">Terms and Conditions</a>
+            </div>
+          </div>
+        </footer>
+
     </div>
 
     <div id="graph-view" class="hidden w-full pb-20">
       <div class="surface-card p-5 mt-2">
-        <h3 class="text-sm font-bold text-white mb-1">Telemetry Graph</h3>
-        <p class="text-[10px] text-gray-400 mb-4">Deviation from Baseline Matrix (IST)</p>
+        <h3 class="text-sm font-bold text-white mb-1">Telemetry Scatter</h3>
+        <p class="text-[10px] text-gray-400 mb-6">Deviation from Baseline Matrix (IST)</p>
         
-        <div class="flex items-center gap-4 text-[9px] font-bold text-gray-400 mb-6">
-           <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-white/30"></span> Target</div>
-           <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-[var(--accent-mint)]"></span> Early/On-Time</div>
-           <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-red-500"></span> Late</div>
+        <div class="flex items-center justify-center gap-4 text-[9px] font-bold text-gray-400 mb-8">
+           <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-white/30"></span> Target</div>
+           <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[var(--accent-mint)]"></span> On Time</div>
+           <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-red-500"></span> Late</div>
         </div>
 
         <div class="relative w-full h-[280px] flex">
-          <div class="w-8 flex flex-col justify-between items-end pr-2 text-[9px] font-bold text-gray-500 pb-6 pt-1">
-              <span>24</span><span>20</span><span>16</span><span>12</span><span>08</span><span>04</span><span>00</span>
+          <div class="w-8 flex flex-col justify-between items-end pr-2 text-[9px] font-bold text-gray-500 pb-8 pt-1">
+              <span>24h</span><span>20h</span><span>16h</span><span>12h</span><span>08h</span><span>04h</span><span>00h</span>
           </div>
-          <div class="flex-1 relative border-l border-b border-white/10 pb-6">
+          <div class="flex-1 relative border-l border-b border-white/10 pb-8">
               <svg id="graph-svg-canvas" class="w-full h-full absolute inset-0 overflow-visible"></svg>
-              <div id="graph-x-labels" class="absolute -bottom-8 left-0 w-full h-8 text-[9px] text-gray-400"></div>
+              <div id="graph-x-labels" class="absolute bottom-0 translate-y-full left-0 w-full h-8 flex justify-between px-2 pt-3 text-[9px] text-gray-400"></div>
           </div>
         </div>
       </div>
@@ -377,8 +395,8 @@
 
   <nav class="nav-bar fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[420px] z-50 rounded-t-3xl">
     <div class="flex justify-around items-center px-6 py-4 max-w-[420px] mx-auto">
-      <div id="nav-btn-dash" class="nav-item bg-white/10 p-3 rounded-full border border-white/5 shadow-inner" onmousedown="showTooltip('tt-dash')" onmouseup="hideTooltip('tt-dash')" ontouchstart="showTooltip('tt-dash')" ontouchend="hideTooltip('tt-dash')">
-        <div id="tt-dash" class="nav-tooltip" style="top: -55px;">DASHBOARD</div>🏠
+      <div id="nav-btn-dash" class="nav-item text-[var(--accent-mint)] scale-110 drop-shadow-[0_0_10px_rgba(0,229,155,0.5)] transition-all" onclick="switchTab('dash')">
+        🏠
       </div>
       <div id="nav-swap-btn" class="nav-item opacity-20 pointer-events-none" onmousedown="showTooltip('tt-swap')" onmouseup="hideTooltip('tt-swap')" ontouchstart="showTooltip('tt-swap')" ontouchend="hideTooltip('tt-swap')">
         <div id="tt-swap" class="nav-tooltip">SWAP LOCKED</div>🔀
@@ -386,8 +404,8 @@
       <div class="nav-item" onmousedown="showTooltip('tt-prof')" onmouseup="hideTooltip('tt-prof')" ontouchstart="showTooltip('tt-prof')" ontouchend="hideTooltip('tt-prof')">
         <div id="tt-prof" class="nav-tooltip">PROFILE</div>👤
       </div>
-      <div id="nav-btn-graph" class="nav-item" onmousedown="showTooltip('tt-graph')" onmouseup="hideTooltip('tt-graph')" ontouchstart="showTooltip('tt-graph')" ontouchend="hideTooltip('tt-graph')">
-        <div id="tt-graph" class="nav-tooltip">GRAPH</div>📈
+      <div id="nav-btn-graph" class="nav-item transition-all" onclick="switchTab('graph')">
+        📈
       </div>
       <div class="nav-item" onmousedown="showTooltip('tt-comm')" onmouseup="showTooltip('tt-comm')" ontouchstart="showTooltip('tt-comm')" ontouchend="hideTooltip('tt-comm')">
         <div id="tt-comm" class="nav-tooltip">COMMUNITY</div>🌍
@@ -404,7 +422,7 @@
     window.singleEditSpent = false;
     window.isSwapModeActive = false;
     
-    // Graph Variables mapping to Firebase
+    // Graph Databases mapped to Firebase
     window.appSetupDate = null;
     window.completionTimestamps = {}; 
     window.dailyTimestampsHistory = [{},{},{},{},{},{},{}];
@@ -435,9 +453,8 @@
       }
       trackerContainer.innerHTML = html;
     }
-    window.addEventListener('DOMContentLoaded', initWeekTracker);
 
-    /* --- SECURE IST GREETING & CLOCK ENGINE --- */
+    /* --- SECURE IST GREETING --- */
     async function setISTGreeting() {
       try {
         const response = await fetch('https://worldtimeapi.org/api/timezone/Asia/Kolkata');
@@ -458,14 +475,13 @@
         document.getElementById('greeting-text').innerText = greeting;
       }
     }
-    setISTGreeting();
-
+    
     /* --- LIVE IST CLOCKS & COUNTDOWNS --- */
     window.startLiveClocks = function() {
         setInterval(() => {
             let nowIST = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"}));
             
-            // Top Header Clock
+            // Top Dashboard Clock
             let timeString = nowIST.toLocaleTimeString('en-US', { hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' });
             const clockEl = document.getElementById('live-ist-clock');
             if(clockEl) clockEl.innerText = timeString;
@@ -509,7 +525,7 @@
         }, 1000);
     }
 
-    /* --- SPEEDOMETER MATH & CHECKBOX SYNC --- */
+    /* --- SPEEDOMETER MATH --- */
     const circle = document.getElementById('speedometer');
     const radius = circle.r.baseVal.value;
     const circumference = radius * 2 * Math.PI; 
@@ -541,16 +557,19 @@
           setTimeout(() => { pill.style.display = 'none'; }, 300);
           circle.classList.remove('drop-shadow-[0_0_10px_rgba(0,229,155,0.8)]');
         }
+        
         if(window.currentDayIndex === 0) {
           swapBtn.classList.add('opacity-20', 'pointer-events-none');
           swapBtn.querySelector('.nav-tooltip').innerText = "SWAP LOCKED";
         }
       } else {
         pill.style.display = 'none';
+        
         if(window.currentDayIndex > 0) {
           swapBtn.classList.remove('opacity-20', 'pointer-events-none');
           swapBtn.querySelector('.nav-tooltip').innerText = "EDIT TASKS";
         }
+
         if (completedCount === 7) circle.classList.add('drop-shadow-[0_0_10px_rgba(0,229,155,0.8)]');
         else circle.classList.remove('drop-shadow-[0_0_10px_rgba(0,229,155,0.8)]');
       }
@@ -566,22 +585,26 @@
     }
 
     document.querySelectorAll('.logic-check').forEach((box, index) => {
-      box.addEventListener('change', () => {
+      box.addEventListener('change', (e) => {
         let checkedCount = document.querySelectorAll('.logic-check:checked').length;
         setProgress(checkedCount);
         const taskRows = document.querySelectorAll('.task-row');
         
+        // Exact Task Mapping (1 to 7)
+        const taskIdStr = e.target.closest('.task-row').querySelector('h4').id; 
+        const taskId = parseInt(taskIdStr.split('-')[2]); 
+
         let nowIST = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"}));
         let timeStr = nowIST.getHours().toString().padStart(2, '0') + ':' + nowIST.getMinutes().toString().padStart(2, '0');
 
         if(box.checked) {
-          taskRows[index].classList.add('opacity-50', 'border-[var(--accent-mint)]/30');
-          taskRows[index].querySelector('h4').classList.add('line-through', 'text-gray-400');
-          window.completionTimestamps[index] = timeStr; // Record click time!
+          e.target.closest('.task-row').classList.add('opacity-50', 'border-[var(--accent-mint)]/30');
+          e.target.closest('.task-row').querySelector('h4').classList.add('line-through', 'text-gray-400');
+          window.completionTimestamps[taskId] = timeStr; 
         } else {
-          taskRows[index].classList.remove('opacity-50', 'border-[var(--accent-mint)]/30');
-          taskRows[index].querySelector('h4').classList.remove('line-through', 'text-gray-400');
-          delete window.completionTimestamps[index];
+          e.target.closest('.task-row').classList.remove('opacity-50', 'border-[var(--accent-mint)]/30');
+          e.target.closest('.task-row').querySelector('h4').classList.remove('line-through', 'text-gray-400');
+          delete window.completionTimestamps[taskId];
         }
 
         if(window.syncCheckboxesToDatabase) {
@@ -598,24 +621,34 @@
     window.showTooltip = function(id) { document.getElementById(id).classList.add('visible'); }
     window.hideTooltip = function(id) { document.getElementById(id).classList.remove('visible'); }
 
-    document.getElementById('nav-btn-dash').addEventListener('click', () => {
-        document.getElementById('dashboard-view').classList.remove('hidden');
-        document.getElementById('graph-view').classList.add('hidden');
-    });
+    window.switchTab = function(tabName) {
+        const btnDash = document.getElementById('nav-btn-dash');
+        const btnGraph = document.getElementById('nav-btn-graph');
+        const viewDash = document.getElementById('dashboard-view');
+        const viewGraph = document.getElementById('graph-view');
 
-    document.getElementById('nav-btn-graph').addEventListener('click', () => {
-        document.getElementById('dashboard-view').classList.add('hidden');
-        document.getElementById('graph-view').classList.remove('hidden');
-        if(window.renderGraph) window.renderGraph(); // Paint graph fresh!
-    });
+        btnDash.className = "nav-item transition-all";
+        btnGraph.className = "nav-item transition-all";
+        
+        if(tabName === 'dash') {
+            btnDash.className = "nav-item text-[var(--accent-mint)] scale-110 drop-shadow-[0_0_10px_rgba(0,229,155,0.5)] transition-all bg-white/10 p-3 rounded-full border border-white/5 shadow-inner";
+            viewDash.classList.remove('hidden');
+            viewGraph.classList.add('hidden');
+        } else if (tabName === 'graph') {
+            btnGraph.className = "nav-item text-[var(--accent-mint)] scale-110 drop-shadow-[0_0_10px_rgba(0,229,155,0.5)] transition-all bg-white/10 p-3 rounded-full border border-white/5 shadow-inner";
+            viewDash.classList.add('hidden');
+            viewGraph.classList.remove('hidden');
+            if(window.renderGraph) window.renderGraph();
+        }
+    };
 
-    /* --- GRAPH SVG PLOTTING ENGINE --- */
+    /* --- FLAWLESS SVG GRAPH ENGINE --- */
     window.getCurrentTargets = function() {
         let t = {};
         for(let j=1; j<=7; j++) {
             let el = document.getElementById(`task-time-${j}`);
             if(el && el.innerText.includes(':') && el.innerText !== '--:--') {
-                t[j-1] = el.innerText;
+                t[j] = el.innerText;
             }
         }
         return t;
@@ -623,13 +656,14 @@
 
     window.renderGraph = function() {
         const svg = document.getElementById('graph-svg-canvas');
-        svg.innerHTML = ''; 
-
         const xLabelsContainer = document.getElementById('graph-x-labels');
-        xLabelsContainer.innerHTML = '';
+        let svgContent = '';
+        let labelContent = '';
         
-        const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-        let setupMidnight = new Date(window.appSetupDate); 
+        const dayNames = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+        let setupMidnight = window.appSetupDate ? new Date(window.appSetupDate) : new Date(); 
+        
+        // Exact percentages to space 7 days across the full width perfectly
         let xCoords = [10, 23.3, 36.6, 50, 63.3, 76.6, 90]; 
 
         for(let i=0; i<7; i++) {
@@ -638,13 +672,16 @@
             let dayName = dayNames[d.getDay()];
             let dateNum = d.getDate();
             
-            xLabelsContainer.innerHTML += `
-              <div class="text-center" style="position: absolute; left: ${xCoords[i]}%; transform: translateX(-50%);">
-                  <span>${dayName}</span><br><span class="text-white font-bold">${dateNum}</span>
+            // X-Axis Labels 
+            labelContent += `
+              <div class="flex flex-col items-center" style="position: absolute; left: ${xCoords[i]}%; transform: translateX(-50%);">
+                  <span class="text-[8px] uppercase tracking-widest font-black">${dayName}</span>
+                  <span class="text-xs font-bold text-white mt-0.5">${dateNum}</span>
               </div>
             `;
 
-            svg.innerHTML += `<line x1="${xCoords[i]}%" y1="0" x2="${xCoords[i]}%" y2="100%" stroke="rgba(255,255,255,0.05)" stroke-width="1" />`;
+            // Vertical Faint Grid Line
+            svgContent += `<line x1="${xCoords[i]}%" y1="0" x2="${xCoords[i]}%" y2="100%" stroke="rgba(255,255,255,0.05)" stroke-width="1" />`;
             
             let targets = {};
             let completions = {};
@@ -663,25 +700,58 @@
                 
                 let [tH, tM] = targetTimeStr.split(':').map(Number);
                 let tMins = (tH * 60) + tM;
-                // Y=100 is 00:00 (Bottom), Y=0 is 24:00 (Top)
-                let yTarget = 100 - (tMins / 1440 * 100);
+                
+                // Y-Axis Math: 00:00 = 100% (Bottom), 24:00 = 0% (Top)
+                const yTarget = 100 - ((tMins / 1440) * 100);
 
-                svg.innerHTML += `<circle cx="${xCoords[i]}%" cy="${yTarget}%" r="2.5" fill="rgba(255,255,255,0.3)" />`;
+                // Draw Target Base Dot
+                svgContent += `<circle cx="${xCoords[i]}%" cy="${yTarget}%" r="3" fill="rgba(255,255,255,0.3)" />`;
 
                 if(completions[taskKey]) {
                     let compTimeStr = completions[taskKey];
                     let [cH, cM] = compTimeStr.split(':').map(Number);
                     let cMins = (cH * 60) + cM;
-                    let yComp = 100 - (cMins / 1440 * 100);
+                    
+                    const yComp = 100 - ((cMins / 1440) * 100);
 
-                    // Actual < Target = completed earlier. In our map, smaller Y_minutes = closer to 100% (lower down). 
-                    let color = cMins <= tMins ? 'var(--accent-mint)' : '#EF4444'; 
+                    // If user completed earlier (fewer minutes), Y% is higher (closer to 100 / visually below)
+                    let isLate = cMins > tMins;
+                    let color = isLate ? '#EF4444' : 'var(--accent-mint)'; 
 
-                    svg.innerHTML += `<line x1="${xCoords[i]}%" y1="${yTarget}%" x2="${xCoords[i]}%" y2="${yComp}%" stroke="${color}" stroke-width="2" opacity="0.8" stroke-dasharray="2 2" />`;
-                    svg.innerHTML += `<circle cx="${xCoords[i]}%" cy="${yComp}%" r="4" fill="${color}" stroke="#050507" stroke-width="1.5" />`;
+                    // Connect Target to Completion
+                    svgContent += `<line x1="${xCoords[i]}%" y1="${yTarget}%" x2="${xCoords[i]}%" y2="${yComp}%" stroke="${color}" stroke-width="2" opacity="0.8" stroke-dasharray="2 2" />`;
+                    
+                    // Draw Completion Dot
+                    svgContent += `<circle cx="${xCoords[i]}%" cy="${yComp}%" r="4.5" fill="${color}" stroke="#050507" stroke-width="1.5" />`;
                 }
             }
         }
+
+        svg.innerHTML = svgContent;
+        xLabelsContainer.innerHTML = labelContent;
+    };
+
+    /* --- AUTO SWAP ENGINE (DAY 2+) --- */
+    window.activateSwapMode = function() {
+      if (window.dailySwapsUsed >= 2) return; // Exhausted
+
+      window.isSwapModeActive = true;
+      
+      const swapBanner = document.getElementById('auto-swap-banner');
+      const swapText = document.getElementById('auto-swap-text');
+      
+      swapText.innerText = `${2 - window.dailySwapsUsed} EDITS REMAINING TODAY`;
+      swapBanner.classList.remove('hidden');
+
+      // Make all flex/expansion tasks clickable for editing
+      document.querySelectorAll('.task-row').forEach((row, idx) => {
+          if(idx === 0) return; // Skip Anchor!
+          row.classList.add('cursor-pointer', 'border', 'border-[var(--accent-mint)]/50', 'shadow-[0_0_10px_rgba(0,229,155,0.1)]');
+          row.onclick = (e) => {
+              if(!window.isSwapModeActive) return;
+              handleTaskClick(idx + 1, e); 
+          };
+      });
     };
 
     /* --- BLOCK CLICKS DURING TOUR --- */
@@ -689,22 +759,11 @@
       if (window.isTourRunning && !e.target.closest('#tour-card')) { e.stopPropagation(); e.preventDefault(); }
     }, true);
 
-    /* --- DAY 2 SWAP BUTTON INITIATION --- */
+    /* --- MANUAL SWAP BUTTON TRIGGER --- */
     document.getElementById('nav-swap-btn').addEventListener('click', () => {
       if (window.currentDayIndex === 0) return alert("Swaps unlock on Day 2.");
       if (window.dailySwapsUsed >= 2) return alert("You have used your 2 edits for today.");
-      
-      window.isSwapModeActive = true;
-      alert("Swap Mode Active: Tap any task (except the Anchor) to edit it.");
-      
-      document.querySelectorAll('.task-row').forEach((row, idx) => {
-          if(idx === 0) return; // Skip Anchor
-          row.classList.add('cursor-pointer', 'border', 'border-[var(--accent-mint)]/50');
-          row.onclick = (e) => {
-              if(!window.isSwapModeActive) return;
-              handleTaskClick(idx + 1, e); 
-          };
-      });
+      window.activateSwapMode();
     });
 
     /* --- EDIT PROTOCOL --- */
@@ -721,7 +780,7 @@
           if (taskId > 4) return;
       } else {
           if (!window.isSwapModeActive) return;
-          if (window.dailySwapsUsed >= 2) return alert("You have reached your 2 swap limit for today.");
+          if (window.dailySwapsUsed >= 2) return;
       }
 
       activeEditTaskId = taskId;
@@ -767,8 +826,8 @@
       } else {
           window.dailySwapsUsed++;
           window.isSwapModeActive = false; 
-          document.querySelectorAll('.task-row').forEach(row => row.classList.remove('cursor-pointer', 'border', 'border-[var(--accent-mint)]/50'));
-          alert(`Edit successful. ${2 - window.dailySwapsUsed} edits remaining today.`);
+          document.getElementById('auto-swap-banner').classList.add('hidden'); // Hide banner
+          document.querySelectorAll('.task-row').forEach(row => row.classList.remove('cursor-pointer', 'border', 'border-[var(--accent-mint)]/50', 'shadow-[0_0_10px_rgba(0,229,155,0.1)]'));
       }
 
       closeEditModal();
@@ -920,8 +979,8 @@
 
       document.querySelectorAll('#extended-daily-tasks .logic-check').forEach((box, i) => {
         box.addEventListener('change', (e) => {
-          let idx = parseInt(e.target.closest('.task-row').querySelector('h4').id.split('-')[2]) - 1;
           const row = e.target.closest('.task-row');
+          const taskId = parseInt(row.querySelector('h4').id.split('-')[2]);
           
           let nowIST = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"}));
           let timeStr = nowIST.getHours().toString().padStart(2, '0') + ':' + nowIST.getMinutes().toString().padStart(2, '0');
@@ -929,17 +988,17 @@
           if(box.checked) {
             row.classList.add('opacity-50', 'border-[var(--accent-mint)]/30');
             row.querySelector('h4').classList.add('line-through', 'text-gray-400');
-            window.completionTimestamps[idx] = timeStr;
+            window.completionTimestamps[taskId] = timeStr;
           } else {
             row.classList.remove('opacity-50', 'border-[var(--accent-mint)]/30');
             row.querySelector('h4').classList.remove('line-through', 'text-gray-400');
-            delete window.completionTimestamps[idx];
+            delete window.completionTimestamps[taskId];
           }
           window.updateTotalProgress();
           
           if(window.syncCheckboxesToDatabase) {
              let checkedIndexes = [];
-             document.querySelectorAll('.logic-check').forEach((b, i) => { if(b.checked) checkedIndexes.push(i); });
+             document.querySelectorAll('.logic-check').forEach((b, idx) => { if(b.checked) checkedIndexes.push(idx); });
              window.syncCheckboxesToDatabase(checkedIndexes, window.completionTimestamps);
           }
         });
@@ -956,10 +1015,9 @@
       }
     };
 
-    window.updateTotalProgress = function() { setProgress(document.querySelectorAll('.logic-check:checked').length); }
-
     /* --- VIRTUAL TOUR ENGINE --- */
     window.startVirtualTour = function() {
+      initWeekTracker();
       window.isTourRunning = true; document.body.classList.add('tour-active');
       document.getElementById('tour-backdrop').style.display = 'block'; document.getElementById('tour-card').style.display = 'block';
       setTimeout(() => { document.getElementById('tour-backdrop').style.opacity = '1'; document.getElementById('tour-card').style.opacity = '1'; }, 10);
@@ -1045,6 +1103,8 @@
         window.dailyTimestampsHistory = data.dailyTimestampsHistory || [{},{},{},{},{},{},{}];
         window.dailyTargetHistory = data.dailyTargetHistory || [{},{},{},{},{},{},{}];
 
+        initWeekTracker(); 
+
         // ---- THE MIDNIGHT IST ROLLOVER ENGINE & HARSH PUNISHMENT ---- //
         let currentISTDate = new Date();
         try {
@@ -1089,7 +1149,7 @@
               completionTimestamps: {},
               dailySwapsUsed: 0,
               lastActiveDay: 0,
-              expansionMatrix: deleteField() 
+              expansionMatrix: deleteField() // Deletes their unlocked slots
             });
             
             window.location.reload();
@@ -1133,6 +1193,10 @@
         // Step 4: Hide Day 1 Edit Badge if Day 2+
         if (window.currentDayIndex > 0) {
            document.getElementById('single-edit-status').style.display = 'none';
+           // AUTO-ACTIVATE SWAP ENGINE ON DAY 2+
+           if (window.dailySwapsUsed < 2) {
+               window.activateSwapMode();
+           }
         } else if (window.singleEditSpent) {
            document.getElementById('single-edit-status').innerText = "🔒 Edit Spent Today";
            document.getElementById('single-edit-status').className = "text-[9px] bg-white/10 text-gray-500 border border-white/10 px-2.5 py-1 rounded-md font-bold tracking-wider uppercase inline-block";
