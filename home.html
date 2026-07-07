@@ -204,8 +204,16 @@
     </div>
   </div>
 
-  <div class="app-container flex flex-col pt-12 px-5 z-10">
+  <div class="app-container flex flex-col pt-6 px-5 z-10">
     
+    <div class="flex justify-center w-full mb-6">
+      <div class="bg-black/60 border border-white/10 px-4 py-1.5 rounded-full flex items-center gap-2 shadow-[0_0_15px_rgba(0,0,0,0.5)]">
+        <span class="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></span>
+        <span id="live-ist-clock" class="text-[11px] font-extrabold tracking-[0.2em] text-gray-200 font-mono">--:--:--</span>
+        <span class="text-[9px] text-[var(--accent-mint)] font-black tracking-widest">IST</span>
+      </div>
+    </div>
+
     <div id="week-tracker" class="flex justify-between items-center mb-6 w-full px-1"></div>
 
     <header class="mb-8 flex justify-between items-start">
@@ -262,6 +270,7 @@
               <p class="text-[10px] text-gray-500 font-medium flex items-center gap-1">
                 <span class="text-[var(--accent-purple)]">🔒 Anchor</span> • <span id="task-time-1">--:--</span>
               </p>
+              <p class="text-[10px] text-red-500 font-bold mt-0.5 tracking-wider hidden" id="task-countdown-1"></p>
             </div>
             <div class="text-2xl opacity-70" id="task-emoji-1">🔄</div>
           </div>
@@ -281,6 +290,7 @@
           <div class="flex-1">
             <h4 class="text-sm font-bold text-white mb-0.5" id="task-name-2">Loading...</h4>
             <p class="text-[10px] text-gray-500 font-medium" id="task-time-2">--:--</p>
+            <p class="text-[10px] text-red-500 font-bold mt-0.5 tracking-wider hidden" id="task-countdown-2"></p>
           </div>
           <div class="text-2xl opacity-70" id="task-emoji-2">🔄</div>
         </div>
@@ -293,6 +303,7 @@
           <div class="flex-1">
             <h4 class="text-sm font-bold text-white mb-0.5" id="task-name-3">Loading...</h4>
             <p class="text-[10px] text-gray-500 font-medium" id="task-time-3">--:--</p>
+            <p class="text-[10px] text-red-500 font-bold mt-0.5 tracking-wider hidden" id="task-countdown-3"></p>
           </div>
           <div class="text-2xl opacity-70" id="task-emoji-3">🔄</div>
         </div>
@@ -305,6 +316,7 @@
           <div class="flex-1">
             <h4 class="text-sm font-bold text-white mb-0.5" id="task-name-4">Loading...</h4>
             <p class="text-[10px] text-gray-500 font-medium" id="task-time-4">--:--</p>
+            <p class="text-[10px] text-red-500 font-bold mt-0.5 tracking-wider hidden" id="task-countdown-4"></p>
           </div>
           <div class="text-2xl opacity-70" id="task-emoji-4">🔄</div>
         </div>
@@ -395,7 +407,7 @@
       initWeekTracker();
     });
 
-    /* --- SECURE IST GREETING --- */
+    /* --- SECURE IST GREETING & CLOCK ENGINE --- */
     async function setISTGreeting() {
       try {
         const response = await fetch('https://worldtimeapi.org/api/timezone/Asia/Kolkata');
@@ -417,6 +429,62 @@
       }
     }
     setISTGreeting();
+
+    /* --- LIVE IST CLOCKS & COUNTDOWNS --- */
+    function startLiveClocks() {
+        setInterval(() => {
+            // Get precise current IST
+            let nowIST = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"}));
+            
+            // Update the Top Dashboard Clock
+            let timeString = nowIST.toLocaleTimeString('en-US', { hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            const clockEl = document.getElementById('live-ist-clock');
+            if(clockEl) clockEl.innerText = timeString;
+
+            // Update Task Countdowns (1 through 7)
+            for(let i=1; i<=7; i++) {
+                const timeEl = document.getElementById(`task-time-${i}`);
+                const countdownEl = document.getElementById(`task-countdown-${i}`);
+                const checkbox = document.querySelector(`#task-name-${i}`)?.closest('.task-row')?.querySelector('.logic-check');
+                
+                if(!timeEl || !countdownEl || !checkbox) continue;
+                
+                let timeStr = timeEl.innerText;
+                
+                // Hide countdown if time isn't set yet, or if the task is already checked!
+                if(timeStr === '--:--' || timeStr.includes('Add Time') || checkbox.checked) {
+                    countdownEl.classList.add('hidden');
+                    continue;
+                }
+
+                let parts = timeStr.split(':');
+                if(parts.length === 2) {
+                    let targetIST = new Date(nowIST);
+                    targetIST.setHours(parseInt(parts[0]), parseInt(parts[1]), 0, 0);
+
+                    let diff = targetIST - nowIST;
+                    
+                    // If target time is in the future today
+                    if (diff > 0 && diff < 86400000) { 
+                        let h = Math.floor(diff / 3600000);
+                        let m = Math.floor((diff % 3600000) / 60000);
+                        let s = Math.floor((diff % 60000) / 1000);
+                        
+                        let text = '⏳ ';
+                        if (h > 0) text += `${h}h `;
+                        text += `${m}m ${s}s remaining`;
+                        
+                        countdownEl.innerText = text;
+                        countdownEl.classList.remove('hidden');
+                    } else {
+                        // Time has passed
+                        countdownEl.classList.add('hidden');
+                    }
+                }
+            }
+        }, 1000);
+    }
+    window.addEventListener('DOMContentLoaded', startLiveClocks);
 
     /* --- SPEEDOMETER MATH --- */
     const circle = document.getElementById('speedometer');
@@ -707,6 +775,7 @@
       }
     }
 
+    // RED COUNTDOWN TIMER INJECTED INTO EXPANSION MATRIX HTML TOO
     window.renderExpansionMatrix = function(expandedTasksArray) {
       let injectedHtml = '';
       for(let i=0; i<expandedTasksArray.length; i++) {
@@ -721,6 +790,7 @@
             <div class="flex-1">
               <h4 class="text-sm font-bold text-white mb-0.5" id="task-name-${idx}">${task.name}</h4>
               <p class="text-[10px] text-gray-500 font-medium" id="task-time-${idx}">${task.time}</p>
+              <p class="text-[10px] text-red-500 font-bold mt-0.5 tracking-wider hidden" id="task-countdown-${idx}"></p>
             </div>
             <div class="text-2xl opacity-70">${task.emoji}</div>
           </div>`;
@@ -959,9 +1029,11 @@
           }, 300);
         }
 
-        // Reveal the Dashboard
+        // Reveal the Dashboard and Start Live Clocks
         loader.style.opacity = '0';
         setTimeout(() => { loader.style.display = 'none'; }, 500);
+        
+        if (window.startLiveClocks) window.startLiveClocks();
 
         // Tour trigger for first timers
         if (!data.expansionMatrix && window.currentDayIndex === 0) {
