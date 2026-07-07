@@ -209,7 +209,7 @@
     </div>
   </div>
 
-  <div class="app-container flex flex-col pt-16 px-5 z-10">
+  <div class="app-container flex flex-col pt-6 px-5 z-10">
     
     <div class="flex justify-center w-full mb-6">
       <div class="bg-black/60 border border-white/10 px-4 py-1.5 rounded-full flex items-center gap-2 shadow-[0_0_15px_rgba(0,0,0,0.5)]">
@@ -288,7 +288,7 @@
               </div>
             </div>
 
-            <div class="bg-black/60 border border-white/5 rounded-2xl p-4 flex items-center gap-4 transition-all duration-300 task-row flex-task-row cursor-pointer hover:bg-white/10" onclick="handleTaskClick(2, event)">
+            <div class="bg-black/60 border border-white/5 rounded-2xl p-4 flex items-center gap-4 transition-all duration-300 task-row flex-task-row hover:bg-white/10" onclick="handleTaskClick(2, event)">
               <label class="task-check-wrapper" onclick="event.stopPropagation()">
                 <input type="checkbox" class="task-checkbox logic-check">
                 <div class="task-custom-check"></div>
@@ -301,7 +301,7 @@
               <div class="text-2xl opacity-70" id="task-emoji-2">🔄</div>
             </div>
 
-            <div class="bg-black/60 border border-white/5 rounded-2xl p-4 flex items-center gap-4 transition-all duration-300 task-row flex-task-row cursor-pointer hover:bg-white/10" onclick="handleTaskClick(3, event)">
+            <div class="bg-black/60 border border-white/5 rounded-2xl p-4 flex items-center gap-4 transition-all duration-300 task-row flex-task-row hover:bg-white/10" onclick="handleTaskClick(3, event)">
               <label class="task-check-wrapper" onclick="event.stopPropagation()">
                 <input type="checkbox" class="task-checkbox logic-check">
                 <div class="task-custom-check"></div>
@@ -314,7 +314,7 @@
               <div class="text-2xl opacity-70" id="task-emoji-3">🔄</div>
             </div>
 
-            <div class="bg-black/60 border border-white/5 rounded-2xl p-4 flex items-center gap-4 transition-all duration-300 task-row flex-task-row cursor-pointer hover:bg-white/10" onclick="handleTaskClick(4, event)">
+            <div class="bg-black/60 border border-white/5 rounded-2xl p-4 flex items-center gap-4 transition-all duration-300 task-row flex-task-row hover:bg-white/10" onclick="handleTaskClick(4, event)">
               <label class="task-check-wrapper" onclick="event.stopPropagation()">
                 <input type="checkbox" class="task-checkbox logic-check">
                 <div class="task-custom-check"></div>
@@ -358,23 +358,37 @@
 
     <div id="graph-view" class="hidden w-full pb-20">
       <div class="surface-card p-5 mt-2">
-        <h3 class="text-sm font-bold text-white mb-1">Telemetry Scatter</h3>
-        <p class="text-[10px] text-gray-400 mb-6">Deviation from Baseline Matrix (IST)</p>
-        
-        <div class="flex items-center justify-center gap-4 text-[9px] font-bold text-gray-400 mb-8">
-           <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-white/30"></span> Target</div>
-           <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[var(--accent-mint)]"></span> On Time</div>
-           <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-red-500"></span> Late</div>
+        <div class="flex justify-between items-center mb-6">
+           <div>
+             <h3 class="text-sm font-bold text-white mb-0.5">Telemetry</h3>
+             <p class="text-[9px] font-bold text-gray-500 uppercase tracking-widest">Deviation from Baseline</p>
+           </div>
+           <div class="flex bg-black/40 rounded-lg p-1 border border-white/5">
+             <button id="btn-graph-daily" class="px-3 py-1.5 text-[9px] tracking-widest font-extrabold rounded-md bg-[var(--accent-mint)] text-black transition-all shadow-[0_0_10px_rgba(0,229,155,0.2)]" onclick="setGraphMode('daily')">DAILY</button>
+             <button id="btn-graph-weekly" class="px-3 py-1.5 text-[9px] tracking-widest font-extrabold rounded-md text-gray-500 hover:text-white transition-all" onclick="setGraphMode('weekly')">WEEKLY</button>
+           </div>
         </div>
 
-        <div class="relative w-full h-[280px] flex">
-          <div class="w-8 flex flex-col justify-between items-end pr-2 text-[9px] font-bold text-gray-500 pb-8 pt-1">
-              <span>24h</span><span>20h</span><span>16h</span><span>12h</span><span>08h</span><span>04h</span><span>00h</span>
-          </div>
-          <div class="flex-1 relative border-l border-b border-white/10 pb-8">
-              <svg id="graph-svg-canvas" class="w-full h-full absolute inset-0 overflow-visible"></svg>
-              <div id="graph-x-labels" class="absolute bottom-0 translate-y-full left-0 w-full h-8 flex justify-between px-2 pt-3 text-[9px] text-gray-400"></div>
-          </div>
+        <div id="graph-daily-nav" class="flex justify-between items-center mb-6 bg-white/5 rounded-full px-5 py-2 border border-white/10">
+           <button onclick="changeGraphDay(-1)" class="text-gray-400 hover:text-white active:scale-90 transition-transform">
+             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+           </button>
+           <span id="graph-current-day-label" class="text-[10px] font-black text-white tracking-[0.2em] uppercase">TODAY</span>
+           <button onclick="changeGraphDay(1)" class="text-gray-400 hover:text-white active:scale-90 transition-transform">
+             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+           </button>
+        </div>
+
+        <div class="relative w-full h-[220px]">
+           <div class="absolute left-0 top-0 h-full flex flex-col justify-between text-[8px] font-bold text-gray-500 py-1">
+              <span class="text-[var(--accent-mint)]">+2h Early</span>
+              <span class="text-white bg-white/10 px-1.5 py-0.5 rounded ml-2">TARGET</span>
+              <span class="text-red-500">-2h Late</span>
+           </div>
+           <div class="pl-[60px] pr-2 h-full w-full relative">
+             <svg id="graph-svg-canvas" class="w-full h-full overflow-visible"></svg>
+             <div id="graph-x-labels" class="absolute bottom-0 translate-y-full left-[60px] right-2 h-8 flex text-[9px] font-bold text-gray-500 pt-3"></div>
+           </div>
         </div>
       </div>
     </div>
@@ -422,11 +436,13 @@
     window.singleEditSpent = false;
     window.isSwapModeActive = false;
     
-    // Graph Databases mapped to Firebase
+    // Graph Variables mapping to Firebase
     window.appSetupDate = null;
     window.completionTimestamps = {}; 
     window.dailyTimestampsHistory = [{},{},{},{},{},{},{}];
     window.dailyTargetHistory = [{},{},{},{},{},{},{}];
+    window.graphMode = 'daily';
+    window.graphViewDay = 0;
 
     /* --- WEEK TRACKER LOGIC --- */
     function initWeekTracker() {
@@ -453,6 +469,7 @@
       }
       trackerContainer.innerHTML = html;
     }
+    window.addEventListener('DOMContentLoaded', initWeekTracker);
 
     /* --- SECURE IST GREETING --- */
     async function setISTGreeting() {
@@ -475,18 +492,17 @@
         document.getElementById('greeting-text').innerText = greeting;
       }
     }
-    
+    setISTGreeting();
+
     /* --- LIVE IST CLOCKS & COUNTDOWNS --- */
     window.startLiveClocks = function() {
         setInterval(() => {
             let nowIST = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"}));
             
-            // Top Dashboard Clock
             let timeString = nowIST.toLocaleTimeString('en-US', { hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' });
             const clockEl = document.getElementById('live-ist-clock');
             if(clockEl) clockEl.innerText = timeString;
 
-            // Red Countdowns (Tasks 1-7)
             for(let i=1; i<=7; i++) {
                 const timeEl = document.getElementById(`task-time-${i}`);
                 const countdownEl = document.getElementById(`task-countdown-${i}`);
@@ -588,22 +604,21 @@
       box.addEventListener('change', (e) => {
         let checkedCount = document.querySelectorAll('.logic-check:checked').length;
         setProgress(checkedCount);
-        const taskRows = document.querySelectorAll('.task-row');
         
-        // Exact Task Mapping (1 to 7)
-        const taskIdStr = e.target.closest('.task-row').querySelector('h4').id; 
+        const row = e.target.closest('.task-row');
+        const taskIdStr = row.querySelector('h4').id; 
         const taskId = parseInt(taskIdStr.split('-')[2]); 
 
         let nowIST = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"}));
         let timeStr = nowIST.getHours().toString().padStart(2, '0') + ':' + nowIST.getMinutes().toString().padStart(2, '0');
 
         if(box.checked) {
-          e.target.closest('.task-row').classList.add('opacity-50', 'border-[var(--accent-mint)]/30');
-          e.target.closest('.task-row').querySelector('h4').classList.add('line-through', 'text-gray-400');
+          row.classList.add('opacity-50', 'border-[var(--accent-mint)]/30');
+          row.querySelector('h4').classList.add('line-through', 'text-gray-400');
           window.completionTimestamps[taskId] = timeStr; 
         } else {
-          e.target.closest('.task-row').classList.remove('opacity-50', 'border-[var(--accent-mint)]/30');
-          e.target.closest('.task-row').querySelector('h4').classList.remove('line-through', 'text-gray-400');
+          row.classList.remove('opacity-50', 'border-[var(--accent-mint)]/30');
+          row.querySelector('h4').classList.remove('line-through', 'text-gray-400');
           delete window.completionTimestamps[taskId];
         }
 
@@ -654,86 +669,135 @@
         return t;
     };
 
+    window.setGraphMode = function(mode) {
+       window.graphMode = mode;
+       document.getElementById('btn-graph-daily').className = mode === 'daily' ? 'px-3 py-1.5 text-[9px] tracking-widest font-extrabold rounded-md bg-[var(--accent-mint)] text-black transition-all shadow-[0_0_10px_rgba(0,229,155,0.2)]' : 'px-3 py-1.5 text-[9px] tracking-widest font-extrabold rounded-md text-gray-500 hover:text-white transition-all';
+       document.getElementById('btn-graph-weekly').className = mode === 'weekly' ? 'px-3 py-1.5 text-[9px] tracking-widest font-extrabold rounded-md bg-[var(--accent-mint)] text-black transition-all shadow-[0_0_10px_rgba(0,229,155,0.2)]' : 'px-3 py-1.5 text-[9px] tracking-widest font-extrabold rounded-md text-gray-500 hover:text-white transition-all';
+
+       if(mode === 'weekly') {
+          document.getElementById('graph-daily-nav').classList.add('hidden');
+       } else {
+          document.getElementById('graph-daily-nav').classList.remove('hidden');
+       }
+       window.renderGraph();
+    };
+
+    window.changeGraphDay = function(dir) {
+        let newDay = window.graphViewDay + dir;
+        if(newDay >= 0 && newDay <= window.currentDayIndex) {
+            window.graphViewDay = newDay;
+            let dayNames = ['DAY 1', 'DAY 2', 'DAY 3', 'DAY 4', 'DAY 5', 'DAY 6', 'DAY 7'];
+            document.getElementById('graph-current-day-label').innerText = newDay === window.currentDayIndex ? 'TODAY' : dayNames[newDay];
+            window.renderGraph();
+        }
+    };
+
     window.renderGraph = function() {
         const svg = document.getElementById('graph-svg-canvas');
-        const xLabelsContainer = document.getElementById('graph-x-labels');
+        const labelsContainer = document.getElementById('graph-x-labels');
         let svgContent = '';
         let labelContent = '';
         
-        const dayNames = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
-        let setupMidnight = window.appSetupDate ? new Date(window.appSetupDate) : new Date(); 
-        
-        // Exact percentages to space 7 days across the full width perfectly
-        let xCoords = [10, 23.3, 36.6, 50, 63.3, 76.6, 90]; 
+        // Exact percentages to space 7 columns across the full width perfectly
+        let xCoords = [0, 16.6, 33.3, 50, 66.6, 83.3, 100]; 
 
-        for(let i=0; i<7; i++) {
-            let d = new Date(setupMidnight);
-            d.setDate(d.getDate() + i);
-            let dayName = dayNames[d.getDay()];
-            let dateNum = d.getDate();
-            
-            // X-Axis Labels 
-            labelContent += `
-              <div class="flex flex-col items-center" style="position: absolute; left: ${xCoords[i]}%; transform: translateX(-50%);">
-                  <span class="text-[8px] uppercase tracking-widest font-black">${dayName}</span>
-                  <span class="text-xs font-bold text-white mt-0.5">${dateNum}</span>
-              </div>
-            `;
+        svgContent += `
+          <defs>
+            <clipPath id="clip-above"><rect x="0" y="0" width="100%" height="50%"/></clipPath>
+            <clipPath id="clip-below"><rect x="0" y="50%" width="100%" height="50%"/></clipPath>
+            <linearGradient id="grad-green" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="rgba(0, 229, 155, 0.7)"/>
+              <stop offset="100%" stop-color="rgba(0, 229, 155, 0)"/>
+            </linearGradient>
+            <linearGradient id="grad-red" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="rgba(239, 68, 68, 0)"/>
+              <stop offset="100%" stop-color="rgba(239, 68, 68, 0.7)"/>
+            </linearGradient>
+          </defs>
+          <line x1="0" y1="50%" x2="100%" y2="50%" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" stroke-dasharray="4 4" />
+        `;
 
-            // Vertical Faint Grid Line
-            svgContent += `<line x1="${xCoords[i]}%" y1="0" x2="${xCoords[i]}%" y2="100%" stroke="rgba(255,255,255,0.05)" stroke-width="1" />`;
-            
-            let targets = {};
-            let completions = {};
+        let pointsArray = [];
 
-            if(i < window.currentDayIndex) {
-                targets = window.dailyTargetHistory[i] || {};
-                completions = window.dailyTimestampsHistory[i] || {};
-            } else if (i === window.currentDayIndex) {
-                targets = window.getCurrentTargets();
-                completions = window.completionTimestamps || {};
+        if (window.graphMode === 'daily') {
+            let targets = window.graphViewDay === window.currentDayIndex ? window.getCurrentTargets() : (window.dailyTargetHistory[window.graphViewDay] || {});
+            let completions = window.graphViewDay === window.currentDayIndex ? window.completionTimestamps : (window.dailyTimestampsHistory[window.graphViewDay] || {});
+
+            for(let i=1; i<=7; i++) {
+                labelContent += `<div style="position: absolute; left: ${xCoords[i-1]}%; transform: translateX(-50%);">T${i}</div>`;
+                svgContent += `<line x1="${xCoords[i-1]}%" y1="0" x2="${xCoords[i-1]}%" y2="100%" stroke="rgba(255,255,255,0.05)" stroke-width="1" />`;
+
+                if(targets[i] && completions[i]) {
+                    let [tH, tM] = targets[i].split(':').map(Number);
+                    let [cH, cM] = completions[i].split(':').map(Number);
+                    let tMins = tH * 60 + tM;
+                    let cMins = cH * 60 + cM;
+
+                    let dev = tMins - cMins; 
+                    dev = Math.max(-120, Math.min(120, dev)); 
+                    let yPercent = 50 - (dev / 120 * 40); 
+                    pointsArray.push(`${xCoords[i-1]},${yPercent}`);
+                }
             }
+        } else {
+            let setupMidnight = new Date(window.appSetupDate || new Date());
+            const dayLabels = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
-            for(let taskKey in targets) {
-                let targetTimeStr = targets[taskKey];
-                if(targetTimeStr === '--:--' || targetTimeStr.includes('Add')) continue;
-                
-                let [tH, tM] = targetTimeStr.split(':').map(Number);
-                let tMins = (tH * 60) + tM;
-                
-                // Y-Axis Math: 00:00 = 100% (Bottom), 24:00 = 0% (Top)
-                const yTarget = 100 - ((tMins / 1440) * 100);
+            for(let i=0; i<7; i++) {
+                let d = new Date(setupMidnight);
+                d.setDate(d.getDate() + i);
+                let label = dayLabels[d.getDay()];
+                labelContent += `<div style="position: absolute; left: ${xCoords[i]}%; transform: translateX(-50%);">${label}</div>`;
+                svgContent += `<line x1="${xCoords[i]}%" y1="0" x2="${xCoords[i]}%" y2="100%" stroke="rgba(255,255,255,0.05)" stroke-width="1" />`;
 
-                // Draw Target Base Dot
-                svgContent += `<circle cx="${xCoords[i]}%" cy="${yTarget}%" r="3" fill="rgba(255,255,255,0.3)" />`;
+                if (i <= window.currentDayIndex) {
+                    let targets = i === window.currentDayIndex ? window.getCurrentTargets() : (window.dailyTargetHistory[i] || {});
+                    let completions = i === window.currentDayIndex ? window.completionTimestamps : (window.dailyTimestampsHistory[i] || {});
 
-                if(completions[taskKey]) {
-                    let compTimeStr = completions[taskKey];
-                    let [cH, cM] = compTimeStr.split(':').map(Number);
-                    let cMins = (cH * 60) + cM;
-                    
-                    const yComp = 100 - ((cMins / 1440) * 100);
-
-                    // If user completed earlier (fewer minutes), Y% is higher (closer to 100 / visually below)
-                    let isLate = cMins > tMins;
-                    let color = isLate ? '#EF4444' : 'var(--accent-mint)'; 
-
-                    // Connect Target to Completion
-                    svgContent += `<line x1="${xCoords[i]}%" y1="${yTarget}%" x2="${xCoords[i]}%" y2="${yComp}%" stroke="${color}" stroke-width="2" opacity="0.8" stroke-dasharray="2 2" />`;
-                    
-                    // Draw Completion Dot
-                    svgContent += `<circle cx="${xCoords[i]}%" cy="${yComp}%" r="4.5" fill="${color}" stroke="#050507" stroke-width="1.5" />`;
+                    let totalDev = 0; let count = 0;
+                    for(let j=1; j<=7; j++) {
+                         if(targets[j] && completions[j]) {
+                            let [tH, tM] = targets[j].split(':').map(Number);
+                            let [cH, cM] = completions[j].split(':').map(Number);
+                            totalDev += ((tH * 60 + tM) - (cH * 60 + cM));
+                            count++;
+                         }
+                    }
+                    if(count > 0) {
+                        let avgDev = totalDev / count;
+                        avgDev = Math.max(-120, Math.min(120, avgDev));
+                        let yPercent = 50 - (avgDev / 120 * 40);
+                        pointsArray.push(`${xCoords[i]},${yPercent}`);
+                    }
                 }
             }
         }
 
+        if(pointsArray.length > 0) {
+            let firstX = pointsArray[0].split(',')[0];
+            let lastX = pointsArray[pointsArray.length-1].split(',')[0];
+            let polyPoints = `${firstX},50 ${pointsArray.join(' ')} ${lastX},50`;
+
+            svgContent += `<polygon points="${polyPoints}" fill="url(#grad-green)" clip-path="url(#clip-above)" />`;
+            svgContent += `<polygon points="${polyPoints}" fill="url(#grad-red)" clip-path="url(#clip-below)" />`;
+            svgContent += `<polyline points="${pointsArray.join(' ')}" fill="none" stroke="white" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" />`;
+
+            pointsArray.forEach(pt => {
+                let [px, py] = pt.split(',');
+                let color = parseFloat(py) < 50 ? 'var(--accent-mint)' : '#EF4444';
+                svgContent += `<circle cx="${px}%" cy="${py}%" r="3.5" fill="${color}" stroke="#050507" stroke-width="1.5" />`;
+            });
+        } else {
+            svgContent += `<text x="50%" y="50%" fill="rgba(255,255,255,0.2)" font-size="10" font-weight="bold" text-anchor="middle" dominant-baseline="middle">AWAITING TASK COMPLETION</text>`;
+        }
+
         svg.innerHTML = svgContent;
-        xLabelsContainer.innerHTML = labelContent;
+        labelsContainer.innerHTML = labelContent;
     };
 
     /* --- AUTO SWAP ENGINE (DAY 2+) --- */
     window.activateSwapMode = function() {
-      if (window.dailySwapsUsed >= 2) return; // Exhausted
+      if (window.dailySwapsUsed >= 2) return; 
 
       window.isSwapModeActive = true;
       
@@ -743,9 +807,8 @@
       swapText.innerText = `${2 - window.dailySwapsUsed} EDITS REMAINING TODAY`;
       swapBanner.classList.remove('hidden');
 
-      // Make all flex/expansion tasks clickable for editing
       document.querySelectorAll('.task-row').forEach((row, idx) => {
-          if(idx === 0) return; // Skip Anchor!
+          if(idx === 0) return; 
           row.classList.add('cursor-pointer', 'border', 'border-[var(--accent-mint)]/50', 'shadow-[0_0_10px_rgba(0,229,155,0.1)]');
           row.onclick = (e) => {
               if(!window.isSwapModeActive) return;
@@ -780,7 +843,7 @@
           if (taskId > 4) return;
       } else {
           if (!window.isSwapModeActive) return;
-          if (window.dailySwapsUsed >= 2) return;
+          if (window.dailySwapsUsed >= 2) return alert("You have reached your 2 swap limit for today.");
       }
 
       activeEditTaskId = taskId;
@@ -826,7 +889,7 @@
       } else {
           window.dailySwapsUsed++;
           window.isSwapModeActive = false; 
-          document.getElementById('auto-swap-banner').classList.add('hidden'); // Hide banner
+          document.getElementById('auto-swap-banner').classList.add('hidden'); 
           document.querySelectorAll('.task-row').forEach(row => row.classList.remove('cursor-pointer', 'border', 'border-[var(--accent-mint)]/50', 'shadow-[0_0_10px_rgba(0,229,155,0.1)]'));
       }
 
@@ -979,8 +1042,8 @@
 
       document.querySelectorAll('#extended-daily-tasks .logic-check').forEach((box, i) => {
         box.addEventListener('change', (e) => {
+          let idx = parseInt(e.target.closest('.task-row').querySelector('h4').id.split('-')[2]);
           const row = e.target.closest('.task-row');
-          const taskId = parseInt(row.querySelector('h4').id.split('-')[2]);
           
           let nowIST = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"}));
           let timeStr = nowIST.getHours().toString().padStart(2, '0') + ':' + nowIST.getMinutes().toString().padStart(2, '0');
@@ -988,31 +1051,23 @@
           if(box.checked) {
             row.classList.add('opacity-50', 'border-[var(--accent-mint)]/30');
             row.querySelector('h4').classList.add('line-through', 'text-gray-400');
-            window.completionTimestamps[taskId] = timeStr;
+            window.completionTimestamps[idx] = timeStr;
           } else {
             row.classList.remove('opacity-50', 'border-[var(--accent-mint)]/30');
             row.querySelector('h4').classList.remove('line-through', 'text-gray-400');
-            delete window.completionTimestamps[taskId];
+            delete window.completionTimestamps[idx];
           }
           window.updateTotalProgress();
           
           if(window.syncCheckboxesToDatabase) {
              let checkedIndexes = [];
-             document.querySelectorAll('.logic-check').forEach((b, idx) => { if(b.checked) checkedIndexes.push(idx); });
+             document.querySelectorAll('.logic-check').forEach((b, i) => { if(b.checked) checkedIndexes.push(i); });
              window.syncCheckboxesToDatabase(checkedIndexes, window.completionTimestamps);
           }
         });
       });
 
       window.updateTotalProgress();
-      
-      const swapBtn = document.getElementById('nav-swap-btn');
-      if (window.currentDayIndex > 0) {
-        swapBtn.classList.remove('opacity-20', 'pointer-events-none');
-        swapBtn.classList.add('scale-110', 'text-[var(--accent-mint)]');
-        swapBtn.querySelector('.nav-tooltip').innerText = "EDIT TASKS";
-        setTimeout(() => { swapBtn.classList.remove('scale-110', 'text-[var(--accent-mint)]'); }, 500);
-      }
     };
 
     /* --- VIRTUAL TOUR ENGINE --- */
@@ -1074,30 +1129,25 @@
     const db = getFirestore(app);
     const loader = document.getElementById('page-loader');
 
-    // Secure Logout Function
     document.getElementById('logout-btn').addEventListener('click', async () => {
       try { await signOut(auth); } catch (error) { console.error("Logout failed", error); }
     });
 
-    // Auth Guard, Rollover Engine & Database Fetch
     onAuthStateChanged(auth, async (user) => {
       if (!user) {
         window.location.href = 'index.html';
         return;
       }
 
-      // Step 1: Inject First Name Dynamically
       const firstName = user.displayName ? user.displayName.split(' ')[0] : 'Operator';
       document.getElementById('user-name').innerText = firstName;
       
-      // Step 2: Fetch Secure Database File
       const userDocRef = doc(db, "users", user.uid);
       const userDoc = await getDoc(userDocRef);
 
       if (userDoc.exists()) {
         const data = userDoc.data();
 
-        // Bind data for Graph
         window.appSetupDate = data.setupDate ? data.setupDate.toDate() : new Date();
         window.completionTimestamps = data.completionTimestamps || {};
         window.dailyTimestampsHistory = data.dailyTimestampsHistory || [{},{},{},{},{},{},{}];
@@ -1105,7 +1155,6 @@
 
         initWeekTracker(); 
 
-        // ---- THE MIDNIGHT IST ROLLOVER ENGINE & HARSH PUNISHMENT ---- //
         let currentISTDate = new Date();
         try {
           const response = await fetch('https://worldtimeapi.org/api/timezone/Asia/Kolkata');
@@ -1124,8 +1173,10 @@
         const diffTime = currentMidnight - setupMidnight;
         const daysPassed = Math.floor(diffTime / (1000 * 60 * 60 * 24));
         window.currentDayIndex = Math.min(Math.max(daysPassed, 0), 6); 
+        window.graphViewDay = window.currentDayIndex;
 
         document.getElementById('day-badge').innerText = `DAY ${window.currentDayIndex + 1}`;
+        document.getElementById('graph-current-day-label').innerText = 'TODAY';
 
         let lastActiveDay = data.lastActiveDay || 0;
         let dailyHistory = data.dailyHistory || [0,0,0,0,0,0,0];
@@ -1133,15 +1184,14 @@
         window.dailySwapsUsed = data.dailySwapsUsed || 0;
         window.singleEditSpent = data.singleEditSpentDay1 || false;
 
-        // Perform Rollover if a new calendar day has started
+        // Perform Rollover
         if (window.currentDayIndex > lastActiveDay) {
           let totalTasks = data.expansionMatrix ? 7 : 4;
           let percent = Math.round((checkedTasks.length / totalTasks) * 100);
           
           if (percent < 100) {
-            // THE HARSH RESET: The user failed to hit 100%. Complete System Reset.
             await updateDoc(userDocRef, {
-              setupDate: serverTimestamp(), // Resets their 7-day clock to TODAY
+              setupDate: serverTimestamp(),
               dailyHistory: [0,0,0,0,0,0,0], 
               dailyTimestampsHistory: [{},{},{},{},{},{},{}],
               dailyTargetHistory: [{},{},{},{},{},{},{}],
@@ -1149,14 +1199,11 @@
               completionTimestamps: {},
               dailySwapsUsed: 0,
               lastActiveDay: 0,
-              expansionMatrix: deleteField() // Deletes their unlocked slots
+              expansionMatrix: deleteField() 
             });
-            
             window.location.reload();
             return; 
-            
           } else {
-            // SUCCESS: They hit 100%. Archive the day and move forward.
             dailyHistory[lastActiveDay] = percent; 
             window.dailyTimestampsHistory[lastActiveDay] = window.completionTimestamps;
             window.dailyTargetHistory[lastActiveDay] = window.getCurrentTargets();
@@ -1177,9 +1224,7 @@
             });
           }
         }
-        // ------------------------------------------------------------- //
 
-        // Step 3: Load the 4 Base Habits
         if (data.baseMatrix) {
           for(let i = 0; i < 4; i++) {
             if(data.baseMatrix[i]) {
@@ -1190,7 +1235,6 @@
           }
         }
 
-        // Step 4: Hide Day 1 Edit Badge if Day 2+
         if (window.currentDayIndex > 0) {
            document.getElementById('single-edit-status').style.display = 'none';
            // AUTO-ACTIVATE SWAP ENGINE ON DAY 2+
@@ -1202,12 +1246,10 @@
            document.getElementById('single-edit-status').className = "text-[9px] bg-white/10 text-gray-500 border border-white/10 px-2.5 py-1 rounded-md font-bold tracking-wider uppercase inline-block";
         }
 
-        // Step 5: Load the Expansion Habits
         if (data.expansionMatrix) {
           window.renderExpansionMatrix(data.expansionMatrix);
         }
 
-        // Step 6: Restore Checkbox States securely with slight delay for DOM
         if (checkedTasks.length > 0) {
           setTimeout(() => {
             const boxes = document.querySelectorAll('.logic-check');
@@ -1223,13 +1265,11 @@
           }, 300);
         }
 
-        // Reveal the Dashboard and Start Live Clocks
         loader.style.opacity = '0';
         setTimeout(() => { loader.style.display = 'none'; }, 500);
         
         if (window.startLiveClocks) window.startLiveClocks();
 
-        // Tour trigger for first timers
         if (!data.expansionMatrix && window.currentDayIndex === 0) {
           setTimeout(window.startVirtualTour, 500);
         }
@@ -1238,7 +1278,6 @@
       }
     });
 
-    // Checkbox Live DB Sync
     window.syncCheckboxesToDatabase = async function(checkedIndexesArray, timestampsObj) {
        const user = auth.currentUser;
        if (user) {
@@ -1251,7 +1290,6 @@
        }
     };
 
-    // Matrix Edits Live DB Sync
     window.syncEditToDatabase = async function() {
       const user = auth.currentUser;
       if (user) {
@@ -1284,13 +1322,10 @@
         
         try {
           await updateDoc(doc(db, "users", user.uid), updates);
-        } catch (e) {
-          console.error("Failed to sync edit", e);
-        }
+        } catch (e) {}
       }
     };
 
-    // Hook: Save Expansion Matrix to Firebase securely
     window.saveExpansionToDatabase = async function(expandedTasksArray) {
       const user = auth.currentUser;
       if (user) {
