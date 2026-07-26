@@ -104,7 +104,6 @@
       transition: opacity 0.5s ease;
     }
 
-    /* Rejection Shake Animation */
     @keyframes shake {
       0%, 100% { transform: translate(-50%, -50%) translateX(0); }
       25% { transform: translate(-50%, -50%) translateX(-6px); }
@@ -114,7 +113,8 @@
     .animate-shake { animation: shake 0.4s ease-in-out; }
   </style>
 </head>
-<body class="relative pb-28"> 
+<!-- PERFECTED BOTTOM PADDING: Solves the "unending CSS abyss" issue -->
+<body class="relative pb-24"> 
 
   <div id="page-loader">
     <div class="w-10 h-10 border-4 border-white/10 border-t-[var(--accent-mint)] rounded-full animate-spin mb-4"></div>
@@ -166,7 +166,6 @@
 
     <!-- 🏠 DASHBOARD VIEW WRAPPER -->
     <div id="dashboard-view" class="block w-full">
-        <!-- Speedometer Card -->
         <section id="tour-speedo-card" class="surface-card p-6 mb-8 flex items-center justify-between transition-all duration-300 rounded-2xl">
           <div>
             <h2 id="tour-txt-protocol" class="text-lg font-bold text-white mb-1 px-1 -ml-1 transition-all duration-300">Live Matrix</h2>
@@ -228,6 +227,81 @@
       </div>
     </div>
 
+    <!-- 🌍 COMMUNITY / DUAL CHALLENGE VIEW WRAPPER -->
+    <div id="community-view" class="hidden w-full pb-10">
+      
+      <!-- STATE 1: NO CHALLENGE ACTIVE (INVITE UI) -->
+      <div id="comm-invite-state" class="block">
+        <div class="surface-card p-6 mt-2 text-center flex flex-col items-center">
+          <div class="w-16 h-16 rounded-full bg-[var(--accent-purple)]/20 border border-[var(--accent-purple)]/50 flex items-center justify-center mb-4 shadow-[0_0_20px_rgba(157,78,221,0.3)]">
+            <span class="text-2xl">⚔️</span>
+          </div>
+          <h3 class="text-lg font-bold text-white mb-2">Dual Challenge</h3>
+          <p class="text-xs text-gray-400 mb-8 leading-relaxed">Invite a friend to lock into a 1-on-1 accountability challenge. Their live progress will sync directly to your dashboard.</p>
+          
+          <button id="btn-generate-invite" onclick="generateInvite()" class="w-full py-4 rounded-xl font-extrabold text-black bg-[var(--accent-purple)] shadow-[0_0_20px_rgba(157,78,221,0.4)] uppercase tracking-widest text-xs hover:scale-95 transition-transform">
+            Generate Invite Link
+          </button>
+
+          <div id="invite-link-container" class="hidden w-full mt-6 bg-black/60 border border-white/10 rounded-xl p-4 flex flex-col gap-3">
+             <p class="text-[10px] font-bold tracking-widest text-[var(--accent-mint)] uppercase">Link Generated</p>
+             <input type="text" id="invite-link-input" readonly class="w-full bg-transparent text-xs text-gray-300 outline-none text-center font-mono">
+             <button onclick="copyInviteLink()" class="px-4 py-2 bg-white/10 rounded-lg text-xs font-bold text-white hover:bg-white/20 transition-all border border-white/5">Copy Link</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STATE 2: ACTIVE DUAL CHALLENGE UI -->
+      <div id="comm-active-state" class="hidden">
+        <div class="surface-card p-6 mt-2">
+          <div class="flex items-center justify-between mb-8">
+            <h3 class="text-sm font-bold text-white">Dual Challenge</h3>
+            <span class="px-2 py-1 bg-[var(--accent-mint)]/20 border border-[var(--accent-mint)]/30 rounded text-[9px] font-black tracking-widest text-[var(--accent-mint)] uppercase flex items-center gap-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-[var(--accent-mint)] animate-pulse"></span> ACTIVE
+            </span>
+          </div>
+
+          <!-- SIDE BY SIDE RINGS -->
+          <div class="flex justify-between items-center gap-4 mb-10">
+            <!-- YOUR RING -->
+            <div class="w-1/2 flex flex-col items-center">
+              <div class="relative w-full max-w-[120px] aspect-square flex items-center justify-center rounded-full mb-3">
+                <svg class="w-full h-full absolute inset-0" viewBox="0 0 100 100">
+                  <circle stroke="rgba(255,255,255,0.05)" stroke-dasharray="4 6" stroke-width="8" fill="transparent" r="40" cx="50" cy="50" />
+                  <circle id="dual-ring-you" class="progress-ring__circle text-[var(--accent-mint)] drop-shadow-[0_0_8px_rgba(0,229,155,0.6)]" stroke-width="8" stroke-linecap="round" fill="transparent" r="40" cx="50" cy="50" stroke="currentColor" />
+                </svg>
+                <span class="text-xl font-extrabold text-white absolute z-10" id="dual-percent-you">0%</span>
+              </div>
+              <span class="text-[10px] font-black tracking-widest text-white uppercase">You</span>
+            </div>
+
+            <div class="text-xl opacity-50">⚔️</div>
+
+            <!-- CHALLENGER'S RING -->
+            <div class="w-1/2 flex flex-col items-center">
+              <div class="relative w-full max-w-[120px] aspect-square flex items-center justify-center rounded-full mb-3">
+                <svg class="w-full h-full absolute inset-0" viewBox="0 0 100 100">
+                  <circle stroke="rgba(255,255,255,0.05)" stroke-dasharray="4 6" stroke-width="8" fill="transparent" r="40" cx="50" cy="50" />
+                  <circle id="dual-ring-challenger" class="progress-ring__circle text-[var(--accent-purple)] drop-shadow-[0_0_8px_rgba(157,78,221,0.6)]" stroke-width="8" stroke-linecap="round" fill="transparent" r="40" cx="50" cy="50" stroke="currentColor" />
+                </svg>
+                <span class="text-xl font-extrabold text-white absolute z-10" id="dual-percent-challenger">0%</span>
+              </div>
+              <span class="text-[10px] font-black tracking-widest text-[var(--accent-purple)] uppercase">Challenger</span>
+            </div>
+          </div>
+
+          <!-- HABITS REMINDER -->
+          <div class="border-t border-white/10 pt-6">
+            <h4 class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-4">Your Commitments</h4>
+            <div id="dual-tasks-list" class="space-y-2">
+              <!-- Injected by JS to match dashboard -->
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <!-- Bottom Navigation Bar -->
@@ -236,14 +310,14 @@
       <div id="nav-btn-dash" class="nav-item text-[var(--accent-mint)] scale-110 drop-shadow-[0_0_10px_rgba(0,229,155,0.5)] transition-all bg-white/10 p-3 rounded-full border border-white/5 shadow-inner" onclick="switchTab('dash')" onmousedown="showTooltip('tt-dash')" onmouseup="hideTooltip('tt-dash')" ontouchstart="showTooltip('tt-dash')" ontouchend="hideTooltip('tt-dash')">
         <div id="tt-dash" class="nav-tooltip" style="top: -55px;">DASHBOARD</div>🏠
       </div>
-      <!-- VISUALIZE TAB -->
       <div id="nav-btn-vis" class="nav-item transition-all" onclick="switchTab('vis')" onmousedown="showTooltip('tt-vis')" onmouseup="hideTooltip('tt-vis')" ontouchstart="showTooltip('tt-vis')" ontouchend="hideTooltip('tt-vis')">
         <div id="tt-vis" class="nav-tooltip">VISUALIZE</div>🌀
       </div>
       <div class="nav-item" onmousedown="showTooltip('tt-prof')" onmouseup="hideTooltip('tt-prof')" ontouchstart="showTooltip('tt-prof')" ontouchend="hideTooltip('tt-prof')">
         <div id="tt-prof" class="nav-tooltip">PROFILE</div>👤
       </div>
-      <div class="nav-item" onmousedown="showTooltip('tt-comm')" onmouseup="showTooltip('tt-comm')" ontouchstart="showTooltip('tt-comm')" ontouchend="hideTooltip('tt-comm')">
+      <!-- NEW COMMUNITY TAB -->
+      <div id="nav-btn-comm" class="nav-item transition-all" onclick="switchTab('comm')" onmousedown="showTooltip('tt-comm')" onmouseup="hideTooltip('tt-comm')" ontouchstart="showTooltip('tt-comm')" ontouchend="hideTooltip('tt-comm')">
         <div id="tt-comm" class="nav-tooltip">COMMUNITY</div>🌍
       </div>
     </div>
@@ -258,6 +332,7 @@
     
     window.appSetupDate = null;
     window.completionTimestamps = {}; 
+    window.challengerUid = null; 
 
     /* --- WEEK TRACKER LOGIC --- */
     function initWeekTracker() {
@@ -363,12 +438,13 @@
 
     window.updateTotalProgress = function() { 
       const checkboxes = document.querySelectorAll('.logic-check');
-      const total = checkboxes.length || 1; // Prevent div by zero
+      const total = checkboxes.length || 1; 
       const completedCount = document.querySelectorAll('.logic-check:checked').length;
       
       const percent = Math.round((completedCount / total) * 100); 
       const offset = circumference - (percent / 100) * circumference;
       
+      // Update Main Dashboard Ring
       circle.style.strokeDashoffset = offset;
       document.getElementById('task-percent').innerText = percent + '%';
 
@@ -382,8 +458,20 @@
           if (todayCircle) todayCircle.className = 'w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold bg-white/10 border border-white/20 text-white shadow-inner transition-all duration-500';
       }
       
+      // Update Visualize Rings if active
       if (!document.getElementById('visualize-view').classList.contains('hidden')) {
          window.renderVisualizeRings();
+      }
+
+      // Update Dual Challenge You Ring if active
+      if (!document.getElementById('community-view').classList.contains('hidden') && window.challengerUid) {
+          const dualYouCircle = document.getElementById('dual-ring-you');
+          const dualYouR = dualYouCircle.r.baseVal.value;
+          const dualYouCircumference = dualYouR * 2 * Math.PI;
+          dualYouCircle.style.strokeDasharray = `${dualYouCircumference} ${dualYouCircumference}`;
+          const dualYouOffset = dualYouCircumference - (percent / 100) * dualYouCircumference;
+          dualYouCircle.style.strokeDashoffset = dualYouOffset;
+          document.getElementById('dual-percent-you').innerText = percent + '%';
       }
     }
 
@@ -427,13 +515,15 @@
     window.switchTab = function(tabName) {
         const btnDash = document.getElementById('nav-btn-dash');
         const btnVis = document.getElementById('nav-btn-vis');
+        const btnComm = document.getElementById('nav-btn-comm');
         
         const viewDash = document.getElementById('dashboard-view');
         const viewVis = document.getElementById('visualize-view');
+        const viewComm = document.getElementById('community-view');
 
         // Reset
-        [btnDash, btnVis].forEach(btn => btn.className = "nav-item transition-all");
-        [viewDash, viewVis].forEach(view => view.classList.add('hidden'));
+        [btnDash, btnVis, btnComm].forEach(btn => { if(btn) btn.className = "nav-item transition-all"; });
+        [viewDash, viewVis, viewComm].forEach(view => { if(view) view.classList.add('hidden'); });
         
         const activeClass = "nav-item text-[var(--accent-mint)] scale-110 drop-shadow-[0_0_10px_rgba(0,229,155,0.5)] transition-all bg-white/10 p-3 rounded-full border border-white/5 shadow-inner";
 
@@ -444,6 +534,10 @@
             btnVis.className = activeClass;
             viewVis.classList.remove('hidden');
             window.renderVisualizeRings();
+        } else if (tabName === 'comm') {
+            btnComm.className = activeClass;
+            viewComm.classList.remove('hidden');
+            if(window.renderCommunityView) window.renderCommunityView();
         }
     };
 
@@ -557,6 +651,71 @@
     window.addEventListener('mouseup', stopHold);
     window.addEventListener('touchend', stopHold);
 
+    /* --- 🌍 COMMUNITY / DUAL CHALLENGE ENGINE --- */
+    window.generateInvite = function() {
+        const linkInput = document.getElementById('invite-link-input');
+        const container = document.getElementById('invite-link-container');
+        
+        // Generates the unique link using the current user's UID (requires Firebase Auth)
+        if(window.currentUserUid) {
+            const link = window.location.origin + window.location.pathname + '?challenge=' + window.currentUserUid;
+            linkInput.value = link;
+            container.classList.remove('hidden');
+        }
+    };
+
+    window.copyInviteLink = function() {
+        const linkInput = document.getElementById('invite-link-input');
+        linkInput.select();
+        document.execCommand('copy');
+        alert("Invite Link Copied!");
+    };
+
+    window.renderCommunityView = function() {
+        const stateInvite = document.getElementById('comm-invite-state');
+        const stateActive = document.getElementById('comm-active-state');
+        const tasksList = document.getElementById('dual-tasks-list');
+
+        if(window.challengerUid) {
+            // Challenge Active!
+            stateInvite.classList.add('hidden');
+            stateActive.classList.remove('hidden');
+
+            // Render User's Own Tasks beneath the rings
+            const checkboxes = document.querySelectorAll('.logic-check');
+            let tasksHtml = '';
+            document.querySelectorAll('.task-row').forEach((row, i) => {
+                let name = row.querySelector('h4').innerText;
+                let emoji = row.querySelector('.text-2xl').innerText;
+                let isChecked = row.querySelector('.logic-check').checked;
+                
+                tasksHtml += `
+                  <div class="bg-black/40 border border-white/5 rounded-xl p-3 flex items-center gap-3">
+                     <div class="w-4 h-4 rounded-full border border-white/20 flex items-center justify-center ${isChecked ? 'bg-[var(--accent-mint)] border-[var(--accent-mint)]' : ''}">
+                         ${isChecked ? '<span class="text-[8px] text-black font-bold">✓</span>' : ''}
+                     </div>
+                     <span class="text-xs font-semibold text-white ${isChecked ? 'opacity-50 line-through' : ''}">${name}</span>
+                     <span class="ml-auto opacity-70">${emoji}</span>
+                  </div>
+                `;
+            });
+            tasksList.innerHTML = tasksHtml;
+
+            // Trigger Firebase fetch for Challenger's live percentage
+            if(window.fetchChallengerProgress) {
+                window.fetchChallengerProgress();
+            }
+
+            // Make sure own ring is updated
+            window.updateTotalProgress();
+
+        } else {
+            // No Challenge Active
+            stateInvite.classList.remove('hidden');
+            stateActive.classList.add('hidden');
+        }
+    };
+
     /* --- ONE-TIME VIRTUAL TOUR ENGINE --- */
     window.startVirtualTour = function() {
       window.isTourRunning = true; document.body.classList.add('tour-active');
@@ -625,21 +784,45 @@
         return;
       }
 
+      window.currentUserUid = user.uid; // Set for invite link generation
       const firstName = user.displayName ? user.displayName.split(' ')[0] : 'Operator';
       document.getElementById('user-name').innerText = firstName;
       
       const userDocRef = doc(db, "users", user.uid);
       const userDoc = await getDoc(userDocRef);
 
+      // --- URL CHALLENGE INTERCEPTOR ---
+      const urlParams = new URLSearchParams(window.location.search);
+      const incomingChallengeUid = urlParams.get('challenge');
+      
+      if (incomingChallengeUid && incomingChallengeUid !== user.uid) {
+         const confirmJoin = confirm("Someone challenged you to an accountability duel! Accept and link profiles?");
+         if(confirmJoin) {
+             try {
+                // Update Current User (Self)
+                await updateDoc(userDocRef, { challengerUid: incomingChallengeUid });
+                // Attempt to Update Challenger (Requires open Firestore rules!)
+                await updateDoc(doc(db, "users", incomingChallengeUid), { challengerUid: user.uid });
+             } catch(e) {
+                console.warn("Could not two-way sync. Check Firebase Rules.");
+             }
+         }
+         // Clean URL so it doesn't prompt again
+         window.history.replaceState({}, document.title, window.location.pathname);
+         // Reload to pull new state cleanly
+         window.location.reload();
+         return;
+      }
+      // ---------------------------------
+
       if (userDoc.exists()) {
         const data = userDoc.data();
 
-        // Dynamically set window total based on actual stored array
         window.totalTasks = data.baseMatrix ? data.baseMatrix.length : (data.totalHabits || 4);
         window.taskDuration = data.duration || 7;
-        
         window.appSetupDate = data.setupDate ? data.setupDate.toDate() : new Date();
         window.completionTimestamps = data.completionTimestamps || {};
+        window.challengerUid = data.challengerUid || null; // Bind Community status
 
         document.getElementById('task-count-header').innerText = `${window.totalTasks} TASKS`;
         document.getElementById('tour-txt-days').innerText = `${window.taskDuration} DAYS`;
@@ -694,13 +877,12 @@
         let dailyHistory = data.dailyHistory || [];
         let checkedTasks = data.checkedTasks || [];
 
-        // Midnight Rollover & Harsh Reset Check
+        // Midnight Rollover & Harsh Reset Check (Ensures Day 2 is Fresh!)
         if (window.currentDayIndex > lastActiveDay) {
-          // Strictly calculate percent based on the absolute total
           let percent = Math.round((checkedTasks.length / window.totalTasks) * 100);
           
           if (percent < 100) {
-            // THE HARSH RESET: Failed to hit 100%. Complete System Reset.
+            // THE HARSH RESET: Failed to hit 100%. Wipes history and unchecks everything.
             await updateDoc(userDocRef, {
               setupDate: serverTimestamp(),
               dailyHistory: [], 
@@ -711,9 +893,8 @@
             window.location.reload();
             return; 
           } else {
-            // SUCCESS: 100%. Archive day.
+            // SUCCESS: 100%. Archive day. Wipe current checks for a fresh Day 2.
             dailyHistory[lastActiveDay] = percent; 
-
             checkedTasks = []; 
             window.completionTimestamps = {};
             lastActiveDay = window.currentDayIndex;
@@ -757,6 +938,47 @@
         window.location.href = 'lock.html';
       }
     });
+
+    window.syncCheckboxesToDatabase = async function(checkedIndexesArray, timestampsObj) {
+       const user = auth.currentUser;
+       if (user) {
+         try {
+           await updateDoc(doc(db, "users", user.uid), {
+             checkedTasks: checkedIndexesArray,
+             completionTimestamps: timestampsObj || {}
+           });
+         } catch(e) {}
+       }
+    };
+
+    // --- FETCH CHALLENGER PROGRESS ---
+    window.fetchChallengerProgress = async function() {
+        if(!window.challengerUid) return;
+        
+        try {
+            const cRef = doc(db, "users", window.challengerUid);
+            const cSnap = await getDoc(cRef);
+            
+            if(cSnap.exists()) {
+                const cData = cSnap.data();
+                const cTotal = cData.baseMatrix ? cData.baseMatrix.length : (cData.totalHabits || 1);
+                const cCompleted = cData.checkedTasks ? cData.checkedTasks.length : 0;
+                
+                const cPercent = Math.round((cCompleted / cTotal) * 100);
+                document.getElementById('dual-percent-challenger').innerText = cPercent + '%';
+
+                const dualCircle = document.getElementById('dual-ring-challenger');
+                if(dualCircle) {
+                    const r = dualCircle.r.baseVal.value;
+                    const circ = r * 2 * Math.PI;
+                    dualCircle.style.strokeDasharray = `${circ} ${circ}`;
+                    dualCircle.style.strokeDashoffset = circ - (cPercent / 100) * circ;
+                }
+            }
+        } catch(e) {
+            console.warn("Could not fetch challenger progress. Check Firebase rules.");
+        }
+    };
   </script>
 </body>
 </html>
