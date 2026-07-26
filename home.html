@@ -842,7 +842,6 @@
       const userDoc = await getDoc(userDocRef);
 
       // --- URL CHALLENGE / DEEP LINK INTERCEPTOR ---
-      // Check both URL and LocalStorage for a pending challenge
       let incomingChallengeUid = new URLSearchParams(window.location.search).get('challenge');
       if(!incomingChallengeUid) {
           incomingChallengeUid = localStorage.getItem('pendingChallenge');
@@ -850,7 +849,6 @@
       
       if (incomingChallengeUid && incomingChallengeUid !== user.uid) {
          try {
-             // 1. Fetch Challenger Data to validate Matchmaking
              const cSnap = await getDoc(doc(db, "users", incomingChallengeUid));
              if(cSnap.exists()) {
                  const cData = cSnap.data();
@@ -860,13 +858,11 @@
                  const cTotal = cData.baseMatrix ? cData.baseMatrix.length : (cData.totalHabits || 4);
                  const cDur = cData.duration || 7;
 
-                 // 2. Validate Symmetry
                  if (myTotal === cTotal && myDur === cDur) {
                      const confirmJoin = confirm("Someone challenged you to an accountability duel! Match parameters validated. Link profiles?");
                      if(confirmJoin) {
                         await updateDoc(userDocRef, { challengerUid: incomingChallengeUid });
                         await updateDoc(doc(db, "users", incomingChallengeUid), { challengerUid: user.uid });
-                        // Set intent to open community tab on reload
                         localStorage.setItem('openCommunity', 'true');
                      }
                  } else {
@@ -891,7 +887,7 @@
         window.appSetupDate = data.setupDate ? data.setupDate.toDate() : new Date();
         window.completionTimestamps = data.completionTimestamps || {};
         window.challengerUid = data.challengerUid || null; 
-        window.totalXP = data.totalXP || 0; // NEW: Initialize XP
+        window.totalXP = data.totalXP || 0; 
 
         document.getElementById('task-count-header').innerText = `${window.totalTasks} TASKS`;
         document.getElementById('tour-txt-days').innerText = `${window.taskDuration} DAYS`;
@@ -992,7 +988,7 @@
           }
         }
 
-        // Restore Checkboxes
+        // Restore Checkboxes securely
         if (checkedTasks.length > 0) {
           setTimeout(() => {
             const boxes = document.querySelectorAll('.logic-check');
