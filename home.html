@@ -221,10 +221,8 @@
         <p class="text-[10px] text-gray-400 mb-8 uppercase tracking-widest">Execute and Seal</p>
 
         <div class="relative w-full max-w-[320px] aspect-square flex items-center justify-center">
-          <!-- Dynamically Generated SVG Rings -->
           <svg id="rings-svg" class="absolute inset-0 w-full h-full drop-shadow-[0_0_15px_rgba(0,0,0,0.5)]" viewBox="0 0 300 300"></svg>
           
-          <!-- MASTER SEAL BUTTON -->
           <button id="seal-btn" class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-24 h-24 rounded-full bg-black/90 border border-white/10 flex flex-col items-center justify-center shadow-[0_0_30px_rgba(0,0,0,0.8)] transition-all select-none focus:outline-none">
              <span class="text-[10px] font-black tracking-widest text-gray-400 uppercase leading-tight text-center" id="seal-text">Hold To<br>Seal</span>
           </button>
@@ -386,19 +384,19 @@
   <!-- Bottom Navigation Bar -->
   <nav class="nav-bar fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[420px] z-50 rounded-t-3xl">
     <div class="flex justify-around items-center px-6 py-4 max-w-[420px] mx-auto">
-      <div id="nav-btn-dash" class="nav-item text-[var(--accent-mint)] scale-110 drop-shadow-[0_0_10px_rgba(0,229,155,0.5)] transition-all bg-white/10 p-3 rounded-full border border-white/5 shadow-inner" onclick="switchTab('dash')" onmousedown="showTooltip('tt-dash')" onmouseup="hideTooltip('tt-dash')" ontouchstart="showTooltip('tt-dash')" ontouchend="hideTooltip('tt-dash')">
-        <div id="tt-dash" class="nav-tooltip" style="top: -55px;">DASHBOARD</div>🏠
+      <div id="nav-btn-dash" class="nav-item text-[var(--accent-mint)] scale-110 drop-shadow-[0_0_10px_rgba(0,229,155,0.5)] transition-all bg-white/10 p-3 rounded-full border border-white/5 shadow-inner" onclick="switchTab('dash')">
+        🏠
       </div>
-      <div id="nav-btn-vis" class="nav-item transition-all" onclick="switchTab('vis')" onmousedown="showTooltip('tt-vis')" onmouseup="hideTooltip('tt-vis')" ontouchstart="showTooltip('tt-vis')" ontouchend="hideTooltip('tt-vis')">
-        <div id="tt-vis" class="nav-tooltip">VISUALIZE</div>🌀
+      <div id="nav-btn-vis" class="nav-item transition-all" onclick="switchTab('vis')">
+        🌀
       </div>
       <!-- PROFILE TAB -->
-      <div id="nav-btn-prof" class="nav-item transition-all" onclick="switchTab('prof')" onmousedown="showTooltip('tt-prof')" onmouseup="hideTooltip('tt-prof')" ontouchstart="showTooltip('tt-prof')" ontouchend="hideTooltip('tt-prof')">
-        <div id="tt-prof" class="nav-tooltip">PROFILE</div>👤
+      <div id="nav-btn-prof" class="nav-item transition-all" onclick="switchTab('prof')">
+        👤
       </div>
       <!-- COMMUNITY TAB -->
-      <div id="nav-btn-comm" class="nav-item transition-all" onclick="switchTab('comm')" onmousedown="showTooltip('tt-comm')" onmouseup="hideTooltip('tt-comm')" ontouchstart="showTooltip('tt-comm')" ontouchend="hideTooltip('tt-comm')">
-        <div id="tt-comm" class="nav-tooltip">COMMUNITY</div>🌍
+      <div id="nav-btn-comm" class="nav-item transition-all" onclick="switchTab('comm')">
+        🌍
       </div>
     </div>
   </nav>
@@ -631,10 +629,6 @@
     };
 
     /* --- NAV BAR TOGGLES --- */
-    document.querySelectorAll('.nav-item').forEach(item => { item.addEventListener('contextmenu', e => e.preventDefault()); });
-    window.showTooltip = function(id) { document.getElementById(id).classList.add('visible'); }
-    window.hideTooltip = function(id) { document.getElementById(id).classList.remove('visible'); }
-
     window.switchTab = function(tabName) {
         const btnDash = document.getElementById('nav-btn-dash');
         const btnVis = document.getElementById('nav-btn-vis');
@@ -1027,6 +1021,11 @@
 
       document.getElementById('task-count-header').innerText = `${window.totalTasks} TASKS`;
       document.getElementById('tour-txt-days').innerText = `${window.taskDuration} DAYS`;
+      
+      // Render initial XP to UI before checkboxes load
+      document.getElementById('global-xp-display').innerText = `${window.baseXP} XP`;
+      document.getElementById('profile-xp').innerText = window.baseXP;
+      window.updateProfileRank(window.baseXP);
 
       // DYNAMIC RENDERING OF DASHBOARD TASKS WITH XP BADGES
       if (data.baseMatrix) {
@@ -1155,7 +1154,7 @@
       
       if (window.startLiveClocks) window.startLiveClocks();
 
-      // Check if we should auto-open Community Tab
+      // Check if we should auto-open Community Tab (after accepting a deep link)
       if (localStorage.getItem('openCommunity') === 'true') {
           localStorage.removeItem('openCommunity');
           setTimeout(() => { window.switchTab('comm'); }, 600);
@@ -1227,6 +1226,11 @@
                     dualCircle.style.strokeDasharray = `${circ} ${circ}`;
                     dualCircle.style.strokeDashoffset = circ - (cPercent / 100) * circ;
                 }
+                
+                // Keep own XP updated in duel view
+                const myCompleted = document.querySelectorAll('.logic-check:checked').length;
+                const myLiveXp = window.baseXP + (myCompleted * 100);
+                document.getElementById('dual-xp-you').innerText = `${myLiveXp} XP`;
             }
         } catch(e) {
             console.warn("Could not fetch challenger. Check Firebase rules.");
