@@ -168,11 +168,10 @@
 
     <!-- 🏠 DASHBOARD VIEW WRAPPER -->
     <div id="dashboard-view" class="block w-full">
-        <!-- Speedometer Card (Daily Progress) -->
         <section id="tour-speedo-card" class="surface-card p-6 mb-8 flex items-center justify-between transition-all duration-300 rounded-2xl">
           <div>
             <h2 id="tour-txt-protocol" class="text-lg font-bold text-white mb-1 px-1 -ml-1 transition-all duration-300">Live Matrix</h2>
-            <p class="text-xs text-gray-400 mb-3 px-1 -ml-1">Daily Task Execution.</p>
+            <p class="text-xs text-gray-400 mb-3 px-1 -ml-1">Execute your architecture.</p>
             <div class="flex">
               <span id="tour-txt-days" class="px-2.5 py-1 bg-[var(--accent-purple)]/20 border border-[var(--accent-purple)]/30 rounded text-[10px] font-bold tracking-widest text-[var(--accent-purple)] transition-all duration-300 uppercase">-- DAYS</span>
             </div>
@@ -547,7 +546,7 @@
       const percent = Math.round((completedCount / total) * 100); 
       const offset = circumference - (percent / 100) * circumference;
       
-      // LIVE XP CALCULATION (Instant Gratification)
+      // LIVE XP CALCULATION
       const liveXP = window.baseXP + (completedCount * 100);
       
       const gXp = document.getElementById('global-xp-display');
@@ -592,7 +591,7 @@
           }
       });
 
-      // SEAL UN-DO LOGIC: If they uncheck a box after sealing, break the seal securely.
+      // SEAL UN-DO LOGIC
       if (completedCount < total && window.isSealedToday) {
           window.isSealedToday = false;
           window.resetSealState();
@@ -685,7 +684,7 @@
         }
     };
 
-    /* --- 🌀 FRACTIONAL SVG VISUALIZE ENGINE --- */
+    /* --- 🌀 FRACTIONAL SVG VISUALIZE ENGINE WITH CURVED STREAKS --- */
     window.renderVisualizeRings = function() {
         const svg = document.getElementById('rings-svg');
         const tasks = Array.from(document.querySelectorAll('.task-row'));
@@ -715,8 +714,10 @@
             const completedDays = historyData.filter(v => v).length + (isChecked ? 1 : 0);
             const progressPercent = Math.min(1, completedDays / window.taskDuration);
             
+            // Streak Logic Appended to Ring (COLOR REMAINS VIBRANT ALWAYS)
             const info = window.getTaskStreakInfo(taskId, isChecked);
-            const strokeColor = info.isRed ? '#EF4444' : colors[i % colors.length];
+            const strokeColor = colors[i % colors.length]; // PERMANENT CONTINUITY COLOR
+            const streakLabel = info.isRed ? '❌ 0' : '🔥 ' + info.streak;
 
             const r = total > 1 ? maxR - (i * gap) : 100;
             const circumference = 2 * Math.PI * r;
@@ -728,9 +729,9 @@
               <path d="${pathD}" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="8" stroke-linecap="round" />
               <path id="ring-path-${i}" d="${pathD}" fill="none" stroke="${strokeColor}" stroke-width="8" stroke-linecap="round" 
                     stroke-dasharray="${circumference}" stroke-dashoffset="${offset}" class="vis-ring-path drop-shadow-[0_0_8px_${strokeColor}80]" />
-              <text fill="rgba(255,255,255,0.7)" font-size="8" font-weight="900" letter-spacing="1">
-                 <textPath href="#ring-path-${i}" startOffset="3%" dominant-baseline="middle" alignment-baseline="middle">
-                    ${name}
+              <text fill="rgba(255,255,255,0.9)" font-size="8" font-weight="900" letter-spacing="1">
+                 <textPath href="#ring-path-${i}" startOffset="2%" dominant-baseline="middle" alignment-baseline="middle">
+                    ${name} • ${streakLabel}
                  </textPath>
               </text>
             `;
@@ -1124,7 +1125,6 @@
         let earnedXP = 0;
         let daysToFill = window.currentDayIndex - lastActiveDay;
         
-        // Loop through the missed days
         for(let d = 1; d <= daysToFill; d++) {
             let processingDay = lastActiveDay + d;
             let isYesterday = (processingDay === window.currentDayIndex);
@@ -1134,7 +1134,7 @@
                 if(isYesterday) {
                     wasChecked = checkedTasks.includes(i - 1);
                 } else {
-                    wasChecked = false; // Punish gap days where they didn't even open the app
+                    wasChecked = false; 
                 }
                 
                 window.taskHistory[i].push(wasChecked);
@@ -1145,13 +1145,11 @@
 
         let newTotalXP = window.baseXP + earnedXP;
 
-        // Reset the trackers
         checkedTasks = []; 
         window.completionTimestamps = {};
         lastActiveDay = window.currentDayIndex;
         window.isSealedToday = false;
 
-        // Note: No "Harsh Reset" wipe here anymore! We keep the setupDate and taskHistory perfectly intact!
         await updateDoc(userDocRef, {
           checkedTasks: checkedTasks,
           completionTimestamps: window.completionTimestamps,
@@ -1182,6 +1180,7 @@
         window.updateTotalProgress();
       }
 
+      // Restore Seal State if sealed earlier today
       if(window.isSealedToday) {
           setTimeout(() => { window.renderSealStateUI(); }, 350);
       }
@@ -1191,11 +1190,13 @@
       
       if (window.startLiveClocks) window.startLiveClocks();
 
+      // Check if we should auto-open Community Tab
       if (localStorage.getItem('openCommunity') === 'true') {
           localStorage.removeItem('openCommunity');
           setTimeout(() => { window.switchTab('comm'); }, 600);
       }
 
+      // Trigger tour if fresh
       if (!data.tourCompleted) {
         setTimeout(window.startVirtualTour, 500);
         await updateDoc(userDocRef, { tourCompleted: true });
@@ -1232,6 +1233,7 @@
             if(cSnap.exists()) {
                 const cData = cSnap.data();
 
+                // Security Check: Did they quit?
                 if(cData.challengerUid !== window.currentUserUid) {
                     window.challengerUid = null;
                     await updateDoc(doc(db, "users", window.currentUserUid), { challengerUid: null });
@@ -1243,6 +1245,7 @@
                 const cTotal = cData.baseMatrix ? cData.baseMatrix.length : (cData.totalHabits || 1);
                 const cCompleted = cData.checkedTasks ? cData.checkedTasks.length : 0;
                 
+                // Challenger Live XP calculation
                 const cBaseXp = cData.totalXP || 0;
                 const cLiveXp = cBaseXp + (cCompleted * 100);
                 
@@ -1258,6 +1261,7 @@
                     dualCircle.style.strokeDashoffset = circ - (cPercent / 100) * circ;
                 }
                 
+                // Keep own XP updated in duel view
                 const myCompleted = document.querySelectorAll('.logic-check:checked').length;
                 const myLiveXp = window.baseXP + (myCompleted * 100);
                 document.getElementById('dual-xp-you').innerText = `${myLiveXp} XP`;
@@ -1270,10 +1274,12 @@
     window.executeQuitFirebase = async function() {
         const user = auth.currentUser;
         if(user) {
+            // Apply Penalty Instantly to Base
             window.baseXP -= 500;
             window.updateTotalProgress(); 
             
             try {
+                // Update self: clear challenger, save penalized XP
                 await updateDoc(doc(db, "users", user.uid), { 
                     challengerUid: null,
                     totalXP: window.baseXP
@@ -1285,7 +1291,7 @@
                 
                 window.challengerUid = null;
                 alert("Challenge Terminated. 500 XP deducted.");
-                window.renderCommunityView();
+                window.renderCommunityView(); // Reset UI
             } catch(e) {
                 console.error("Quit error:", e);
                 alert("Error quitting challenge.");
