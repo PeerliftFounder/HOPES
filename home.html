@@ -11,7 +11,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   
   <script>
-    // DEEP LINK MEMORY: Catch invite links before Firebase redirects unauthenticated users
+    // DEEP LINK MEMORY
     const urlParams = new URLSearchParams(window.location.search);
     const incomingChallenge = urlParams.get('challenge');
     if(incomingChallenge) {
@@ -37,7 +37,6 @@
       user-select: none;
     }
 
-    /* RADIANT BACKGROUND GLOW */
     @keyframes liquidTheme {
       0% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
@@ -67,11 +66,9 @@
 
     .app-container { max-width: 420px; margin: 0 auto; min-height: 100vh; background: rgba(5, 5, 7, 0.4); }
 
-    /* SVG Ring Animations */
     .progress-ring__circle { transition: stroke-dashoffset 1.5s cubic-bezier(0.16, 1, 0.3, 1); transform: rotate(-90deg); transform-origin: 50% 50%; }
-    .vis-ring-path { transition: stroke-dashoffset 1s cubic-bezier(0.16, 1, 0.3, 1); }
+    .vis-ring-path { transition: stroke-dashoffset 1s cubic-bezier(0.16, 1, 0.3, 1); transform: rotate(-90deg); transform-origin: 50% 50%; }
 
-    /* Checkbox UI */
     .task-check-wrapper { position: relative; display: inline-block; width: 24px; height: 24px; flex-shrink: 0; }
     .task-checkbox { opacity: 0; width: 0; height: 0; position: absolute; }
     .task-custom-check {
@@ -81,7 +78,6 @@
     .task-checkbox:checked ~ .task-custom-check { background-color: var(--accent-mint); border-color: var(--accent-mint); box-shadow: 0 0 15px rgba(0, 229, 155, 0.4); }
     .task-checkbox:checked ~ .task-custom-check::after { content: '✓'; color: #000; font-size: 14px; font-weight: 800; }
 
-    /* Nav Bar */
     .nav-bar {
       background: rgba(10, 10, 15, 0.65); backdrop-filter: blur(30px) saturate(200%); -webkit-backdrop-filter: blur(30px) saturate(200%);
       border-top: 1px solid rgba(255,255,255,0.1); padding-bottom: env(safe-area-inset-bottom, 16px);
@@ -172,11 +168,11 @@
 
     <!-- 🏠 DASHBOARD VIEW WRAPPER -->
     <div id="dashboard-view" class="block w-full">
-        <!-- Speedometer Card -->
+        <!-- Speedometer Card (Daily Progress) -->
         <section id="tour-speedo-card" class="surface-card p-6 mb-8 flex items-center justify-between transition-all duration-300 rounded-2xl">
           <div>
             <h2 id="tour-txt-protocol" class="text-lg font-bold text-white mb-1 px-1 -ml-1 transition-all duration-300">Live Matrix</h2>
-            <p class="text-xs text-gray-400 mb-3 px-1 -ml-1">Execute your architecture.</p>
+            <p class="text-xs text-gray-400 mb-3 px-1 -ml-1">Daily Task Execution.</p>
             <div class="flex">
               <span id="tour-txt-days" class="px-2.5 py-1 bg-[var(--accent-purple)]/20 border border-[var(--accent-purple)]/30 rounded text-[10px] font-bold tracking-widest text-[var(--accent-purple)] transition-all duration-300 uppercase">-- DAYS</span>
             </div>
@@ -194,7 +190,7 @@
           </div>
         </section>
 
-        <!-- DYNAMIC TASK LIST -->
+        <!-- DYNAMIC TASK LIST WITH STREAKS AND XP -->
         <section id="tour-target-base" class="mb-6 transition-all duration-300 rounded-2xl p-2 -mx-2">
           <div class="flex items-center justify-between mb-4 pl-1">
             <h3 class="text-xs font-bold uppercase tracking-widest text-gray-300">Daily Commitments</h3>
@@ -214,28 +210,28 @@
         </footer>
     </div>
 
-    <!-- 🌀 VISUALIZE VIEW WRAPPER (THE RINGS ENGINE) -->
+    <!-- 🌀 VISUALIZE VIEW WRAPPER (FRACTIONAL RINGS ENGINE) -->
     <div id="visualize-view" class="hidden w-full pb-10">
       <div id="tour-target-visualize" class="surface-card p-5 mt-2 flex flex-col items-center">
-        <h3 class="text-sm font-bold text-white mb-1">Activity Rings</h3>
-        <p class="text-[10px] text-gray-400 mb-8 uppercase tracking-widest">Execute and Seal</p>
+        <h3 class="text-sm font-bold text-white mb-1">Matrix Duration Rings</h3>
+        <p class="text-[10px] text-gray-400 mb-8 uppercase tracking-widest text-center">Fills relative to total duration.<br>Broken streaks glow red.</p>
 
         <div class="relative w-full max-w-[320px] aspect-square flex items-center justify-center">
           <svg id="rings-svg" class="absolute inset-0 w-full h-full drop-shadow-[0_0_15px_rgba(0,0,0,0.5)]" viewBox="0 0 300 300"></svg>
           
+          <!-- MASTER SEAL BUTTON -->
           <button id="seal-btn" class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-24 h-24 rounded-full bg-black/90 border border-white/10 flex flex-col items-center justify-center shadow-[0_0_30px_rgba(0,0,0,0.8)] transition-all select-none focus:outline-none">
              <span class="text-[10px] font-black tracking-widest text-gray-400 uppercase leading-tight text-center" id="seal-text">Hold To<br>Seal</span>
           </button>
         </div>
         
-        <p class="text-[9px] text-gray-500 font-bold uppercase tracking-widest mt-8 text-center px-4 leading-relaxed">Rings auto-seal at midnight. Manual seals require 100% completion.</p>
+        <p class="text-[9px] text-gray-500 font-bold uppercase tracking-widest mt-8 text-center px-4 leading-relaxed">Rings auto-seal at midnight. Manual seals require 100% daily completion.</p>
       </div>
     </div>
 
     <!-- 👤 PROFILE VIEW WRAPPER -->
     <div id="profile-view" class="hidden w-full pb-10">
       <div class="surface-card p-6 mt-2 relative overflow-hidden flex flex-col items-center text-center">
-        <!-- Avatar -->
         <div class="w-20 h-20 rounded-full bg-gradient-to-tr from-[var(--accent-purple)] to-[var(--accent-mint)] p-1 shadow-[0_0_20px_rgba(0,229,155,0.3)] mb-4">
           <div class="w-full h-full rounded-full bg-black flex items-center justify-center text-3xl font-black text-white" id="profile-avatar">👤</div>
         </div>
@@ -243,7 +239,6 @@
         <h2 class="text-xl font-black text-white tracking-wide" id="profile-name-full">User</h2>
         <p class="text-[10px] font-bold tracking-widest uppercase mb-8 transition-colors duration-300" id="profile-rank" style="color: var(--accent-purple);">Initiate</p>
         
-        <!-- Stats Grid -->
         <div class="w-full grid grid-cols-2 gap-4 mb-8">
           <div class="bg-black/40 border border-white/5 rounded-xl p-4 flex flex-col items-center justify-center">
              <span class="text-2xl mb-1">🏆</span>
@@ -257,7 +252,6 @@
           </div>
         </div>
 
-        <!-- Secure Logout Button -->
         <button id="profile-logout-btn" class="w-full py-4 rounded-xl font-bold text-red-500 bg-red-500/10 border border-red-500/20 uppercase tracking-widest text-xs hover:bg-red-500/20 active:scale-95 transition-all">
           Secure Log Out
         </button>
@@ -283,7 +277,7 @@
             </div>
             <div class="bg-black/40 p-4 rounded-xl border border-[var(--accent-mint)]/20 shadow-[0_0_10px_rgba(0,229,155,0.05)]">
               <h4 class="text-xs font-bold text-[var(--accent-mint)] mb-1 tracking-wider uppercase">2. Symmetrical Warfare</h4>
-              <p class="text-[10px] text-gray-400 leading-relaxed">Both challengers must possess the <span class="font-bold text-white">exact same number of tasks</span> and the <span class="font-bold text-white">exact same operational duration</span>. Mismatched invites are automatically rejected.</p>
+              <p class="text-[10px] text-gray-400 leading-relaxed">Both challengers must possess the <span class="font-bold text-white">exact same number of tasks</span> and the <span class="font-bold text-white">exact same duration</span>. Mismatched invites are actively rejected.</p>
             </div>
             <div class="bg-red-500/10 p-4 rounded-xl border border-red-500/30">
               <h4 class="text-xs font-bold text-red-500 mb-1 tracking-wider uppercase">3. Desertion Penalty</h4>
@@ -364,7 +358,7 @@
           <div class="border-t border-white/10 pt-6 relative z-10">
             <h4 class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-4">Your Matrices</h4>
             <div id="dual-tasks-list" class="space-y-2">
-              <!-- Injected by JS to match dashboard -->
+              <!-- Injected by JS -->
             </div>
           </div>
           
@@ -384,20 +378,10 @@
   <!-- Bottom Navigation Bar -->
   <nav class="nav-bar fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[420px] z-50 rounded-t-3xl">
     <div class="flex justify-around items-center px-6 py-4 max-w-[420px] mx-auto">
-      <div id="nav-btn-dash" class="nav-item text-[var(--accent-mint)] scale-110 drop-shadow-[0_0_10px_rgba(0,229,155,0.5)] transition-all bg-white/10 p-3 rounded-full border border-white/5 shadow-inner" onclick="switchTab('dash')">
-        🏠
-      </div>
-      <div id="nav-btn-vis" class="nav-item transition-all" onclick="switchTab('vis')">
-        🌀
-      </div>
-      <!-- PROFILE TAB -->
-      <div id="nav-btn-prof" class="nav-item transition-all" onclick="switchTab('prof')">
-        👤
-      </div>
-      <!-- COMMUNITY TAB -->
-      <div id="nav-btn-comm" class="nav-item transition-all" onclick="switchTab('comm')">
-        🌍
-      </div>
+      <div id="nav-btn-dash" class="nav-item text-[var(--accent-mint)] scale-110 drop-shadow-[0_0_10px_rgba(0,229,155,0.5)] transition-all bg-white/10 p-3 rounded-full border border-white/5 shadow-inner" onclick="switchTab('dash')">🏠</div>
+      <div id="nav-btn-vis" class="nav-item transition-all" onclick="switchTab('vis')">🌀</div>
+      <div id="nav-btn-prof" class="nav-item transition-all" onclick="switchTab('prof')">👤</div>
+      <div id="nav-btn-comm" class="nav-item transition-all" onclick="switchTab('comm')">🌍</div>
     </div>
   </nav>
 
@@ -405,11 +389,12 @@
     /* --- SYSTEM STATE VARIABLES --- */
     window.isTourRunning = false; 
     window.currentDayIndex = 0;
-    window.totalTasks = 4; // Dynamically overwritten by Firebase/DOM
+    window.totalTasks = 4; // Dynamically overwritten by Firebase
     window.taskDuration = 7;
     
     window.appSetupDate = null;
     window.completionTimestamps = {}; 
+    window.taskHistory = {}; // Core Engine for Individual Task Tracking
     window.challengerUid = null; 
     
     // XP & SEAL STATE
@@ -527,7 +512,27 @@
         }
     }
 
-    /* --- PERFECT SYNCHRONIZED SPEEDOMETER & XP MATH --- */
+    /* --- INDIVIDUAL TASK STREAK MATH --- */
+    window.getTaskStreakInfo = function(taskId, isCheckedToday) {
+        let history = window.taskHistory[taskId] || [];
+        let historicalStreak = 0;
+        
+        for (let i = history.length - 1; i >= 0; i--) {
+            if (history[i] === true) historicalStreak++;
+            else break;
+        }
+        
+        let displayStreak = historicalStreak + (isCheckedToday ? 1 : 0);
+        let isRed = (historicalStreak === 0 && !isCheckedToday);
+        
+        if (history.length === 0 && !isCheckedToday) {
+            isRed = false; // Give grace on Day 1
+        }
+        
+        return { streak: displayStreak, isRed: isRed };
+    }
+
+    /* --- PERFECT SYNCHRONIZED DASHBOARD LOGIC --- */
     const circle = document.getElementById('speedometer');
     const radius = circle.r.baseVal.value;
     const circumference = radius * 2 * Math.PI; 
@@ -556,7 +561,7 @@
       const dXp = document.getElementById('dual-xp-you');
       if(dXp) dXp.innerText = `${liveXP} XP`;
       
-      // Update Main Dashboard Ring
+      // Update Main Dashboard Daily Ring
       circle.style.strokeDashoffset = offset;
       document.getElementById('task-percent').innerText = percent + '%';
 
@@ -569,6 +574,23 @@
           const todayCircle = document.getElementById('day-circle-0');
           if (todayCircle) todayCircle.className = 'w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold bg-white/10 border border-white/20 text-white shadow-inner transition-all duration-500';
       }
+
+      // UPDATE INDIVIDUAL TASK STREAK UI
+      checkboxes.forEach((box) => {
+          let taskId = parseInt(box.dataset.taskId);
+          let info = window.getTaskStreakInfo(taskId, box.checked);
+          
+          let streakUi = document.getElementById(`task-streak-ui-${taskId}`);
+          if(streakUi) {
+              if (info.isRed) {
+                  streakUi.classList.replace('text-orange-500', 'text-red-500');
+                  streakUi.innerHTML = `❌ <span id="task-streak-val-${taskId}">0</span>`;
+              } else {
+                  streakUi.classList.replace('text-red-500', 'text-orange-500');
+                  streakUi.innerHTML = `🔥 <span id="task-streak-val-${taskId}">${info.streak}</span>`;
+              }
+          }
+      });
 
       // SEAL UN-DO LOGIC: If they uncheck a box after sealing, break the seal securely.
       if (completedCount < total && window.isSealedToday) {
@@ -663,7 +685,7 @@
         }
     };
 
-    /* --- 🌀 FLAWLESS SVG VISUALIZE ENGINE --- */
+    /* --- 🌀 FRACTIONAL SVG VISUALIZE ENGINE --- */
     window.renderVisualizeRings = function() {
         const svg = document.getElementById('rings-svg');
         const tasks = Array.from(document.querySelectorAll('.task-row'));
@@ -678,27 +700,34 @@
           </defs>
         `;
         
-        const colors = ['#00E59B', '#9D4EDD', '#3B82F6', '#F43F5E', '#EAB308', '#A855F7', '#14B8A6', '#F97316', '#EC4899', '#8B5CF6'];
-        
+        const colors = ['#00E59B', '#9D4EDD', '#3B82F6', '#EAB308', '#A855F7', '#14B8A6', '#F97316', '#EC4899'];
         const maxR = 140;
         const minR = 60;
         const gap = total > 1 ? (maxR - minR) / Math.max(1, total - 1) : 0;
         
         tasks.forEach((taskRow, i) => {
+            const taskId = i + 1;
             const isChecked = taskRow.querySelector('.logic-check').checked;
             const name = taskRow.querySelector('h4').innerText.toUpperCase();
             
+            // Fractional Logic
+            const historyData = window.taskHistory[taskId] || [];
+            const completedDays = historyData.filter(v => v).length + (isChecked ? 1 : 0);
+            const progressPercent = Math.min(1, completedDays / window.taskDuration);
+            
+            const info = window.getTaskStreakInfo(taskId, isChecked);
+            const strokeColor = info.isRed ? '#EF4444' : colors[i % colors.length];
+
             const r = total > 1 ? maxR - (i * gap) : 100;
-            const color = colors[i % colors.length];
             const circumference = 2 * Math.PI * r;
-            const offset = isChecked ? 0 : circumference;
+            const offset = circumference - (progressPercent * circumference);
             
             const pathD = `M 150 ${150 - r} A ${r} ${r} 0 1 1 149.9 ${150 - r}`;
             
             html += `
               <path d="${pathD}" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="8" stroke-linecap="round" />
-              <path id="ring-path-${i}" d="${pathD}" fill="none" stroke="${color}" stroke-width="8" stroke-linecap="round" 
-                    stroke-dasharray="${circumference}" stroke-dashoffset="${offset}" class="vis-ring-path drop-shadow-[0_0_8px_${color}80]" />
+              <path id="ring-path-${i}" d="${pathD}" fill="none" stroke="${strokeColor}" stroke-width="8" stroke-linecap="round" 
+                    stroke-dasharray="${circumference}" stroke-dashoffset="${offset}" class="vis-ring-path drop-shadow-[0_0_8px_${strokeColor}80]" />
               <text fill="rgba(255,255,255,0.7)" font-size="8" font-weight="900" letter-spacing="1">
                  <textPath href="#ring-path-${i}" startOffset="3%" dominant-baseline="middle" alignment-baseline="middle">
                     ${name}
@@ -745,7 +774,7 @@
 
     function startHold(e) {
        e.preventDefault();
-       if(window.isSealedToday) return; // Prevent re-triggering
+       if(window.isSealedToday) return; 
 
        const checkboxes = document.querySelectorAll('.logic-check');
        const totalRendered = checkboxes.length || 1;
@@ -811,7 +840,6 @@
         const container = document.getElementById('invite-link-container');
         
         if(window.currentUserUid) {
-            // Point the link to the root directory so it handles auth cleanly
             const baseUrl = window.location.origin + window.location.pathname.replace(/[^/]*$/, '');
             const link = baseUrl + '?challenge=' + window.currentUserUid;
             linkInput.value = link;
@@ -833,12 +861,10 @@
         const tasksList = document.getElementById('dual-tasks-list');
 
         if(window.challengerUid) {
-            // Challenge Active! Bypass Rules and Invite entirely.
             stateRules.classList.add('hidden');
             stateInvite.classList.add('hidden');
             stateActive.classList.remove('hidden');
 
-            // Render User's Own Tasks beneath the rings
             const checkboxes = document.querySelectorAll('.logic-check');
             let tasksHtml = '';
             document.querySelectorAll('.task-row').forEach((row, i) => {
@@ -862,7 +888,6 @@
             window.updateTotalProgress();
 
         } else {
-            // No Challenge Active -> Show Rules first
             stateActive.classList.add('hidden');
             if (window.commRulesAccepted) {
                 stateRules.classList.add('hidden');
@@ -892,8 +917,8 @@
     }
     const tourSteps = {
       1: { elementId: "tour-speedo-card", text: "Welcome to your locked matrix. Everything here is strict. No edits or swaps allowed." },
-      2: { elementId: "tour-target-base", text: "Complete habits to earn +100XP. Missing one drops -50XP. Missed days reset your streak." },
-      3: { elementId: "nav-btn-vis", text: "Tap Visualize to watch your live rings. Hold the center button to seal your day." },
+      2: { elementId: "tour-target-base", text: "Complete habits to earn +100XP. Missing one drops -50XP. Missed days reset your streaks and turn your matrix red." },
+      3: { elementId: "nav-btn-vis", text: "Tap Visualize to watch your fractional duration rings. Hold the center button to seal your day." },
       4: { elementId: "nav-btn-comm", text: "Duel a friend here. You must have identical matrices to link up." }
     };
     function executeTourStep(step) {
@@ -976,9 +1001,14 @@
       window.completionTimestamps = data.completionTimestamps || {};
       window.challengerUid = data.challengerUid || null; 
       
-      // Initialize Base XP explicitly from Firebase
       window.baseXP = data.totalXP || 0; 
       window.isSealedToday = data.isSealedToday || false;
+
+      // INITIALIZE TASK HISTORY ENGINE
+      window.taskHistory = data.taskHistory || {};
+      for(let i=1; i<=window.totalTasks; i++) {
+          if(!window.taskHistory[i]) window.taskHistory[i] = [];
+      }
 
       // --- URL CHALLENGE / DEEP LINK INTERCEPTOR ---
       let incomingChallengeUid = new URLSearchParams(window.location.search).get('challenge');
@@ -994,7 +1024,6 @@
                  const cTotal = cData.baseMatrix ? cData.baseMatrix.length : (cData.totalHabits || 4);
                  const cDur = cData.duration || 7;
 
-                 // Symmetrical Check
                  if (window.totalTasks === cTotal && window.taskDuration === cDur) {
                      const confirmJoin = confirm("Someone challenged you to an accountability duel! Match parameters validated. Link profiles?");
                      if(confirmJoin) {
@@ -1011,7 +1040,6 @@
          } catch(e) {
              console.warn("Could not sync duel. Check Firebase Rules.");
          }
-         // Clean up memory and URL
          localStorage.removeItem('pendingChallenge');
          window.history.replaceState({}, document.title, window.location.pathname);
          window.location.reload();
@@ -1022,12 +1050,11 @@
       document.getElementById('task-count-header').innerText = `${window.totalTasks} TASKS`;
       document.getElementById('tour-txt-days').innerText = `${window.taskDuration} DAYS`;
       
-      // Render initial XP to UI before checkboxes load
       document.getElementById('global-xp-display').innerText = `${window.baseXP} XP`;
       document.getElementById('profile-xp').innerText = window.baseXP;
       window.updateProfileRank(window.baseXP);
 
-      // DYNAMIC RENDERING OF DASHBOARD TASKS WITH XP BADGES
+      // DYNAMIC RENDERING OF DASHBOARD TASKS
       if (data.baseMatrix) {
           let taskHtml = '';
           data.baseMatrix.forEach((task, index) => {
@@ -1040,15 +1067,22 @@
                 </label>
                 <div class="flex-1">
                   <h4 class="text-sm font-bold text-white mb-0.5" id="task-name-${i}">${task.name}</h4>
-                  <div class="flex items-center gap-3">
+                  
+                  <div class="flex items-center gap-3 mt-1">
                      <p class="text-[10px] text-gray-500 font-medium flex items-center gap-1">
                        <span class="text-[var(--accent-purple)]">🔒 Locked</span> • <span id="task-time-${i}">${task.time}</span>
                      </p>
-                     <p class="text-[8.5px] font-black tracking-widest flex items-center gap-1.5 opacity-90">
+                     
+                     <p class="text-[10px] font-bold text-orange-500 flex items-center gap-1 transition-all" id="task-streak-ui-${i}">
+                       🔥 <span id="task-streak-val-${i}">0</span>
+                     </p>
+
+                     <p class="text-[8.5px] font-black tracking-widest flex items-center gap-1.5 opacity-90 ml-auto">
                        <span class="text-[var(--accent-mint)]">+100XP</span>
                        <span class="text-red-500">-50XP</span>
                      </p>
                   </div>
+
                   <p class="text-[10px] text-red-500 font-bold mt-0.5 tracking-wider hidden" id="task-countdown-${i}"></p>
                 </div>
                 <div class="text-2xl opacity-70" id="task-emoji-${i}">${task.emoji}</div>
@@ -1075,54 +1109,59 @@
 
       const diffTime = currentMidnight - setupMidnight;
       const daysPassed = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+      
+      // Cap at taskDuration
       window.currentDayIndex = Math.min(Math.max(daysPassed, 0), window.taskDuration - 1); 
 
       document.getElementById('day-badge').innerText = `DAY ${window.currentDayIndex + 1}`;
       document.getElementById('profile-streak').innerText = `Day ${window.currentDayIndex + 1} / ${window.taskDuration}`;
 
       let lastActiveDay = data.lastActiveDay || 0;
-      let dailyHistory = data.dailyHistory || [];
-      let checkedTasks = data.checkedTasks || [];
+      let checkedTasks = data.checkedTasks || []; // Stores DOM indices (0-based)
 
-      // Midnight Rollover & XP Calculation
+      // 🌙 MIDNIGHT ROLLOVER & XP DEDUCTION ALGORITHM
       if (window.currentDayIndex > lastActiveDay) {
-        let percent = Math.round((checkedTasks.length / window.totalTasks) * 100);
+        let earnedXP = 0;
+        let daysToFill = window.currentDayIndex - lastActiveDay;
         
-        // XP MATH: +100 for completed, -50 for missed
-        let earnedXP = (checkedTasks.length * 100) - ((window.totalTasks - checkedTasks.length) * 50);
-        let newTotalXP = window.baseXP + earnedXP;
-        
-        if (percent < 100) {
-          // HARSH RESET (Preserves XP!)
-          await updateDoc(userDocRef, {
-            setupDate: serverTimestamp(),
-            dailyHistory: [], 
-            checkedTasks: [], 
-            completionTimestamps: {},
-            lastActiveDay: 0,
-            isSealedToday: false, // Reset seal
-            totalXP: newTotalXP // Log the point deduction before reset
-          });
-          window.location.reload();
-          return; 
-        } else {
-          // SUCCESS
-          dailyHistory[lastActiveDay] = percent; 
-          checkedTasks = []; 
-          window.completionTimestamps = {};
-          lastActiveDay = window.currentDayIndex;
-
-          await updateDoc(userDocRef, {
-            dailyHistory: dailyHistory,
-            checkedTasks: checkedTasks,
-            completionTimestamps: window.completionTimestamps,
-            lastActiveDay: lastActiveDay,
-            isSealedToday: false, // Reset seal
-            totalXP: newTotalXP
-          });
-          window.baseXP = newTotalXP;
-          window.isSealedToday = false;
+        // Loop through the missed days
+        for(let d = 1; d <= daysToFill; d++) {
+            let processingDay = lastActiveDay + d;
+            let isYesterday = (processingDay === window.currentDayIndex);
+            
+            for(let i=1; i<=window.totalTasks; i++) {
+                let wasChecked = false;
+                if(isYesterday) {
+                    wasChecked = checkedTasks.includes(i - 1);
+                } else {
+                    wasChecked = false; // Punish gap days where they didn't even open the app
+                }
+                
+                window.taskHistory[i].push(wasChecked);
+                if(wasChecked) earnedXP += 100;
+                else earnedXP -= 50;
+            }
         }
+
+        let newTotalXP = window.baseXP + earnedXP;
+
+        // Reset the trackers
+        checkedTasks = []; 
+        window.completionTimestamps = {};
+        lastActiveDay = window.currentDayIndex;
+        window.isSealedToday = false;
+
+        // Note: No "Harsh Reset" wipe here anymore! We keep the setupDate and taskHistory perfectly intact!
+        await updateDoc(userDocRef, {
+          checkedTasks: checkedTasks,
+          completionTimestamps: window.completionTimestamps,
+          lastActiveDay: lastActiveDay,
+          isSealedToday: false,
+          taskHistory: window.taskHistory,
+          totalXP: newTotalXP
+        });
+        
+        window.baseXP = newTotalXP;
       }
 
       // Restore Checkboxes securely
@@ -1140,11 +1179,9 @@
           window.updateTotalProgress();
         }, 300);
       } else {
-        // If 0 checked tasks, just update UI with base XP
         window.updateTotalProgress();
       }
 
-      // Restore Seal State if sealed earlier today
       if(window.isSealedToday) {
           setTimeout(() => { window.renderSealStateUI(); }, 350);
       }
@@ -1154,13 +1191,11 @@
       
       if (window.startLiveClocks) window.startLiveClocks();
 
-      // Check if we should auto-open Community Tab (after accepting a deep link)
       if (localStorage.getItem('openCommunity') === 'true') {
           localStorage.removeItem('openCommunity');
           setTimeout(() => { window.switchTab('comm'); }, 600);
       }
 
-      // Trigger tour if fresh
       if (!data.tourCompleted) {
         setTimeout(window.startVirtualTour, 500);
         await updateDoc(userDocRef, { tourCompleted: true });
@@ -1179,7 +1214,6 @@
        }
     };
 
-    // --- SAVE SEAL STATE TO FIREBASE ---
     window.saveSealStateToFirebase = async function(isSealed) {
         const user = auth.currentUser;
         if(user) {
@@ -1188,7 +1222,6 @@
         }
     };
 
-    // --- FETCH CHALLENGER PROGRESS & XP ---
     window.fetchChallengerProgress = async function() {
         if(!window.challengerUid) return;
         
@@ -1199,7 +1232,6 @@
             if(cSnap.exists()) {
                 const cData = cSnap.data();
 
-                // Security Check: Did they quit?
                 if(cData.challengerUid !== window.currentUserUid) {
                     window.challengerUid = null;
                     await updateDoc(doc(db, "users", window.currentUserUid), { challengerUid: null });
@@ -1211,7 +1243,6 @@
                 const cTotal = cData.baseMatrix ? cData.baseMatrix.length : (cData.totalHabits || 1);
                 const cCompleted = cData.checkedTasks ? cData.checkedTasks.length : 0;
                 
-                // Challenger Live XP calculation
                 const cBaseXp = cData.totalXP || 0;
                 const cLiveXp = cBaseXp + (cCompleted * 100);
                 
@@ -1227,7 +1258,6 @@
                     dualCircle.style.strokeDashoffset = circ - (cPercent / 100) * circ;
                 }
                 
-                // Keep own XP updated in duel view
                 const myCompleted = document.querySelectorAll('.logic-check:checked').length;
                 const myLiveXp = window.baseXP + (myCompleted * 100);
                 document.getElementById('dual-xp-you').innerText = `${myLiveXp} XP`;
@@ -1237,29 +1267,25 @@
         }
     };
 
-    // --- QUIT CHALLENGE FIREBASE HOOK ---
     window.executeQuitFirebase = async function() {
         const user = auth.currentUser;
         if(user) {
-            // Apply Penalty Instantly to Base
             window.baseXP -= 500;
-            window.updateTotalProgress(); // Refreshes the UI instantly
+            window.updateTotalProgress(); 
             
             try {
-                // Update self: clear challenger, save penalized XP
                 await updateDoc(doc(db, "users", user.uid), { 
                     challengerUid: null,
                     totalXP: window.baseXP
                 });
                 
-                // Attempt to update challenger if rules permit
                 if(window.challengerUid) {
                     await updateDoc(doc(db, "users", window.challengerUid), { challengerUid: null });
                 }
                 
                 window.challengerUid = null;
                 alert("Challenge Terminated. 500 XP deducted.");
-                window.renderCommunityView(); // Reset UI
+                window.renderCommunityView();
             } catch(e) {
                 console.error("Quit error:", e);
                 alert("Error quitting challenge.");
