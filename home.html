@@ -274,7 +274,7 @@
       <div id="nav-btn-dash" class="nav-item text-[var(--accent-mint)] scale-110 drop-shadow-[0_0_10px_rgba(0,229,155,0.5)] transition-all bg-white/10 p-3 rounded-full border border-white/5 shadow-inner" onclick="switchTab('dash')" onmousedown="showTooltip('tt-dash')" onmouseup="hideTooltip('tt-dash')" ontouchstart="showTooltip('tt-dash')" ontouchend="hideTooltip('tt-dash')">
         <div id="tt-dash" class="nav-tooltip" style="top: -55px;">DASHBOARD</div>🏠
       </div>
-      <!-- NEW VISUALIZE TAB -->
+      <!-- VISUALIZE TAB -->
       <div id="nav-btn-vis" class="nav-item transition-all" onclick="switchTab('vis')" onmousedown="showTooltip('tt-vis')" onmouseup="hideTooltip('tt-vis')" ontouchstart="showTooltip('tt-vis')" ontouchend="hideTooltip('tt-vis')">
         <div id="tt-vis" class="nav-tooltip">VISUALIZE</div>🌀
       </div>
@@ -294,7 +294,7 @@
     /* --- SYSTEM STATE VARIABLES --- */
     window.isTourRunning = false; 
     window.currentDayIndex = 0;
-    window.totalTasks = 4;
+    window.totalTasks = 4; // Will be dynamically overwritten by Firebase/DOM
     window.taskDuration = 7;
     
     // Graph/Time Databases mapped to Firebase
@@ -359,7 +359,6 @@
     window.startLiveClocks = function() {
         setInterval(() => {
             let nowIST = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"}));
-            
             let timeString = nowIST.toLocaleTimeString('en-US', { hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' });
             const clockEl = document.getElementById('live-ist-clock');
             if(clockEl) clockEl.innerText = timeString;
@@ -383,7 +382,6 @@
                     targetIST.setHours(parseInt(parts[0]), parseInt(parts[1]), 0, 0);
 
                     let diff = targetIST - nowIST;
-                    
                     if (diff > 0 && diff < 86400000) { 
                         let h = Math.floor(diff / 3600000);
                         let m = Math.floor((diff % 3600000) / 60000);
@@ -402,7 +400,7 @@
         }, 1000);
     }
 
-    /* --- SPEEDOMETER MATH --- */
+    /* --- PERFECT SYNCHRONIZED SPEEDOMETER MATH --- */
     const circle = document.getElementById('speedometer');
     const radius = circle.r.baseVal.value;
     const circumference = radius * 2 * Math.PI; 
@@ -410,13 +408,18 @@
     circle.style.strokeDashoffset = circumference;
 
     window.updateTotalProgress = function() { 
+      // Strictly calculate based on actual rendered DOM elements
+      const checkboxes = document.querySelectorAll('.logic-check');
+      const total = checkboxes.length || 1; // Prevent div by zero
       const completedCount = document.querySelectorAll('.logic-check:checked').length;
-      const percent = Math.round((completedCount / window.totalTasks) * 100); 
+      
+      const percent = Math.round((completedCount / total) * 100); 
       const offset = circumference - (percent / 100) * circumference;
+      
       circle.style.strokeDashoffset = offset;
       document.getElementById('task-percent').innerText = percent + '%';
 
-      if (completedCount === window.totalTasks) {
+      if (completedCount === total && total > 0) {
           circle.classList.add('drop-shadow-[0_0_10px_rgba(0,229,155,0.8)]');
           const todayCircle = document.getElementById('day-circle-0');
           if (todayCircle) todayCircle.className = 'w-8 h-8 rounded-full flex items-center justify-center text-xs font-extrabold bg-[var(--accent-mint)] text-black border border-[var(--accent-mint)] shadow-[0_0_15px_rgba(0,229,155,0.5)] transition-all duration-500';
@@ -426,11 +429,44 @@
           if (todayCircle) todayCircle.className = 'w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold bg-white/10 border border-white/20 text-white shadow-inner transition-all duration-500';
       }
       
-      // Update Rings if Visualize tab is open
+      // Live update rings if the visualization tab is active
       if (!document.getElementById('visualize-view').classList.contains('hidden')) {
          window.renderVisualizeRings();
       }
     }
+
+    // Attach listeners function (called after Firebase injects the tasks)
+    window.attachCheckboxListeners = function() {
+        document.querySelectorAll('.logic-check').forEach((box) => {
+          box.addEventListener('change', (e) => {
+            const row = e.target.closest('.task-row');
+            const taskIdStr = row.querySelector('h4').id; 
+            const taskId = parseInt(taskIdStr.split('-')[2]); 
+
+            let nowIST = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"}));
+            let timeStr = nowIST.getHours().toString().padStart(2, '0') + ':' + nowIST.getMinutes().toString().padStart(2, '0');
+
+            if(box.checked) {
+              row.classList.add('opacity-50', 'border-[var(--accent-mint)]/30');
+              row.querySelector('h4').classList.add('line-through', 'text-gray-400');
+              window.completionTimestamps[taskId] = timeStr; 
+            } else {
+              row.classList.remove('opacity-50', 'border-[var(--accent-mint)]/30');
+              row.querySelector('h4').classList.remove('line-through', 'text-gray-400');
+              delete window.completionTimestamps[taskId];
+            }
+
+            window.updateTotalProgress();
+
+            if(window.syncCheckboxesToDatabase) {
+               let checkedIndexes = [];
+               document.querySelectorAll('.logic-check').forEach((b, i) => { if(b.checked) checkedIndexes.push(i); });
+               window.syncCheckboxesToDatabase(checkedIndexes, window.completionTimestamps);
+            }
+          });
+        });
+        window.updateTotalProgress();
+    };
 
     /* --- NAV BAR TOGGLES --- */
     document.querySelectorAll('.nav-item').forEach(item => { item.addEventListener('contextmenu', e => e.preventDefault()); });
@@ -470,7 +506,7 @@
     window.renderVisualizeRings = function() {
         const svg = document.getElementById('rings-svg');
         const tasks = Array.from(document.querySelectorAll('.task-row'));
-        const total = tasks.length;
+        const total = tasks.length || 1;
         
         let html = `
           <defs>
@@ -481,10 +517,9 @@
           </defs>
         `;
         
-        // Vibrant Ring Colors
         const colors = ['#00E59B', '#9D4EDD', '#3B82F6', '#F43F5E', '#EAB308', '#A855F7', '#14B8A6', '#F97316', '#EC4899', '#8B5CF6'];
         
-        // Scalable Geometry (Center is 150,150. Max radius 140. Min radius 60 for center button)
+        // Dynamically scale rings based on exact number of tasks
         const maxR = 140;
         const minR = 60;
         const gap = total > 1 ? (maxR - minR) / Math.max(1, total - 1) : 0;
@@ -498,18 +533,12 @@
             const circumference = 2 * Math.PI * r;
             const offset = isChecked ? 0 : circumference;
             
-            // Path logic: Starts top-center and goes clockwise
             const pathD = `M 150 ${150 - r} A ${r} ${r} 0 1 1 149.9 ${150 - r}`;
             
             html += `
-              <!-- Faint Background Track -->
               <path d="${pathD}" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="8" stroke-linecap="round" />
-              
-              <!-- Live Progress Track -->
               <path id="ring-path-${i}" d="${pathD}" fill="none" stroke="${color}" stroke-width="8" stroke-linecap="round" 
                     stroke-dasharray="${circumference}" stroke-dashoffset="${offset}" class="vis-ring-path drop-shadow-[0_0_8px_${color}80]" />
-              
-              <!-- Curved Typography -->
               <text fill="rgba(255,255,255,0.7)" font-size="8" font-weight="900" letter-spacing="1">
                  <textPath href="#ring-path-${i}" startOffset="3%" dominant-baseline="middle" alignment-baseline="middle">
                     ${name}
@@ -518,26 +547,28 @@
             `;
         });
         
-        // Add the invisible interaction seal path
+        // Seal Progress Track
         html += `
           <path id="seal-progress-path" d="M 150 102 A 48 48 0 1 1 149.9 102" fill="none" stroke="url(#sealGrad)" stroke-width="4" stroke-linecap="round" stroke-dasharray="301" stroke-dashoffset="301" style="transition: stroke-dashoffset 0.1s linear;" />
         `;
-        
         svg.innerHTML = html;
     };
 
-    /* --- HOLD-TO-SEAL MECHANIC --- */
+    /* --- HOLD-TO-SEAL SYNCHRONIZED VALIDATION MECHANIC --- */
     const sealBtn = document.getElementById('seal-btn');
     const sealText = document.getElementById('seal-text');
     let holdTimer;
-    let holdProgress = 0; // 0 to 100
+    let holdProgress = 0; 
     
     function startHold(e) {
        e.preventDefault();
-       // Check Rules
+       // Safe Validation: Check exact rendered DOM tasks, not a hardcoded variable
+       const checkboxes = document.querySelectorAll('.logic-check');
+       const totalRendered = checkboxes.length || 1;
        const completed = document.querySelectorAll('.logic-check:checked').length;
-       if(completed < window.totalTasks) {
-           // Reject!
+       
+       if(completed < totalRendered) {
+           // Rejected! Tasks are missing.
            sealBtn.classList.add('animate-shake', 'border-red-500');
            sealText.innerHTML = "FINISH<br>TASKS";
            sealText.classList.replace('text-gray-400', 'text-red-500');
@@ -549,12 +580,11 @@
            return;
        }
        
-       // Start Filling
+       // Success! Start Animation
        holdTimer = setInterval(() => {
-           holdProgress += 4; // Fills in ~1.25 seconds
+           holdProgress += 4; 
            const path = document.getElementById('seal-progress-path');
            if (path) {
-               // Path circumference is ~301
                const offset = 301 - (holdProgress / 100 * 301);
                path.style.strokeDashoffset = offset;
            }
@@ -579,7 +609,7 @@
        sealText.innerHTML = "SEALED<br>✓";
        sealText.className = "text-[12px] font-black tracking-widest text-[var(--accent-mint)] uppercase";
        sealBtn.classList.add('shadow-[0_0_50px_rgba(0,229,155,0.6)]', 'border-[var(--accent-mint)]');
-       // In a full app, this would trigger an immediate Firebase log to archive the day immediately instead of waiting for midnight.
+       // Real app triggers Firebase here!
        alert("Day Sealed Successfully. Consistency maintained.");
     }
     
@@ -790,8 +820,10 @@
       if (userDoc.exists()) {
         const data = userDoc.data();
 
-        window.totalTasks = data.totalHabits || 4;
+        // Dynamically set window total based on actual stored array
+        window.totalTasks = data.baseMatrix ? data.baseMatrix.length : (data.totalHabits || 4);
         window.taskDuration = data.duration || 7;
+        
         window.appSetupDate = data.setupDate ? data.setupDate.toDate() : new Date();
         window.completionTimestamps = data.completionTimestamps || {};
         window.dailyTimestampsHistory = data.dailyTimestampsHistory || [];
@@ -800,7 +832,7 @@
         document.getElementById('task-count-header').innerText = `${window.totalTasks} TASKS`;
         document.getElementById('tour-txt-days').innerText = `${window.taskDuration} DAYS`;
 
-        // DYNAMIC RENDERING OF DASHBOARD TASKS (No Expansions, No Edits)
+        // DYNAMIC RENDERING OF DASHBOARD TASKS
         if (data.baseMatrix) {
             let taskHtml = '';
             data.baseMatrix.forEach((task, index) => {
@@ -822,34 +854,7 @@
                 </div>`;
             });
             document.getElementById('daily-tasks').innerHTML = taskHtml;
-
-            // Rebind Listeners to newly injected checkboxes
-            document.querySelectorAll('.logic-check').forEach((box) => {
-                box.addEventListener('change', (e) => {
-                    window.updateTotalProgress();
-                    const row = e.target.closest('.task-row');
-                    const taskId = parseInt(row.querySelector('h4').id.split('-')[2]); 
-
-                    let nowIST = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"}));
-                    let timeStr = nowIST.getHours().toString().padStart(2, '0') + ':' + nowIST.getMinutes().toString().padStart(2, '0');
-
-                    if(box.checked) {
-                        row.classList.add('opacity-50', 'border-[var(--accent-mint)]/30');
-                        row.querySelector('h4').classList.add('line-through', 'text-gray-400');
-                        window.completionTimestamps[taskId] = timeStr; 
-                    } else {
-                        row.classList.remove('opacity-50', 'border-[var(--accent-mint)]/30');
-                        row.querySelector('h4').classList.remove('line-through', 'text-gray-400');
-                        delete window.completionTimestamps[taskId];
-                    }
-
-                    if(window.syncCheckboxesToDatabase) {
-                       let checkedIndexes = [];
-                       document.querySelectorAll('.logic-check').forEach((b, i) => { if(b.checked) checkedIndexes.push(i); });
-                       window.syncCheckboxesToDatabase(checkedIndexes, window.completionTimestamps);
-                    }
-                });
-            });
+            window.attachCheckboxListeners();
         }
 
         let currentISTDate = new Date();
@@ -879,7 +884,7 @@
         let dailyHistory = data.dailyHistory || [];
         let checkedTasks = data.checkedTasks || [];
 
-        // Perform Midnight Auto-Seal Rollover & Harsh Reset Check
+        // Midnight Rollover & Harsh Reset Check
         if (window.currentDayIndex > lastActiveDay) {
           let percent = Math.round((checkedTasks.length / window.totalTasks) * 100);
           
@@ -897,7 +902,7 @@
             window.location.reload();
             return; 
           } else {
-            // SUCCESS: 100%. Archive day. Auto-sealed at midnight.
+            // SUCCESS: 100%. Archive day.
             dailyHistory[lastActiveDay] = percent; 
             window.dailyTimestampsHistory[lastActiveDay] = window.completionTimestamps;
             window.dailyTargetHistory[lastActiveDay] = window.getCurrentTargets();
