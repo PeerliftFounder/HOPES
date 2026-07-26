@@ -99,7 +99,6 @@
     #page-loader {
       position: fixed; inset: 0; background-color: #050507; z-index: 99999;
       display: flex; flex-direction: column; justify-content: center; align-items: center;
-      transition: opacity 0.5s ease;
     }
 
     @keyframes shake {
@@ -141,9 +140,9 @@
               <span class="text-2xl">⚔️</span>
           </div>
           <h2 class="text-xl font-black text-white mb-2 uppercase tracking-wider">Incoming Duel!</h2>
-          <p class="text-sm text-gray-300 mb-6 leading-relaxed" id="incoming-challenge-text">You have been challenged by Operator to a 7-day Dual Challenge.</p>
+          <p class="text-sm text-gray-300 mb-6 leading-relaxed" id="incoming-challenge-text">You have been challenged to a Dual Challenge.</p>
           <div class="flex gap-3">
-              <button onclick="acceptIncomingChallenge()" class="flex-1 py-3 rounded-xl font-bold text-black bg-[var(--accent-mint)] shadow-[0_0_15px_rgba(0,229,155,0.4)] uppercase text-xs tracking-widest">Accept</button>
+              <button onclick="acceptIncomingChallenge()" class="flex-1 py-3 rounded-xl font-bold text-black bg-[var(--accent-mint)] shadow-[0_0_15px_rgba(0,229,155,0.4)] uppercase text-xs tracking-widest hover:scale-95 transition-transform">Accept</button>
               <button onclick="declineIncomingChallenge()" class="flex-1 py-3 rounded-xl font-bold text-white bg-white/5 border border-white/10 uppercase text-xs tracking-widest hover:bg-red-500/20 hover:text-red-400 hover:border-red-500/50 transition-colors">Decline</button>
           </div>
       </div>
@@ -154,12 +153,23 @@
       <div class="bg-[#0a0a0f] border-t border-white/10 w-full rounded-t-3xl p-6 transform translate-y-full transition-transform duration-500" id="ring-legend-content" onclick="event.stopPropagation()">
           <div class="w-12 h-1.5 bg-white/20 rounded-full mx-auto mb-6"></div>
           <h3 class="text-xs font-black tracking-widest text-gray-400 uppercase mb-4">Matrix Data Link</h3>
-          <div id="legend-tasks-list" class="space-y-3">
-              <!-- Dynamically mapped colors to tasks injected here -->
-          </div>
+          <div id="legend-tasks-list" class="space-y-3"></div>
       </div>
   </div>
 
+  <!-- THE MEMORY TOUR BACKDROP -->
+  <div id="tour-backdrop" style="display: none; opacity: 0;"></div>
+  <div id="tour-card" class="fixed left-1/2 -translate-x-1/2 w-[90%] max-w-[380px] bg-black border border-[var(--accent-mint)]/50 rounded-2xl p-5 shadow-[0_20px_50px_rgba(0,0,0,0.9)] z-[99999] transition-all duration-500 ease-in-out" style="display: none; bottom: 48px;">
+    <div class="flex justify-between items-center mb-3">
+      <span class="text-[10px] font-extrabold tracking-[0.2em] text-[var(--accent-mint)] uppercase" id="tour-step-indicator">RULE 1 / 4</span>
+    </div>
+    <p class="text-sm text-gray-200 leading-relaxed font-medium mb-5" id="tour-text">Welcome to your dashboard.</p>
+    <div class="flex justify-end pointer-events-auto">
+      <button onclick="nextTourStep()" id="tour-next-btn" class="bg-white text-black px-5 py-2 rounded-lg text-xs font-extrabold uppercase tracking-wider hover:scale-95 transition-transform">Next</button>
+    </div>
+  </div>
+
+  <!-- APPLICATION CONTAINER -->
   <div class="app-container flex flex-col pt-6 px-5 z-10">
     
     <!-- LIVE IST CLOCK -->
@@ -201,13 +211,12 @@
         
         <!-- ================= PERSONAL SECTION ================= -->
         <div id="personal-dashboard-section" class="block transition-all duration-300">
-            <!-- Speedometer Card (Daily Progress) -->
             <section class="surface-card p-6 mb-8 flex items-center justify-between rounded-2xl">
               <div>
                 <h2 class="text-lg font-bold text-white mb-1 px-1 -ml-1">Live Matrix</h2>
                 <p class="text-xs text-gray-400 mb-3 px-1 -ml-1">Execute your architecture.</p>
                 <div class="flex">
-                  <span id="tour-txt-days" class="px-2.5 py-1 bg-[var(--accent-purple)]/20 border border-[var(--accent-purple)]/30 rounded text-[10px] font-bold tracking-widest text-[var(--accent-purple)] uppercase">-- DAYS</span>
+                  <span id="personal-days-disp" class="px-2.5 py-1 bg-[var(--accent-purple)]/20 border border-[var(--accent-purple)]/30 rounded text-[10px] font-bold tracking-widest text-[var(--accent-purple)] uppercase">-- DAYS</span>
                 </div>
               </div>
 
@@ -223,22 +232,18 @@
               </div>
             </section>
 
-            <!-- DYNAMIC TASK LIST WITH STREAKS AND XP -->
             <section class="mb-6 rounded-2xl p-2 -mx-2">
               <div class="flex items-center justify-between mb-4 pl-1">
                 <h3 class="text-xs font-bold uppercase tracking-widest text-gray-300">Daily Commitments</h3>
                 <span class="text-[10px] text-gray-500 font-bold" id="task-count-header">-- TASKS</span>
               </div>
-
-              <div class="space-y-3" id="daily-tasks">
-                <!-- JavaScript Injects Personal Tasks Here -->
-              </div>
+              <div class="space-y-3" id="personal-tasks-list"></div>
             </section>
         </div>
 
         <!-- ================= DUAL CHALLENGE SECTION ================= -->
         <div id="dual-dashboard-section" class="hidden transition-all duration-300">
-            <!-- Empty State for Dual Challenge -->
+            <!-- Empty State -->
             <div id="dual-empty-state" class="surface-card p-8 flex flex-col items-center text-center mt-4 border border-[var(--accent-purple)]/30">
                 <span class="text-4xl drop-shadow-[0_0_15px_rgba(157,78,221,0.5)] mb-4">🌍</span>
                 <h3 class="text-lg font-black text-white uppercase tracking-wider mb-2">Engage The World</h3>
@@ -253,7 +258,7 @@
                  <section class="surface-card p-6 mb-8 flex items-center justify-between rounded-2xl border border-[var(--accent-purple)]/30">
                   <div>
                     <h2 class="text-lg font-bold text-white mb-1 px-1 -ml-1">Versus Matrix</h2>
-                    <p class="text-xs text-gray-400 mb-3 px-1 -ml-1" id="dual-challenge-title-disp">Challenge Title</p>
+                    <p class="text-xs text-[var(--accent-purple)] font-bold mb-3 px-1 -ml-1 uppercase tracking-wider" id="dual-challenge-title-disp">Challenge Title</p>
                     <div class="flex">
                       <span id="dual-days-disp" class="px-2.5 py-1 bg-[var(--accent-mint)]/10 border border-[var(--accent-mint)]/30 rounded text-[10px] font-bold tracking-widest text-[var(--accent-mint)] uppercase">-- DAYS</span>
                     </div>
@@ -275,10 +280,7 @@
                   <div class="flex items-center justify-between mb-4 pl-1">
                     <h3 class="text-xs font-bold uppercase tracking-widest text-gray-300">Challenge Commitments</h3>
                   </div>
-
-                  <div class="space-y-3" id="dual-daily-tasks">
-                    <!-- Dual Challenge Tasks Go Here -->
-                  </div>
+                  <div class="space-y-3" id="dual-tasks-list"></div>
                 </section>
             </div>
         </div>
@@ -295,12 +297,11 @@
     <div id="visualize-view" class="hidden w-full pb-10">
       <div class="surface-card p-5 mt-2 flex flex-col items-center">
         <h3 class="text-sm font-bold text-white mb-1">Matrix Duration Rings</h3>
-        <p class="text-[10px] text-gray-400 mb-8 uppercase tracking-widest text-center">Fills relative to total duration.</p>
+        <p class="text-[10px] text-gray-400 mb-8 uppercase tracking-widest text-center">Fills relative to total duration.<br>Broken streaks glow red.</p>
 
         <div class="relative w-full max-w-[320px] aspect-square flex items-center justify-center">
           <svg id="rings-svg" class="absolute inset-0 w-full h-full drop-shadow-[0_0_15px_rgba(0,0,0,0.5)]" viewBox="0 0 300 300"></svg>
           
-          <!-- MASTER SEAL BUTTON -->
           <button id="seal-btn" class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-24 h-24 rounded-full bg-black/90 border border-white/10 flex flex-col items-center justify-center shadow-[0_0_30px_rgba(0,0,0,0.8)] transition-all select-none focus:outline-none">
              <span class="text-[10px] font-black tracking-widest text-gray-400 uppercase leading-tight text-center" id="seal-text">Hold To<br>Seal</span>
           </button>
@@ -323,7 +324,7 @@
         <!-- UNIQUE ID SECION -->
         <div class="flex flex-col items-center mb-8 mt-2">
             <span class="text-[8px] uppercase tracking-widest text-gray-500 font-bold mb-1">Your Identity Code</span>
-            <div class="flex items-center gap-2 bg-black/50 border border-white/10 px-4 py-2 rounded-lg">
+            <div class="flex items-center gap-2 bg-black/50 border border-white/10 px-4 py-2 rounded-lg shadow-inner">
                 <span class="text-sm font-mono tracking-widest font-bold text-white" id="profile-uid-code">260000</span>
                 <button onclick="copyMyUidCode()" class="text-[var(--accent-mint)] hover:text-white transition-colors active:scale-90 p-1">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
@@ -350,7 +351,7 @@
       </div>
     </div>
 
-    <!-- 🌍 COMMUNITY / DUAL CHALLENGE VIEW WRAPPER -->
+    <!-- 🌍 COMMUNITY VIEW WRAPPER -->
     <div id="community-view" class="hidden w-full pb-10">
       
       <!-- STATE 0: RULES OF ENGAGEMENT -->
@@ -391,7 +392,6 @@
           <p class="text-[10px] text-gray-400 mb-6 tracking-widest text-center uppercase">Construct your battle matrix.</p>
           
           <div class="space-y-6">
-              <!-- Name & Duration -->
               <div>
                   <label class="text-[9px] font-bold text-[var(--accent-mint)] tracking-widest uppercase mb-2 block">Operation Name</label>
                   <input type="text" id="comm-challenge-name" placeholder="e.g. 75 Hard, Coding Sprint..." class="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-3 text-sm font-semibold text-white outline-none focus:border-[var(--accent-mint)]">
@@ -407,21 +407,17 @@
                   </div>
               </div>
 
-              <!-- Matrix Builder -->
               <div>
                   <label class="text-[9px] font-bold text-white tracking-widest uppercase mb-2 block">Matrix Configuration (3 Slots)</label>
                   <div class="space-y-3">
-                      <!-- Slot 1 -->
                       <div class="bg-black/40 border border-white/5 rounded-xl p-2 flex gap-2">
                           <button class="w-10 h-10 rounded-lg bg-white/5 text-xl flex-shrink-0" onclick="promptEmoji(1)" id="comm-em-1">🔥</button>
                           <input type="text" id="comm-t-1" placeholder="Task 01" class="clean-input text-sm font-semibold px-2">
                       </div>
-                      <!-- Slot 2 -->
                       <div class="bg-black/40 border border-white/5 rounded-xl p-2 flex gap-2">
                           <button class="w-10 h-10 rounded-lg bg-white/5 text-xl flex-shrink-0" onclick="promptEmoji(2)" id="comm-em-2">💪</button>
                           <input type="text" id="comm-t-2" placeholder="Task 02" class="clean-input text-sm font-semibold px-2">
                       </div>
-                      <!-- Slot 3 -->
                       <div class="bg-black/40 border border-white/5 rounded-xl p-2 flex gap-2">
                           <button class="w-10 h-10 rounded-lg bg-white/5 text-xl flex-shrink-0" onclick="promptEmoji(3)" id="comm-em-3">📚</button>
                           <input type="text" id="comm-t-3" placeholder="Task 03" class="clean-input text-sm font-semibold px-2">
@@ -429,12 +425,10 @@
                   </div>
               </div>
 
-              <!-- Target Lock -->
               <div class="border-t border-white/10 pt-6">
                   <label class="text-[9px] font-bold text-red-400 tracking-widest uppercase mb-2 block">Target Acquisition (6-Digit ID)</label>
                   <input type="number" id="comm-target-id" placeholder="26XXXX" class="w-full bg-black/60 border border-red-500/30 rounded-xl px-4 py-3 text-lg text-center font-mono font-bold text-white outline-none focus:border-red-500 shadow-[0_0_15px_rgba(239,68,68,0.1)]">
               </div>
-
           </div>
           
           <button id="btn-send-invite" onclick="sendDualChallenge()" class="w-full mt-8 py-4 rounded-xl font-extrabold text-black bg-[var(--accent-mint)] shadow-[0_0_20px_rgba(0,229,155,0.3)] uppercase tracking-widest text-xs hover:scale-95 transition-transform">
@@ -508,24 +502,34 @@
   <script>
     /* --- SYSTEM STATE VARIABLES --- */
     window.currentDayIndex = 0;
-    window.totalTasks = 4; // Dynamically overwritten by Firebase
+    
+    // Personal State
+    window.totalTasks = 4; 
     window.taskDuration = 7;
     window.appSetupDate = null;
     window.completionTimestamps = {}; 
     window.taskHistory = {}; 
-    
-    // XP & SEAL STATE
     window.baseXP = 0; 
     window.isSealedToday = false; 
-    
-    // DUAL CHALLENGE STATE
+
+    // Dual Challenge State
     window.challengerUid = null; 
     window.commRulesAccepted = false;
-    window.currentDashboardMode = 'personal'; // 'personal' | 'dual'
+    window.currentDashboardMode = 'personal'; 
     window.commDurationSelection = 7;
-    window.dualMatrixData = []; // Array of tasks for duel
+    
+    window.dualMatrixData = []; // [{name, emoji}]
+    window.dualTaskDuration = 7;
+    window.dualSetupDate = null;
+    window.dualCompletionTimestamps = {};
+    window.dualTaskHistory = {};
+    window.currentDualDayIndex = 0;
 
-    // 🎨 UI COLORS FOR RINGS
+    // Fixed UI Constants
+    const SVG_RADIUS_MAIN = 42;
+    const SVG_CIRC_MAIN = SVG_RADIUS_MAIN * 2 * Math.PI;
+    const SVG_RADIUS_DUAL = 40;
+    const SVG_CIRC_DUAL = SVG_RADIUS_DUAL * 2 * Math.PI;
     window.ringColors = ['#00E59B', '#9D4EDD', '#3B82F6', '#EAB308', '#F43F5E', '#A855F7', '#14B8A6'];
 
     /* --- WEEK TRACKER LOGIC --- */
@@ -536,17 +540,14 @@
       const dayNames = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
       for(let i=0; i<7; i++) {
-        let d = new Date(today);
-        d.setDate(today.getDate() + i);
-        let dayName = dayNames[d.getDay()];
-        let dateNum = d.getDate();
+        let d = new Date(today); d.setDate(today.getDate() + i);
         let isToday = (i === 0);
         
         html += `
           <div class="flex flex-col items-center gap-1.5">
-            <span class="text-[9px] font-extrabold tracking-widest ${isToday ? 'text-white' : 'text-gray-600'}">${dayName}</span>
+            <span class="text-[9px] font-extrabold tracking-widest ${isToday ? 'text-white' : 'text-gray-600'}">${dayNames[d.getDay()]}</span>
             <div id="day-circle-${i}" class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${isToday ? 'bg-white/10 border border-white/20 text-white shadow-inner' : 'bg-black/40 border border-white/5 text-gray-600'} transition-all duration-500">
-              ${dateNum}
+              ${d.getDate()}
             </div>
           </div>
         `;
@@ -565,9 +566,7 @@
         if (hour < 12) greeting = "Good morning";
         else if (hour < 18) greeting = "Good afternoon";
         document.getElementById('greeting-text').innerText = greeting;
-      } catch (error) {
-        document.getElementById('greeting-text').innerText = "Good evening";
-      }
+      } catch (error) { document.getElementById('greeting-text').innerText = "Good evening"; }
     }
     setISTGreeting();
 
@@ -600,8 +599,7 @@
             secPersonal.style.display = 'none';
             secDual.style.display = 'block';
             
-            // Check State
-            if(window.challengerUid) {
+            if(window.challengerUid && window.dualMatrixData.length > 0) {
                 document.getElementById('dual-empty-state').style.display = 'none';
                 document.getElementById('dual-active-state').style.display = 'block';
             } else {
@@ -611,45 +609,84 @@
         }
     }
 
-    /* --- PERFECT SYNCHRONIZED DASHBOARD LOGIC (PERSONAL ONLY for now) --- */
-    const circle = document.getElementById('speedometer');
-    const radius = circle.r.baseVal.value;
-    const circumference = radius * 2 * Math.PI; 
-    circle.style.strokeDasharray = `${circumference} ${circumference}`;
-    circle.style.strokeDashoffset = circumference;
+    /* --- PROFILE RANK LOGIC --- */
+    window.updateProfileRank = function(xp) {
+        let rank = "Initiate"; let color = "var(--accent-purple)";
+        if (xp < 0) { rank = "In Debt"; color = "#EF4444"; }
+        else if (xp >= 500 && xp < 2000) { rank = "Disciplined"; color = "var(--accent-mint)"; }
+        else if (xp >= 2000) { rank = "Master"; color = "#EAB308"; }
+        
+        const rankEl = document.getElementById('profile-rank');
+        if(rankEl) { rankEl.innerText = rank; rankEl.style.color = color; }
+    }
 
-    window.updateTotalProgress = function() { 
-      const checkboxes = document.querySelectorAll('#daily-tasks .logic-check');
+    window.copyMyUidCode = function() {
+        const codeText = document.getElementById('profile-uid-code').innerText;
+        navigator.clipboard.writeText(codeText).then(() => { alert("Identity Code Copied!"); });
+    }
+
+    /* --- INDIVIDUAL TASK STREAK MATH --- */
+    window.getTaskStreakInfo = function(taskId, isCheckedToday, historyDict) {
+        let history = historyDict[taskId] || [];
+        let historicalStreak = 0;
+        
+        for (let i = history.length - 1; i >= 0; i--) {
+            if (history[i] === true) historicalStreak++; else break;
+        }
+        
+        let displayStreak = historicalStreak + (isCheckedToday ? 1 : 0);
+        let isRed = (historicalStreak === 0 && !isCheckedToday);
+        if (history.length === 0 && !isCheckedToday) isRed = false; // Grace on Day 1
+        
+        return { streak: displayStreak, isRed: isRed };
+    }
+
+    /* --- PERFECT SYNCHRONIZED PROGRESS LOGIC --- */
+    window.updatePersonalProgress = function() { 
+      const checkboxes = document.querySelectorAll('.personal-check');
       const total = checkboxes.length || 1; 
-      const completedCount = document.querySelectorAll('#daily-tasks .logic-check:checked').length;
+      const completedCount = document.querySelectorAll('.personal-check:checked').length;
+      const dualCompletedCount = document.querySelectorAll('.dual-check:checked').length;
       
       const percent = Math.round((completedCount / total) * 100); 
-      const offset = circumference - (percent / 100) * circumference;
+      const offset = SVG_CIRC_MAIN - (percent / 100) * SVG_CIRC_MAIN;
       
-      // LIVE XP CALCULATION (Instant Gratification)
-      const liveXP = window.baseXP + (completedCount * 100);
+      // LIVE XP CALCULATION (Combines Base XP + Personal Today + Dual Today)
+      const liveXP = window.baseXP + (completedCount * 100) + (dualCompletedCount * 100);
       
-      const gXp = document.getElementById('global-xp-display');
-      if(gXp) gXp.innerText = `${liveXP} XP`;
-      
-      const pXp = document.getElementById('profile-xp');
-      if(pXp) pXp.innerText = liveXP;
-      
+      const gXp = document.getElementById('global-xp-display'); if(gXp) gXp.innerText = `${liveXP} XP`;
+      const pXp = document.getElementById('profile-xp'); if(pXp) pXp.innerText = liveXP;
       if(window.updateProfileRank) window.updateProfileRank(liveXP);
-      
-      // Update Main Dashboard Daily Ring
-      circle.style.strokeDashoffset = offset;
+
+      const circle = document.getElementById('speedometer');
+      if(circle) circle.style.strokeDashoffset = offset;
       document.getElementById('task-percent').innerText = percent + '%';
 
       if (completedCount === total && total > 0) {
-          circle.classList.add('drop-shadow-[0_0_10px_rgba(0,229,155,0.8)]');
+          if(circle) circle.classList.add('drop-shadow-[0_0_10px_rgba(0,229,155,0.8)]');
           const todayCircle = document.getElementById('day-circle-0');
           if (todayCircle) todayCircle.className = 'w-8 h-8 rounded-full flex items-center justify-center text-xs font-extrabold bg-[var(--accent-mint)] text-black border border-[var(--accent-mint)] shadow-[0_0_15px_rgba(0,229,155,0.5)] transition-all duration-500';
       } else {
-          circle.classList.remove('drop-shadow-[0_0_10px_rgba(0,229,155,0.8)]');
+          if(circle) circle.classList.remove('drop-shadow-[0_0_10px_rgba(0,229,155,0.8)]');
           const todayCircle = document.getElementById('day-circle-0');
           if (todayCircle) todayCircle.className = 'w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold bg-white/10 border border-white/20 text-white shadow-inner transition-all duration-500';
       }
+
+      // UPDATE PERSONAL TASK STREAK UI
+      checkboxes.forEach((box) => {
+          let taskId = parseInt(box.dataset.taskId);
+          let info = window.getTaskStreakInfo(taskId, box.checked, window.taskHistory);
+          let streakUi = document.getElementById(`personal-streak-ui-${taskId}`);
+          if(streakUi) {
+              if (info.isRed) {
+                  streakUi.classList.replace('text-orange-500', 'text-red-500');
+                  streakUi.innerHTML = `❌ <span id="personal-streak-val-${taskId}">0</span>`;
+              } else {
+                  streakUi.classList.replace('text-red-500', 'text-orange-500');
+                  streakUi.innerHTML = `🔥 <span id="personal-streak-val-${taskId}">${info.streak}</span>`;
+              }
+          }
+      });
 
       // SEAL UN-DO LOGIC
       if (completedCount < total && window.isSealedToday) {
@@ -658,14 +695,66 @@
           if(window.saveSealStateToFirebase) window.saveSealStateToFirebase(false);
       }
       
-      // Update Visualize Rings if active
       if (!document.getElementById('visualize-view').classList.contains('hidden')) {
          window.renderVisualizeRings();
       }
     }
 
+    window.updateDualProgress = function() {
+        const checkboxes = document.querySelectorAll('.dual-check');
+        if(checkboxes.length === 0) return;
+        const total = checkboxes.length;
+        const completedCount = document.querySelectorAll('.dual-check:checked').length;
+        const percent = Math.round((completedCount / total) * 100); 
+
+        // Update Dual Dashboard Ring
+        const dualCircle = document.getElementById('speedometer-dual');
+        if(dualCircle) {
+            const offset = SVG_CIRC_MAIN - (percent / 100) * SVG_CIRC_MAIN;
+            dualCircle.style.strokeDashoffset = offset;
+            document.getElementById('dual-task-percent').innerText = percent + '%';
+        }
+
+        // UPDATE DUAL TASK STREAK UI
+        checkboxes.forEach((box) => {
+            let taskId = parseInt(box.dataset.taskId);
+            let info = window.getTaskStreakInfo(taskId, box.checked, window.dualTaskHistory);
+            let streakUi = document.getElementById(`dual-streak-ui-${taskId}`);
+            if(streakUi) {
+                if (info.isRed) {
+                    streakUi.classList.replace('text-orange-500', 'text-red-500');
+                    streakUi.innerHTML = `❌ <span id="dual-streak-val-${taskId}">0</span>`;
+                } else {
+                    streakUi.classList.replace('text-red-500', 'text-orange-500');
+                    streakUi.innerHTML = `🔥 <span id="dual-streak-val-${taskId}">${info.streak}</span>`;
+                }
+            }
+        });
+
+        // LIVE XP CALCULATION
+        const personalCompleted = document.querySelectorAll('.personal-check:checked').length;
+        const liveXP = window.baseXP + (personalCompleted * 100) + (completedCount * 100);
+        const gXp = document.getElementById('global-xp-display'); if(gXp) gXp.innerText = `${liveXP} XP`;
+        const pXp = document.getElementById('profile-xp'); if(pXp) pXp.innerText = liveXP;
+        if(window.updateProfileRank) window.updateProfileRank(liveXP);
+
+        // Update Community View (VS Ring)
+        if (window.challengerUid) {
+            const dualYouCircle = document.getElementById('comm-rings-you');
+            if (dualYouCircle) {
+                const offset = SVG_CIRC_DUAL - (percent / 100) * SVG_CIRC_DUAL;
+                dualYouCircle.innerHTML = `
+                  <path d="M 150 ${150 - SVG_RADIUS_DUAL} A ${SVG_RADIUS_DUAL} ${SVG_RADIUS_DUAL} 0 1 1 149.9 ${150 - SVG_RADIUS_DUAL}" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="8" stroke-linecap="round" />
+                  <path d="M 150 ${150 - SVG_RADIUS_DUAL} A ${SVG_RADIUS_DUAL} ${SVG_RADIUS_DUAL} 0 1 1 149.9 ${150 - SVG_RADIUS_DUAL}" fill="none" stroke="var(--accent-mint)" stroke-width="8" stroke-linecap="round" stroke-dasharray="${SVG_CIRC_DUAL}" stroke-dashoffset="${offset}" class="vis-ring-path drop-shadow-[0_0_8px_rgba(0,229,155,0.8)]" />
+                `;
+                document.getElementById('comm-percent-you').innerText = percent + '%';
+            }
+        }
+    }
+
     window.attachCheckboxListeners = function() {
-        document.querySelectorAll('#daily-tasks .logic-check').forEach((box) => {
+        // PERSONAL LISTENERS
+        document.querySelectorAll('.personal-check').forEach((box) => {
           box.addEventListener('change', (e) => {
             const row = e.target.closest('.task-row');
             const taskIdStr = row.querySelector('h4').id; 
@@ -684,25 +773,46 @@
               delete window.completionTimestamps[taskId];
             }
 
-            window.updateTotalProgress();
+            window.updatePersonalProgress();
 
-            if(window.syncCheckboxesToDatabase) {
+            if(window.syncPersonalCheckboxes) {
                let checkedIndexes = [];
-               document.querySelectorAll('#daily-tasks .logic-check').forEach((b, i) => { if(b.checked) checkedIndexes.push(i); });
-               window.syncCheckboxesToDatabase(checkedIndexes, window.completionTimestamps);
+               document.querySelectorAll('.personal-check').forEach((b, i) => { if(b.checked) checkedIndexes.push(i); });
+               window.syncPersonalCheckboxes(checkedIndexes, window.completionTimestamps);
             }
           });
         });
-        window.updateTotalProgress();
-    };
 
-    /* --- PROFILE UID CODE LOGIC --- */
-    window.copyMyUidCode = function() {
-        const codeText = document.getElementById('profile-uid-code').innerText;
-        navigator.clipboard.writeText(codeText).then(() => {
-            alert("Identity Code Copied!");
+        // DUAL LISTENERS
+        document.querySelectorAll('.dual-check').forEach((box) => {
+          box.addEventListener('change', (e) => {
+            const row = e.target.closest('.task-row');
+            const taskIdStr = row.querySelector('h4').id; 
+            const taskId = parseInt(taskIdStr.split('-')[2]); 
+
+            let nowIST = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"}));
+            let timeStr = nowIST.getHours().toString().padStart(2, '0') + ':' + nowIST.getMinutes().toString().padStart(2, '0');
+
+            if(box.checked) {
+              row.classList.add('opacity-50', 'border-[var(--accent-purple)]/30');
+              row.querySelector('h4').classList.add('line-through', 'text-gray-400');
+              window.dualCompletionTimestamps[taskId] = timeStr; 
+            } else {
+              row.classList.remove('opacity-50', 'border-[var(--accent-purple)]/30');
+              row.querySelector('h4').classList.remove('line-through', 'text-gray-400');
+              delete window.dualCompletionTimestamps[taskId];
+            }
+
+            window.updateDualProgress();
+
+            if(window.syncDualCheckboxes) {
+               let checkedIndexes = [];
+               document.querySelectorAll('.dual-check').forEach((b, i) => { if(b.checked) checkedIndexes.push(i); });
+               window.syncDualCheckboxes(checkedIndexes, window.dualCompletionTimestamps);
+            }
+          });
         });
-    }
+    };
 
     /* --- NAV BAR TOGGLES --- */
     window.switchTab = function(tabName) {
@@ -740,24 +850,9 @@
     };
 
     /* --- 🌀 FRACTIONAL SVG VISUALIZE ENGINE (PERSONAL) --- */
-    window.getTaskStreakInfo = function(taskId, isCheckedToday) {
-        let history = window.taskHistory[taskId] || [];
-        let historicalStreak = 0;
-        
-        for (let i = history.length - 1; i >= 0; i--) {
-            if (history[i] === true) historicalStreak++;
-            else break;
-        }
-        let displayStreak = historicalStreak + (isCheckedToday ? 1 : 0);
-        let isRed = (historicalStreak === 0 && !isCheckedToday);
-        if (history.length === 0 && !isCheckedToday) isRed = false; // Grace on Day 1
-        
-        return { streak: displayStreak, isRed: isRed };
-    }
-
     window.renderVisualizeRings = function() {
         const svg = document.getElementById('rings-svg');
-        const tasks = Array.from(document.querySelectorAll('#daily-tasks .task-row'));
+        const tasks = Array.from(document.querySelectorAll('#daily-tasks .task-row')); // Personal Only
         const total = tasks.length || 1;
         
         let html = `
@@ -769,8 +864,7 @@
           </defs>
         `;
         
-        const maxR = 140;
-        const minR = 60;
+        const maxR = 140; const minR = 60;
         const gap = total > 1 ? (maxR - minR) / Math.max(1, total - 1) : 0;
         
         tasks.forEach((taskRow, i) => {
@@ -783,9 +877,8 @@
             const completedDays = historyData.filter(v => v).length + (isChecked ? 1 : 0);
             const progressPercent = Math.min(1, completedDays / window.taskDuration);
             
-            // Streak Logic Appended to Ring (COLOR REMAINS VIBRANT ALWAYS)
-            const info = window.getTaskStreakInfo(taskId, isChecked);
-            const strokeColor = window.ringColors[i % window.ringColors.length]; // PERMANENT CONTINUITY COLOR
+            const info = window.getTaskStreakInfo(taskId, isChecked, window.taskHistory);
+            const strokeColor = window.ringColors[i % window.ringColors.length]; 
             const streakLabel = info.isRed ? '❌ 0' : '🔥 ' + info.streak;
 
             const r = total > 1 ? maxR - (i * gap) : 100;
@@ -896,7 +989,7 @@
     window.addEventListener('mouseup', stopHold);
     window.addEventListener('touchend', stopHold);
 
-    /* --- 🌍 COMMUNITY / DUAL CHALLENGE ENGINE (UI ONLY for now) --- */
+    /* --- 🌍 COMMUNITY / DUAL CHALLENGE ENGINE --- */
     window.acceptCommRules = function() {
         window.commRulesAccepted = true;
         document.getElementById('comm-rules-state').classList.add('hidden');
@@ -926,7 +1019,6 @@
         const content = document.getElementById('ring-legend-content');
         const list = document.getElementById('legend-tasks-list');
         
-        // Build Legend List based on dualMatrixData
         let html = '';
         if(window.dualMatrixData && window.dualMatrixData.length > 0) {
             window.dualMatrixData.forEach((task, i) => {
@@ -967,9 +1059,7 @@
         for(let i=1; i<=3; i++) {
             let tName = document.getElementById(`comm-t-${i}`).value.trim();
             let tEmoji = document.getElementById(`comm-em-${i}`).innerText;
-            if(tName) {
-                customTasks.push({ name: tName, emoji: tEmoji });
-            }
+            if(tName) customTasks.push({ name: tName, emoji: tEmoji });
         }
 
         if(!name) return alert("Operation Name is required.");
@@ -983,9 +1073,7 @@
             targetCode: targetId
         };
 
-        if(window.executeFirebaseInvite) {
-            window.executeFirebaseInvite(payload);
-        }
+        if(window.executeFirebaseInvite) window.executeFirebaseInvite(payload);
     };
 
     window.renderCommunityView = function() {
@@ -994,18 +1082,39 @@
         const stateActive = document.getElementById('comm-active-state');
 
         if(window.challengerUid) {
-            // Active Duel!
             stateRules.classList.add('hidden');
             stateInvite.classList.add('hidden');
             stateActive.classList.remove('hidden');
 
             document.getElementById('comm-challenge-title-disp').innerText = window.challengeName || "Dual Challenge";
-
-            // Render Rings based on dual logic (Placeholders for now until hooked up)
-            window.renderDualVSUI();
             
+            // Render VS UI
+            const svgOpp = document.getElementById('comm-rings-challenger');
+            if(svgOpp) {
+                const tasks = window.dualMatrixData || [1,2,3];
+                const total = tasks.length || 1;
+                const maxR = 140; const minR = 60;
+                const gap = total > 1 ? (maxR - minR) / Math.max(1, total - 1) : 0;
+                
+                let htmlOpp = '';
+                tasks.forEach((t, i) => {
+                    const color = window.ringColors[i % window.ringColors.length];
+                    const r = total > 1 ? maxR - (i * gap) : 100;
+                    const circ = 2 * Math.PI * r;
+                    const pathD = `M 150 ${150 - r} A ${r} ${r} 0 1 1 149.9 ${150 - r}`;
+                    
+                    htmlOpp += `
+                      <path d="${pathD}" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="8" stroke-linecap="round" />
+                      <path d="${pathD}" fill="none" stroke="${color}" stroke-width="8" stroke-linecap="round" stroke-dasharray="${circ}" stroke-dashoffset="${circ}" id="dual-opp-path-${i}" class="vis-ring-path drop-shadow-[0_0_8px_${color}80]" />
+                    `;
+                });
+                svgOpp.innerHTML = htmlOpp;
+            }
+
+            if(window.fetchChallengerProgress) window.fetchChallengerProgress();
+            window.updateDualProgress(); // Render own side of VS rings
+
         } else {
-            // Not Active
             stateActive.classList.add('hidden');
             if (window.commRulesAccepted) {
                 stateRules.classList.add('hidden');
@@ -1017,49 +1126,7 @@
         }
     };
 
-    window.renderDualVSUI = function() {
-        // UI Render logic for the VS rings in Community Tab. 
-        // This will be wired to dual data in the next step.
-        const svgYou = document.getElementById('comm-rings-you');
-        const svgOpp = document.getElementById('comm-rings-challenger');
-        if(!svgYou || !svgOpp) return;
-        
-        const tasks = window.dualMatrixData || [1,2,3];
-        const total = tasks.length || 1;
-        const maxR = 140; const minR = 60;
-        const gap = total > 1 ? (maxR - minR) / Math.max(1, total - 1) : 0;
-        
-        let htmlYou = ''; let htmlOpp = '';
-        
-        tasks.forEach((t, i) => {
-            const color = window.ringColors[i % window.ringColors.length];
-            const r = total > 1 ? maxR - (i * gap) : 100;
-            const circ = 2 * Math.PI * r;
-            // Fake progress for UI mockup
-            const offsetYou = circ - (0.5 * circ); 
-            const offsetOpp = circ - (0.2 * circ); 
-            const pathD = `M 150 ${150 - r} A ${r} ${r} 0 1 1 149.9 ${150 - r}`;
-            
-            htmlYou += `
-              <path d="${pathD}" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="8" stroke-linecap="round" />
-              <path d="${pathD}" fill="none" stroke="${color}" stroke-width="8" stroke-linecap="round" stroke-dasharray="${circ}" stroke-dashoffset="${offsetYou}" class="vis-ring-path drop-shadow-[0_0_8px_${color}80]" />
-            `;
-            htmlOpp += `
-              <path d="${pathD}" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="8" stroke-linecap="round" />
-              <path d="${pathD}" fill="none" stroke="${color}" stroke-width="8" stroke-linecap="round" stroke-dasharray="${circ}" stroke-dashoffset="${offsetOpp}" class="vis-ring-path drop-shadow-[0_0_8px_${color}80]" />
-            `;
-        });
-        
-        svgYou.innerHTML = htmlYou;
-        svgOpp.innerHTML = htmlOpp;
-        
-        document.getElementById('comm-percent-you').innerText = '50%';
-        document.getElementById('comm-percent-challenger').innerText = '20%';
-    };
-
-    window.acceptIncomingChallenge = function() {
-        if(window.firebaseAcceptChallenge) window.firebaseAcceptChallenge();
-    }
+    window.acceptIncomingChallenge = function() { if(window.firebaseAcceptChallenge) window.firebaseAcceptChallenge(); }
     window.declineIncomingChallenge = function() {
         document.getElementById('incoming-challenge-modal').classList.add('opacity-0');
         setTimeout(() => { document.getElementById('incoming-challenge-modal').classList.add('hidden'); }, 500);
@@ -1069,9 +1136,7 @@
     window.quitChallenge = function() {
         const confirmQuit = confirm("DANGER: Deserting an active duel will permanently deduct 500 XP from your global score. Are you absolutely sure?");
         if(confirmQuit) {
-            if(window.executeQuitFirebase) {
-                window.executeQuitFirebase();
-            }
+            if(window.executeQuitFirebase) window.executeQuitFirebase();
         }
     };
   </script>
@@ -1082,7 +1147,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import { getFirestore, doc, getDoc, updateDoc, setDoc, serverTimestamp, query, collection, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getFirestore, doc, getDoc, updateDoc, setDoc, serverTimestamp, query, collection, where, getDocs, deleteField } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyC7GXfPKhHCU78ZW4gj_fElWAa3YuKbKzM",
@@ -1098,252 +1163,344 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
-    const loader = document.getElementById('page-loader');
 
     document.getElementById('profile-logout-btn').addEventListener('click', async () => {
       try { await signOut(auth); } catch (error) { console.error("Logout failed", error); }
     });
 
     onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        window.location.href = 'index.html';
-        return;
-      }
-
-      window.currentUserUid = user.uid; 
-      const firstName = user.displayName ? user.displayName.split(' ')[0] : 'Operator';
-      document.getElementById('user-name').innerText = firstName;
-      document.getElementById('profile-name-full').innerText = user.displayName || 'Operator';
-      document.getElementById('profile-avatar').innerText = firstName.charAt(0).toUpperCase();
-      
-      const userDocRef = doc(db, "users", user.uid);
-      const userDoc = await getDoc(userDocRef);
-
-      if (!userDoc.exists() || !userDoc.data().hasCompletedSetup) {
-         window.location.href = 'lock.html';
-         return;
-      }
-
-      const data = userDoc.data();
-      
-      // UNIQUE ID GENERATOR
-      let myCode = data.uid_code;
-      if(!myCode) {
-          myCode = '26' + Math.floor(1000 + Math.random() * 9000).toString();
-          await updateDoc(userDocRef, { uid_code: myCode });
-      }
-      document.getElementById('profile-uid-code').innerText = myCode;
-
-      // PENDING CHALLENGE INTERCEPTOR (If someone sent an invite to this UID code)
-      if(data.pendingChallenge) {
-          document.getElementById('incoming-challenge-text').innerText = `You have been challenged to '${data.pendingChallenge.challengeName}'!`;
-          const incModal = document.getElementById('incoming-challenge-modal');
-          incModal.classList.remove('hidden');
-          setTimeout(() => { incModal.classList.remove('opacity-0'); document.getElementById('incoming-modal-content').classList.replace('scale-95', 'scale-100'); }, 10);
-      }
-
-      window.totalTasks = data.baseMatrix ? data.baseMatrix.length : (data.totalHabits || 4);
-      window.taskDuration = data.duration || 7;
-      window.appSetupDate = data.setupDate ? data.setupDate.toDate() : new Date();
-      window.completionTimestamps = data.completionTimestamps || {};
-      window.challengerUid = data.challengerUid || null; 
-      
-      window.baseXP = data.totalXP || 0; 
-      window.isSealedToday = data.isSealedToday || false;
-
-      window.taskHistory = data.taskHistory || {};
-      for(let i=1; i<=window.totalTasks; i++) {
-          if(!window.taskHistory[i]) window.taskHistory[i] = [];
-      }
-
-      document.getElementById('task-count-header').innerText = `${window.totalTasks} TASKS`;
-      document.getElementById('tour-txt-days').innerText = `${window.taskDuration} DAYS`;
-      
-      document.getElementById('global-xp-display').innerText = `${window.baseXP} XP`;
-      document.getElementById('profile-xp').innerText = window.baseXP;
-      window.updateProfileRank(window.baseXP);
-
-      // DYNAMIC RENDERING OF DASHBOARD TASKS
-      if (data.baseMatrix) {
-          let taskHtml = '';
-          data.baseMatrix.forEach((task, index) => {
-              let i = index + 1;
-              taskHtml += `
-              <div class="bg-black/60 border border-white/5 rounded-2xl p-4 flex items-center gap-4 transition-all duration-300 task-row" id="task-row-${i}">
-                <label class="task-check-wrapper">
-                  <input type="checkbox" class="task-checkbox logic-check" data-task-id="${i}">
-                  <div class="task-custom-check"></div>
-                </label>
-                <div class="flex-1">
-                  <h4 class="text-sm font-bold text-white mb-0.5" id="task-name-${i}">${task.name}</h4>
-                  
-                  <div class="flex items-center gap-3 mt-1">
-                     <p class="text-[10px] text-gray-500 font-medium flex items-center gap-1">
-                       <span class="text-[var(--accent-purple)]">🔒 Locked</span> • <span id="task-time-${i}">${task.time}</span>
-                     </p>
-                     
-                     <p class="text-[10px] font-bold text-orange-500 flex items-center gap-1 transition-all" id="task-streak-ui-${i}">
-                       🔥 <span id="task-streak-val-${i}">0</span>
-                     </p>
-
-                     <p class="text-[8.5px] font-black tracking-widest flex items-center gap-1.5 opacity-90 ml-auto">
-                       <span class="text-[var(--accent-mint)]">+100XP</span>
-                       <span class="text-red-500">-50XP</span>
-                     </p>
-                  </div>
-
-                  <p class="text-[10px] text-red-500 font-bold mt-0.5 tracking-wider hidden" id="task-countdown-${i}"></p>
-                </div>
-                <div class="text-2xl opacity-70" id="task-emoji-${i}">${task.emoji}</div>
-              </div>`;
-          });
-          document.getElementById('daily-tasks').innerHTML = taskHtml;
-          window.attachCheckboxListeners();
-      }
-
-      let currentISTDate = new Date();
       try {
-        const response = await fetch('https://worldtimeapi.org/api/timezone/Asia/Kolkata');
-        const timeData = await response.json();
-        currentISTDate = new Date(timeData.datetime);
-      } catch (e) {
-        currentISTDate = new Date(new Date().getTime() + (new Date().getTimezoneOffset() * 60000) + (3600000 * 5.5));
-      }
+          if (!user) { window.location.href = 'index.html'; return; }
 
-      const currentMidnight = new Date(currentISTDate);
-      currentMidnight.setHours(0,0,0,0);
+          window.currentUserUid = user.uid; 
+          const firstName = user.displayName ? user.displayName.split(' ')[0] : 'Operator';
+          document.getElementById('user-name').innerText = firstName;
+          document.getElementById('profile-name-full').innerText = user.displayName || 'Operator';
+          document.getElementById('profile-avatar').innerText = firstName.charAt(0).toUpperCase();
+          
+          const userDocRef = doc(db, "users", user.uid);
+          const userDoc = await getDoc(userDocRef);
 
-      const setupMidnight = new Date(window.appSetupDate);
-      setupMidnight.setHours(0,0,0,0);
+          if (!userDoc.exists() || !userDoc.data().hasCompletedSetup) {
+             let pending = new URLSearchParams(window.location.search).get('challenge');
+             if (pending) localStorage.setItem('pendingChallenge', pending);
+             window.location.href = 'lock.html';
+             return;
+          }
 
-      const diffTime = currentMidnight - setupMidnight;
-      const daysPassed = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-      
-      // Cap at taskDuration
-      window.currentDayIndex = Math.min(Math.max(daysPassed, 0), window.taskDuration - 1); 
+          const data = userDoc.data();
+          
+          // 1. UNIQUE ID GENERATOR
+          let myCode = data.uid_code;
+          if(!myCode) {
+              myCode = '26' + Math.floor(1000 + Math.random() * 9000).toString();
+              await updateDoc(userDocRef, { uid_code: myCode });
+          }
+          document.getElementById('profile-uid-code').innerText = myCode;
 
-      document.getElementById('day-badge').innerText = `DAY ${window.currentDayIndex + 1}`;
-      document.getElementById('profile-streak').innerText = `Day ${window.currentDayIndex + 1} / ${window.taskDuration}`;
+          // 2. LOAD CORE PERSONAL STATE
+          window.totalTasks = data.baseMatrix ? data.baseMatrix.length : (data.totalHabits || 4);
+          window.taskDuration = data.duration || 7;
+          window.appSetupDate = data.setupDate ? data.setupDate.toDate() : new Date();
+          window.completionTimestamps = data.completionTimestamps || {};
+          window.baseXP = data.totalXP || 0; 
+          window.isSealedToday = data.isSealedToday || false;
+          
+          window.taskHistory = data.taskHistory || {};
+          for(let i=1; i<=window.totalTasks; i++) {
+              if(!window.taskHistory[i]) window.taskHistory[i] = [];
+          }
 
-      let lastActiveDay = data.lastActiveDay || 0;
-      let checkedTasks = data.checkedTasks || []; 
+          // 3. LOAD DUAL CHALLENGE STATE
+          window.challengerUid = data.challengerUid || null; 
+          window.challengeName = data.challengeName || "Dual Challenge";
+          window.dualMatrixData = data.dualMatrixData || [];
+          window.dualTaskDuration = data.dualDuration || 7;
+          window.dualSetupDate = data.dualSetupDate ? data.dualSetupDate.toDate() : new Date();
+          window.dualCompletionTimestamps = data.dualCompletionTimestamps || {};
+          window.dualTaskHistory = data.dualTaskHistory || {};
+          
+          for(let i=1; i<=window.dualMatrixData.length; i++) {
+              if(!window.dualTaskHistory[i]) window.dualTaskHistory[i] = [];
+          }
 
-      // 🌙 MIDNIGHT ROLLOVER & XP DEDUCTION ALGORITHM
-      if (window.currentDayIndex > lastActiveDay) {
-        let earnedXP = 0;
-        let daysToFill = window.currentDayIndex - lastActiveDay;
-        
-        for(let d = 1; d <= daysToFill; d++) {
-            let processingDay = lastActiveDay + d;
-            let isYesterday = (processingDay === window.currentDayIndex);
+          // PENDING CHALLENGE INTERCEPTOR
+          if(data.pendingChallenge) {
+              document.getElementById('incoming-challenge-text').innerText = `You have been challenged to '${data.pendingChallenge.challengeName}' by ${data.pendingChallenge.fromName}!`;
+              const incModal = document.getElementById('incoming-challenge-modal');
+              incModal.classList.remove('hidden');
+              setTimeout(() => { incModal.classList.remove('opacity-0'); document.getElementById('incoming-modal-content').classList.replace('scale-95', 'scale-100'); }, 10);
+          }
+
+          // UI HEADERS
+          document.getElementById('task-count-header').innerText = `${window.totalTasks} TASKS`;
+          document.getElementById('tour-txt-days').innerText = `${window.taskDuration} DAYS`;
+          document.getElementById('global-xp-display').innerText = `${window.baseXP} XP`;
+          document.getElementById('profile-xp').innerText = window.baseXP;
+          window.updateProfileRank(window.baseXP);
+
+          // 4. RENDER PERSONAL TASKS
+          if (data.baseMatrix) {
+              let taskHtml = '';
+              data.baseMatrix.forEach((task, index) => {
+                  let i = index + 1;
+                  taskHtml += `
+                  <div class="bg-black/60 border border-white/5 rounded-2xl p-4 flex items-center gap-4 transition-all duration-300 task-row" id="personal-row-${i}">
+                    <label class="task-check-wrapper">
+                      <input type="checkbox" class="task-checkbox logic-check personal-check" data-task-id="${i}">
+                      <div class="task-custom-check"></div>
+                    </label>
+                    <div class="flex-1">
+                      <h4 class="text-sm font-bold text-white mb-0.5" id="personal-name-${i}">${task.name}</h4>
+                      
+                      <div class="flex items-center gap-3 mt-1">
+                         <p class="text-[10px] text-gray-500 font-medium flex items-center gap-1">
+                           <span class="text-[var(--accent-purple)]">🔒 Locked</span> • <span id="task-time-${i}">${task.time}</span>
+                         </p>
+                         
+                         <p class="text-[10px] font-bold text-orange-500 flex items-center gap-1 transition-all" id="personal-streak-ui-${i}">
+                           🔥 <span id="personal-streak-val-${i}">0</span>
+                         </p>
+
+                         <p class="text-[8.5px] font-black tracking-widest flex items-center gap-1.5 opacity-90 ml-auto">
+                           <span class="text-[var(--accent-mint)]">+100XP</span>
+                           <span class="text-red-500">-50XP</span>
+                         </p>
+                      </div>
+
+                      <p class="text-[10px] text-red-500 font-bold mt-0.5 tracking-wider hidden" id="task-countdown-${i}"></p>
+                    </div>
+                    <div class="text-2xl opacity-70">${task.emoji}</div>
+                  </div>`;
+              });
+              document.getElementById('personal-tasks-list').innerHTML = taskHtml;
+          }
+
+          // 5. RENDER DUAL TASKS
+          if (window.challengerUid && window.dualMatrixData.length > 0) {
+              document.getElementById('dual-challenge-title-disp').innerText = window.challengeName;
+              document.getElementById('dual-days-disp').innerText = `${window.dualTaskDuration} DAYS`;
+
+              let dualHtml = '';
+              window.dualMatrixData.forEach((task, index) => {
+                  let i = index + 1;
+                  dualHtml += `
+                  <div class="bg-black/40 border border-[var(--accent-purple)]/30 rounded-2xl p-4 flex items-center gap-4 transition-all duration-300 task-row" id="dual-row-${i}">
+                    <label class="task-check-wrapper">
+                      <input type="checkbox" class="task-checkbox logic-check dual-check" data-task-id="${i}">
+                      <div class="task-custom-check" style="border-color: var(--accent-purple);"></div>
+                    </label>
+                    <div class="flex-1">
+                      <h4 class="text-sm font-bold text-white mb-0.5" id="dual-name-${i}">${task.name}</h4>
+                      
+                      <div class="flex items-center gap-3 mt-1">
+                         <p class="text-[10px] font-bold text-orange-500 flex items-center gap-1 transition-all" id="dual-streak-ui-${i}">
+                           🔥 <span id="dual-streak-val-${i}">0</span>
+                         </p>
+                         <p class="text-[8.5px] font-black tracking-widest flex items-center gap-1.5 opacity-90 ml-auto">
+                           <span class="text-[var(--accent-purple)]">+100XP</span>
+                           <span class="text-red-500">-50XP</span>
+                         </p>
+                      </div>
+                    </div>
+                    <div class="text-2xl opacity-70">${task.emoji}</div>
+                  </div>`;
+              });
+              document.getElementById('dual-tasks-list').innerHTML = dualHtml;
+              
+              document.getElementById('dual-empty-state').style.display = 'none';
+              document.getElementById('dual-active-state').style.display = 'block';
+          }
+          
+          window.attachCheckboxListeners(); // Attach to both personal and dual
+
+          // 6. TIME MATH
+          let currentISTDate = new Date();
+          try {
+            const response = await fetch('https://worldtimeapi.org/api/timezone/Asia/Kolkata');
+            const timeData = await response.json();
+            currentISTDate = new Date(timeData.datetime);
+          } catch (e) {
+            currentISTDate = new Date(new Date().getTime() + (new Date().getTimezoneOffset() * 60000) + (3600000 * 5.5));
+          }
+
+          const currentMidnight = new Date(currentISTDate); currentMidnight.setHours(0,0,0,0);
+          const setupMidnight = new Date(window.appSetupDate); setupMidnight.setHours(0,0,0,0);
+          
+          const diffTime = currentMidnight - setupMidnight;
+          const daysPassed = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+          window.currentDayIndex = Math.min(Math.max(daysPassed, 0), window.taskDuration - 1); 
+
+          document.getElementById('day-badge').innerText = `DAY ${window.currentDayIndex + 1}`;
+          document.getElementById('profile-streak').innerText = `Day ${window.currentDayIndex + 1} / ${window.taskDuration}`;
+
+          // Dual Math
+          let dualDaysPassed = 0;
+          if (window.challengerUid) {
+              const dSetupMidnight = new Date(window.dualSetupDate); dSetupMidnight.setHours(0,0,0,0);
+              const dDiff = currentMidnight - dSetupMidnight;
+              dualDaysPassed = Math.floor(dDiff / (1000 * 60 * 60 * 24));
+              window.currentDualDayIndex = Math.min(Math.max(dualDaysPassed, 0), window.dualTaskDuration - 1);
+              const dbd = document.getElementById('dual-day-badge');
+              if(dbd) dbd.innerText = `DAY ${window.currentDualDayIndex + 1}`;
+          }
+
+          let lastActiveDay = data.lastActiveDay || 0;
+          let checkedTasks = data.checkedTasks || []; 
+          let dualLastActiveDay = data.dualLastActiveDay || 0;
+          let dualCheckedTasks = data.dualCheckedTasks || [];
+
+          // 🌙 MIDNIGHT ROLLOVER: PERSONAL & DUAL
+          let needsUpdate = false;
+          let newTotalXP = window.baseXP;
+          
+          let updatePayload = {};
+
+          // Personal Rollover
+          if (window.currentDayIndex > lastActiveDay) {
+            let earnedXP = 0;
+            let daysToFill = window.currentDayIndex - lastActiveDay;
             
-            for(let i=1; i<=window.totalTasks; i++) {
-                let wasChecked = false;
-                if(isYesterday) {
-                    wasChecked = checkedTasks.includes(i - 1);
-                } else {
-                    wasChecked = false; 
-                }
+            for(let d = 1; d <= daysToFill; d++) {
+                let processingDay = lastActiveDay + d;
+                let isYesterday = (processingDay === window.currentDayIndex);
                 
-                window.taskHistory[i].push(wasChecked);
-                if(wasChecked) earnedXP += 100;
-                else earnedXP -= 50;
+                for(let i=1; i<=window.totalTasks; i++) {
+                    let wasChecked = isYesterday ? checkedTasks.includes(i - 1) : false;
+                    window.taskHistory[i].push(wasChecked);
+                    if(wasChecked) earnedXP += 100; else earnedXP -= 50;
+                }
             }
-        }
 
-        let newTotalXP = window.baseXP + earnedXP;
+            newTotalXP += earnedXP;
+            checkedTasks = []; 
+            window.completionTimestamps = {};
+            lastActiveDay = window.currentDayIndex;
+            window.isSealedToday = false;
 
-        checkedTasks = []; 
-        window.completionTimestamps = {};
-        lastActiveDay = window.currentDayIndex;
-        window.isSealedToday = false;
+            updatePayload.checkedTasks = checkedTasks;
+            updatePayload.completionTimestamps = window.completionTimestamps;
+            updatePayload.lastActiveDay = lastActiveDay;
+            updatePayload.isSealedToday = false;
+            updatePayload.taskHistory = window.taskHistory;
+            needsUpdate = true;
+          }
 
-        await updateDoc(userDocRef, {
-          checkedTasks: checkedTasks,
-          completionTimestamps: window.completionTimestamps,
-          lastActiveDay: lastActiveDay,
-          isSealedToday: false,
-          taskHistory: window.taskHistory,
-          totalXP: newTotalXP
-        });
-        
-        window.baseXP = newTotalXP;
-      }
-
-      // Restore Checkboxes securely
-      if (checkedTasks.length > 0) {
-        setTimeout(() => {
-          const boxes = document.querySelectorAll('#daily-tasks .logic-check');
-          checkedTasks.forEach(idx => {
-            if (boxes[idx]) {
-              boxes[idx].checked = true;
-              const row = boxes[idx].closest('.task-row');
-              row.classList.add('opacity-50', 'border-[var(--accent-mint)]/30');
-              row.querySelector('h4').classList.add('line-through', 'text-gray-400');
+          // Dual Rollover
+          if (window.challengerUid && window.currentDualDayIndex > dualLastActiveDay) {
+            let dEarnedXP = 0;
+            let dDaysToFill = window.currentDualDayIndex - dualLastActiveDay;
+            
+            for(let d = 1; d <= dDaysToFill; d++) {
+                let processingDay = dualLastActiveDay + d;
+                let isYesterday = (processingDay === window.currentDualDayIndex);
+                
+                for(let i=1; i<=window.dualMatrixData.length; i++) {
+                    let wasChecked = isYesterday ? dualCheckedTasks.includes(i - 1) : false;
+                    window.dualTaskHistory[i].push(wasChecked);
+                    if(wasChecked) dEarnedXP += 100; else dEarnedXP -= 50;
+                }
             }
-          });
-          window.updateTotalProgress();
-        }, 300);
-      } else {
-        window.updateTotalProgress();
+
+            newTotalXP += dEarnedXP;
+            dualCheckedTasks = []; 
+            window.dualCompletionTimestamps = {};
+            dualLastActiveDay = window.currentDualDayIndex;
+
+            updatePayload.dualCheckedTasks = dualCheckedTasks;
+            updatePayload.dualCompletionTimestamps = window.dualCompletionTimestamps;
+            updatePayload.dualLastActiveDay = dualLastActiveDay;
+            updatePayload.dualTaskHistory = window.dualTaskHistory;
+            needsUpdate = true;
+          }
+
+          if (needsUpdate) {
+             updatePayload.totalXP = newTotalXP;
+             window.baseXP = newTotalXP;
+             await updateDoc(userDocRef, updatePayload);
+          }
+
+          // RESTORE UI STATES
+          if (checkedTasks.length > 0) {
+              const boxes = document.querySelectorAll('.personal-check');
+              checkedTasks.forEach(idx => {
+                if (boxes[idx]) {
+                  boxes[idx].checked = true;
+                  const row = boxes[idx].closest('.task-row');
+                  row.classList.add('opacity-50', 'border-[var(--accent-mint)]/30');
+                  row.querySelector('h4').classList.add('line-through', 'text-gray-400');
+                }
+              });
+          }
+          window.updatePersonalProgress();
+
+          if (dualCheckedTasks.length > 0 && window.challengerUid) {
+              const dBoxes = document.querySelectorAll('.dual-check');
+              dualCheckedTasks.forEach(idx => {
+                if (dBoxes[idx]) {
+                  dBoxes[idx].checked = true;
+                  const row = dBoxes[idx].closest('.task-row');
+                  row.classList.add('opacity-50', 'border-[var(--accent-purple)]/30');
+                  row.querySelector('h4').classList.add('line-through', 'text-gray-400');
+                }
+              });
+          }
+          if(window.challengerUid) window.updateDualProgress();
+
+          if(window.isSealedToday) window.renderSealStateUI();
+
+      } catch (err) {
+          console.error("Critical Boot Error:", err);
+      } finally {
+          // THIS ENSURES THE LOADER ALWAYS DISAPPEARS, NO MATTER WHAT.
+          const loaderEl = document.getElementById('page-loader');
+          if (loaderEl) loaderEl.style.display = 'none';
+          if (window.startLiveClocks) window.startLiveClocks();
       }
-
-      // Restore Seal State if sealed earlier today
-      if(window.isSealedToday) {
-          setTimeout(() => { window.renderSealStateUI(); }, 350);
-      }
-
-      loader.style.opacity = '0';
-      setTimeout(() => { loader.style.display = 'none'; }, 500);
-      
-      if (window.startLiveClocks) window.startLiveClocks();
-
     });
 
-    window.syncCheckboxesToDatabase = async function(checkedIndexesArray, timestampsObj) {
+    // --- SYNC ENGINE ---
+    window.syncPersonalCheckboxes = async function(checkedIndexesArray, timestampsObj) {
        const user = auth.currentUser;
        if (user) {
-         try {
-           await updateDoc(doc(db, "users", user.uid), {
-             checkedTasks: checkedIndexesArray,
-             completionTimestamps: timestampsObj || {}
-           });
-         } catch(e) {}
+         try { await updateDoc(doc(db, "users", user.uid), { checkedTasks: checkedIndexesArray, completionTimestamps: timestampsObj || {} }); } 
+         catch(e) { console.error(e); }
+       }
+    };
+
+    window.syncDualCheckboxes = async function(checkedIndexesArray, timestampsObj) {
+       const user = auth.currentUser;
+       if (user) {
+         try { await updateDoc(doc(db, "users", user.uid), { dualCheckedTasks: checkedIndexesArray, dualCompletionTimestamps: timestampsObj || {} }); } 
+         catch(e) { console.error(e); }
        }
     };
 
     window.saveSealStateToFirebase = async function(isSealed) {
         const user = auth.currentUser;
         if(user) {
-            try { await updateDoc(doc(db, "users", user.uid), { isSealedToday: isSealed }); } 
-            catch(e) {}
+            try { await updateDoc(doc(db, "users", user.uid), { isSealedToday: isSealed }); } catch(e) {}
         }
     };
 
     // --- EXECUTE FIREBASE DUAL CHALLENGE INVITE ---
     window.executeFirebaseInvite = async function(payload) {
         const btn = document.getElementById('btn-send-invite');
-        btn.innerText = "Transmitting...";
-        btn.disabled = true;
+        btn.innerText = "Transmitting..."; btn.disabled = true;
 
         try {
-            // 1. Query for the Target ID
             const usersRef = collection(db, "users");
             const q = query(usersRef, where("uid_code", "==", payload.targetCode));
             const querySnapshot = await getDocs(q);
 
             if(querySnapshot.empty) {
                 alert("Target Code Not Found. Ensure they have generated their 26XXXX identity code in their profile.");
-                btn.innerText = "Lock & Send Invite";
-                btn.disabled = false;
-                return;
+                btn.innerText = "Lock & Send Invite"; btn.disabled = false; return;
             }
 
-            // Target Found!
             let targetDocRef;
             querySnapshot.forEach((doc) => { targetDocRef = doc.ref; });
 
-            // 2. Format the pending challenge payload
             const inviteData = {
                 fromUid: window.currentUserUid,
                 fromName: document.getElementById('user-name').innerText,
@@ -1353,23 +1510,17 @@
                 sentAt: serverTimestamp()
             };
 
-            // 3. Write to Target User
             await updateDoc(targetDocRef, { pendingChallenge: inviteData });
-            
             alert(`Challenge Transmitted Successfully to ${payload.targetCode}! Awaiting their acceptance.`);
             
-            // Switch UI back to inactive rules state to wait
             document.getElementById('comm-invite-state').classList.add('hidden');
             document.getElementById('comm-rules-state').classList.remove('hidden');
 
-            btn.innerText = "Lock & Send Invite";
-            btn.disabled = false;
+            btn.innerText = "Lock & Send Invite"; btn.disabled = false;
 
         } catch (e) {
-            console.error(e);
             alert("Transmission Error. Check network connection.");
-            btn.innerText = "Lock & Send Invite";
-            btn.disabled = false;
+            btn.innerText = "Lock & Send Invite"; btn.disabled = false;
         }
     };
 
@@ -1391,21 +1542,29 @@
                         challengeName: challengeData.challengeName,
                         dualMatrixData: challengeData.dualMatrix,
                         dualDuration: challengeData.duration,
-                        pendingChallenge: deleteField() // Remove pending
+                        dualSetupDate: serverTimestamp(),
+                        dualLastActiveDay: 0,
+                        dualCheckedTasks: [],
+                        dualTaskHistory: {},
+                        pendingChallenge: deleteField() 
                     });
                     
-                    // 2. Attempt to link back to Inviter (Requires open Firestore rules!)
+                    // 2. Attempt to link back to Inviter
                     try {
                         const inviterRef = doc(db, "users", challengeData.fromUid);
                         await updateDoc(inviterRef, {
                             challengerUid: user.uid,
                             challengeName: challengeData.challengeName,
                             dualMatrixData: challengeData.dualMatrix,
-                            dualDuration: challengeData.duration
+                            dualDuration: challengeData.duration,
+                            dualSetupDate: serverTimestamp(),
+                            dualLastActiveDay: 0,
+                            dualCheckedTasks: [],
+                            dualTaskHistory: {}
                         });
                     } catch(e) { console.warn("Could not write back to inviter."); }
                     
-                    window.location.reload(); // Reload to sync dual states
+                    window.location.reload(); 
                 }
             } catch (e) {}
         }
@@ -1415,6 +1574,86 @@
         const user = auth.currentUser;
         if(user) {
             try { await updateDoc(doc(db, "users", user.uid), { pendingChallenge: deleteField() }); } catch(e){}
+        }
+    };
+
+    window.fetchChallengerProgress = async function() {
+        if(!window.challengerUid) return;
+        
+        try {
+            const cRef = doc(db, "users", window.challengerUid);
+            const cSnap = await getDoc(cRef);
+            
+            if(cSnap.exists()) {
+                const cData = cSnap.data();
+
+                if(cData.challengerUid !== window.currentUserUid) {
+                    window.challengerUid = null;
+                    await updateDoc(doc(db, "users", window.currentUserUid), { challengerUid: null });
+                    alert("Your challenger has deserted the duel.");
+                    window.renderCommunityView();
+                    return;
+                }
+
+                const cTotal = cData.dualMatrixData ? cData.dualMatrixData.length : 1;
+                const cCompleted = cData.dualCheckedTasks ? cData.dualCheckedTasks.length : 0;
+                
+                const cPercent = Math.round((cCompleted / cTotal) * 100);
+                document.getElementById('dual-percent-challenger').innerText = cPercent + '%';
+
+                const svgOpp = document.getElementById('comm-rings-challenger');
+                if(svgOpp) {
+                    const tasks = window.dualMatrixData || [1,2,3];
+                    const total = tasks.length || 1;
+                    const maxR = 140; const minR = 60;
+                    const gap = total > 1 ? (maxR - minR) / Math.max(1, total - 1) : 0;
+                    
+                    let htmlOpp = '';
+                    tasks.forEach((t, i) => {
+                        const color = window.ringColors[i % window.ringColors.length];
+                        const r = total > 1 ? maxR - (i * gap) : 100;
+                        const circ = 2 * Math.PI * r;
+                        
+                        // Fake mapping logic to challenger's history for the UI mockup
+                        const historyData = cData.dualTaskHistory ? cData.dualTaskHistory[i+1] || [] : [];
+                        const completedDays = historyData.filter(v => v).length + (cData.dualCheckedTasks && cData.dualCheckedTasks.includes(i) ? 1 : 0);
+                        const progressPercent = Math.min(1, completedDays / window.dualTaskDuration);
+                        const offset = circ - (progressPercent * circ); 
+
+                        const pathD = `M 150 ${150 - r} A ${r} ${r} 0 1 1 149.9 ${150 - r}`;
+                        
+                        htmlOpp += `
+                          <path d="${pathD}" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="8" stroke-linecap="round" />
+                          <path d="${pathD}" fill="none" stroke="${color}" stroke-width="8" stroke-linecap="round" stroke-dasharray="${circ}" stroke-dashoffset="${offset}" class="vis-ring-path drop-shadow-[0_0_8px_${color}80]" />
+                        `;
+                    });
+                    svgOpp.innerHTML = htmlOpp;
+                }
+            }
+        } catch(e) { console.warn("Could not fetch challenger. Check Firebase rules."); }
+    };
+
+    window.executeQuitFirebase = async function() {
+        const user = auth.currentUser;
+        if(user) {
+            window.baseXP -= 500;
+            window.updateTotalProgress(); 
+            
+            try {
+                await updateDoc(doc(db, "users", user.uid), { 
+                    challengerUid: null,
+                    totalXP: window.baseXP,
+                    dualMatrixData: deleteField()
+                });
+                
+                if(window.challengerUid) {
+                    await updateDoc(doc(db, "users", window.challengerUid), { challengerUid: null, dualMatrixData: deleteField() });
+                }
+                
+                window.challengerUid = null;
+                alert("Challenge Terminated. 500 XP deducted.");
+                window.location.reload();
+            } catch(e) { alert("Error quitting challenge."); }
         }
     };
   </script>
