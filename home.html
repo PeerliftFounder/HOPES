@@ -10,6 +10,16 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   
+  <script>
+    // DEEP LINK MEMORY: Catch invite links before Firebase redirects unauthenticated users
+    const urlParams = new URLSearchParams(window.location.search);
+    const incomingChallenge = urlParams.get('challenge');
+    if(incomingChallenge) {
+        localStorage.setItem('pendingChallenge', incomingChallenge);
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  </script>
+
   <style>
     :root {
       --accent-mint: #00E59B;
@@ -113,7 +123,6 @@
     .animate-shake { animation: shake 0.4s ease-in-out; }
   </style>
 </head>
-<!-- PERFECTED BOTTOM PADDING: Solves the "unending CSS abyss" issue -->
 <body class="relative pb-24"> 
 
   <div id="page-loader">
@@ -152,20 +161,25 @@
     <!-- DATE TRACKER -->
     <div id="week-tracker" class="flex justify-between items-center mb-6 w-full px-1"></div>
 
-    <header class="mb-8 flex justify-between items-start">
+    <header class="mb-8 flex justify-between items-center">
       <div>
         <h1 class="text-3xl font-extrabold tracking-tight text-white mb-1">
-          <span id="greeting-text">Good evening</span>, <span class="text-[var(--accent-mint)]" id="user-name">...</span> <span class="text-2xl">👋</span>
+          <span id="greeting-text">Good evening</span>, <br><span class="text-[var(--accent-mint)] text-2xl" id="user-name">...</span> <span class="text-xl">👋</span>
         </h1>
-        <p class="text-sm text-gray-400 font-medium">Small steps today, better tomorrow.</p>
       </div>
-      <button id="logout-btn" class="mt-1 w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-all shadow-[0_0_15px_rgba(0,0,0,0.2)] active:scale-95">
-        <svg class="w-4 h-4 translate-x-[1px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-      </button>
+      
+      <!-- GLOBAL XP DISPLAY (Replaced Logout Button) -->
+      <div class="flex flex-col items-end">
+        <div class="flex items-center gap-2 bg-black/60 border border-[var(--accent-mint)]/30 px-3 py-2 rounded-xl shadow-[0_0_15px_rgba(0,229,155,0.15)]">
+          <span class="text-lg">🏆</span>
+          <span id="global-xp-display" class="text-sm font-black tracking-widest text-[var(--accent-mint)]">0 XP</span>
+        </div>
+      </div>
     </header>
 
     <!-- 🏠 DASHBOARD VIEW WRAPPER -->
     <div id="dashboard-view" class="block w-full">
+        <!-- Speedometer Card -->
         <section id="tour-speedo-card" class="surface-card p-6 mb-8 flex items-center justify-between transition-all duration-300 rounded-2xl">
           <div>
             <h2 id="tour-txt-protocol" class="text-lg font-bold text-white mb-1 px-1 -ml-1 transition-all duration-300">Live Matrix</h2>
@@ -224,6 +238,38 @@
         </div>
         
         <p class="text-[9px] text-gray-500 font-bold uppercase tracking-widest mt-8 text-center px-4 leading-relaxed">Rings auto-seal at midnight. Manual seals require 100% completion.</p>
+      </div>
+    </div>
+
+    <!-- 👤 PROFILE VIEW WRAPPER -->
+    <div id="profile-view" class="hidden w-full pb-10">
+      <div class="surface-card p-6 mt-2 relative overflow-hidden flex flex-col items-center text-center">
+        <!-- Avatar -->
+        <div class="w-20 h-20 rounded-full bg-gradient-to-tr from-[var(--accent-purple)] to-[var(--accent-mint)] p-1 shadow-[0_0_20px_rgba(0,229,155,0.3)] mb-4">
+          <div class="w-full h-full rounded-full bg-black flex items-center justify-center text-3xl font-black text-white" id="profile-avatar">👤</div>
+        </div>
+        
+        <h2 class="text-xl font-black text-white tracking-wide" id="profile-name-full">User</h2>
+        <p class="text-[10px] font-bold tracking-widest uppercase mb-8 transition-colors duration-300" id="profile-rank" style="color: var(--accent-purple);">Initiate</p>
+        
+        <!-- Stats Grid -->
+        <div class="w-full grid grid-cols-2 gap-4 mb-8">
+          <div class="bg-black/40 border border-white/5 rounded-xl p-4 flex flex-col items-center justify-center">
+             <span class="text-2xl mb-1">🏆</span>
+             <span class="text-base font-extrabold text-[var(--accent-mint)]" id="profile-xp">0</span>
+             <span class="text-[9px] text-gray-500 font-bold uppercase tracking-widest mt-1">Total XP</span>
+          </div>
+          <div class="bg-black/40 border border-white/5 rounded-xl p-4 flex flex-col items-center justify-center">
+             <span class="text-2xl mb-1">🔥</span>
+             <span class="text-base font-extrabold text-white" id="profile-streak">Day 0/7</span>
+             <span class="text-[9px] text-gray-500 font-bold uppercase tracking-widest mt-1">Matrix Streak</span>
+          </div>
+        </div>
+
+        <!-- Secure Logout Button -->
+        <button id="profile-logout-btn" class="w-full py-4 rounded-xl font-bold text-red-500 bg-red-500/10 border border-red-500/20 uppercase tracking-widest text-xs hover:bg-red-500/20 active:scale-95 transition-all">
+          Secure Log Out
+        </button>
       </div>
     </div>
 
@@ -313,10 +359,10 @@
       <div id="nav-btn-vis" class="nav-item transition-all" onclick="switchTab('vis')" onmousedown="showTooltip('tt-vis')" onmouseup="hideTooltip('tt-vis')" ontouchstart="showTooltip('tt-vis')" ontouchend="hideTooltip('tt-vis')">
         <div id="tt-vis" class="nav-tooltip">VISUALIZE</div>🌀
       </div>
-      <div class="nav-item" onmousedown="showTooltip('tt-prof')" onmouseup="hideTooltip('tt-prof')" ontouchstart="showTooltip('tt-prof')" ontouchend="hideTooltip('tt-prof')">
+      <!-- PROFILE TAB -->
+      <div id="nav-btn-prof" class="nav-item transition-all" onclick="switchTab('prof')" onmousedown="showTooltip('tt-prof')" onmouseup="hideTooltip('tt-prof')" ontouchstart="showTooltip('tt-prof')" ontouchend="hideTooltip('tt-prof')">
         <div id="tt-prof" class="nav-tooltip">PROFILE</div>👤
       </div>
-      <!-- NEW COMMUNITY TAB -->
       <div id="nav-btn-comm" class="nav-item transition-all" onclick="switchTab('comm')" onmousedown="showTooltip('tt-comm')" onmouseup="hideTooltip('tt-comm')" ontouchstart="showTooltip('tt-comm')" ontouchend="hideTooltip('tt-comm')">
         <div id="tt-comm" class="nav-tooltip">COMMUNITY</div>🌍
       </div>
@@ -333,6 +379,7 @@
     window.appSetupDate = null;
     window.completionTimestamps = {}; 
     window.challengerUid = null; 
+    window.totalXP = 0;
 
     /* --- WEEK TRACKER LOGIC --- */
     function initWeekTracker() {
@@ -466,12 +513,14 @@
       // Update Dual Challenge You Ring if active
       if (!document.getElementById('community-view').classList.contains('hidden') && window.challengerUid) {
           const dualYouCircle = document.getElementById('dual-ring-you');
-          const dualYouR = dualYouCircle.r.baseVal.value;
-          const dualYouCircumference = dualYouR * 2 * Math.PI;
-          dualYouCircle.style.strokeDasharray = `${dualYouCircumference} ${dualYouCircumference}`;
-          const dualYouOffset = dualYouCircumference - (percent / 100) * dualYouCircumference;
-          dualYouCircle.style.strokeDashoffset = dualYouOffset;
-          document.getElementById('dual-percent-you').innerText = percent + '%';
+          if (dualYouCircle) {
+              const dualYouR = dualYouCircle.r.baseVal.value;
+              const dualYouCircumference = dualYouR * 2 * Math.PI;
+              dualYouCircle.style.strokeDasharray = `${dualYouCircumference} ${dualYouCircumference}`;
+              const dualYouOffset = dualYouCircumference - (percent / 100) * dualYouCircumference;
+              dualYouCircle.style.strokeDashoffset = dualYouOffset;
+              document.getElementById('dual-percent-you').innerText = percent + '%';
+          }
       }
     }
 
@@ -507,6 +556,21 @@
         window.updateTotalProgress();
     };
 
+    /* --- PROFILE RANK LOGIC --- */
+    window.updateProfileRank = function(xp) {
+        let rank = "Initiate";
+        let color = "var(--accent-purple)";
+        if (xp < 0) { rank = "In Debt"; color = "#EF4444"; }
+        else if (xp >= 500 && xp < 2000) { rank = "Disciplined"; color = "var(--accent-mint)"; }
+        else if (xp >= 2000) { rank = "Master"; color = "#EAB308"; }
+        
+        const rankEl = document.getElementById('profile-rank');
+        if(rankEl) {
+            rankEl.innerText = rank;
+            rankEl.style.color = color;
+        }
+    }
+
     /* --- NAV BAR TOGGLES --- */
     document.querySelectorAll('.nav-item').forEach(item => { item.addEventListener('contextmenu', e => e.preventDefault()); });
     window.showTooltip = function(id) { document.getElementById(id).classList.add('visible'); }
@@ -515,15 +579,17 @@
     window.switchTab = function(tabName) {
         const btnDash = document.getElementById('nav-btn-dash');
         const btnVis = document.getElementById('nav-btn-vis');
+        const btnProf = document.getElementById('nav-btn-prof');
         const btnComm = document.getElementById('nav-btn-comm');
         
         const viewDash = document.getElementById('dashboard-view');
         const viewVis = document.getElementById('visualize-view');
+        const viewProf = document.getElementById('profile-view');
         const viewComm = document.getElementById('community-view');
 
         // Reset
-        [btnDash, btnVis, btnComm].forEach(btn => { if(btn) btn.className = "nav-item transition-all"; });
-        [viewDash, viewVis, viewComm].forEach(view => { if(view) view.classList.add('hidden'); });
+        [btnDash, btnVis, btnProf, btnComm].forEach(btn => { if(btn) btn.className = "nav-item transition-all"; });
+        [viewDash, viewVis, viewProf, viewComm].forEach(view => { if(view) view.classList.add('hidden'); });
         
         const activeClass = "nav-item text-[var(--accent-mint)] scale-110 drop-shadow-[0_0_10px_rgba(0,229,155,0.5)] transition-all bg-white/10 p-3 rounded-full border border-white/5 shadow-inner";
 
@@ -534,6 +600,9 @@
             btnVis.className = activeClass;
             viewVis.classList.remove('hidden');
             window.renderVisualizeRings();
+        } else if (tabName === 'prof') {
+            btnProf.className = activeClass;
+            viewProf.classList.remove('hidden');
         } else if (tabName === 'comm') {
             btnComm.className = activeClass;
             viewComm.classList.remove('hidden');
@@ -656,7 +725,6 @@
         const linkInput = document.getElementById('invite-link-input');
         const container = document.getElementById('invite-link-container');
         
-        // Generates the unique link using the current user's UID (requires Firebase Auth)
         if(window.currentUserUid) {
             const link = window.location.origin + window.location.pathname + '?challenge=' + window.currentUserUid;
             linkInput.value = link;
@@ -677,11 +745,9 @@
         const tasksList = document.getElementById('dual-tasks-list');
 
         if(window.challengerUid) {
-            // Challenge Active!
             stateInvite.classList.add('hidden');
             stateActive.classList.remove('hidden');
 
-            // Render User's Own Tasks beneath the rings
             const checkboxes = document.querySelectorAll('.logic-check');
             let tasksHtml = '';
             document.querySelectorAll('.task-row').forEach((row, i) => {
@@ -701,16 +767,10 @@
             });
             tasksList.innerHTML = tasksHtml;
 
-            // Trigger Firebase fetch for Challenger's live percentage
-            if(window.fetchChallengerProgress) {
-                window.fetchChallengerProgress();
-            }
-
-            // Make sure own ring is updated
+            if(window.fetchChallengerProgress) window.fetchChallengerProgress();
             window.updateTotalProgress();
 
         } else {
-            // No Challenge Active
             stateInvite.classList.remove('hidden');
             stateActive.classList.add('hidden');
         }
@@ -724,9 +784,9 @@
       executeTourStep(1);
     }
     const tourSteps = {
-      1: { elementId: "tour-txt-protocol", text: "Welcome to your locked matrix. Everything here is strict. There are no edits or swaps allowed." },
-      2: { elementId: "tour-txt-days", text: "This architecture will execute for your chosen duration." },
-      3: { elementId: "nav-btn-vis", text: "Tap the Visualize Ring to watch your live progress and formally seal your day when finished." }
+      1: { elementId: "tour-speedo-card", text: "Welcome to your locked matrix. Everything here is strict. There are no edits or swaps allowed." },
+      2: { elementId: "tour-target-base", text: "Complete habits to earn +100XP. Missing one drops -50XP. Missed days reset your streak." },
+      3: { elementId: "nav-btn-vis", text: "Tap Visualize to watch your live rings. Hold the center button to seal your day." }
     };
     function executeTourStep(step) {
       document.querySelectorAll('.tour-highlight').forEach(el => { el.classList.remove('tour-highlight'); });
@@ -774,7 +834,7 @@
     const db = getFirestore(app);
     const loader = document.getElementById('page-loader');
 
-    document.getElementById('logout-btn').addEventListener('click', async () => {
+    document.getElementById('profile-logout-btn').addEventListener('click', async () => {
       try { await signOut(auth); } catch (error) { console.error("Logout failed", error); }
     });
 
@@ -784,32 +844,48 @@
         return;
       }
 
-      window.currentUserUid = user.uid; // Set for invite link generation
+      window.currentUserUid = user.uid; 
       const firstName = user.displayName ? user.displayName.split(' ')[0] : 'Operator';
       document.getElementById('user-name').innerText = firstName;
+      document.getElementById('profile-name-full').innerText = user.displayName || 'Operator';
+      document.getElementById('profile-avatar').innerText = firstName.charAt(0).toUpperCase();
       
       const userDocRef = doc(db, "users", user.uid);
       const userDoc = await getDoc(userDocRef);
 
-      // --- URL CHALLENGE INTERCEPTOR ---
-      const urlParams = new URLSearchParams(window.location.search);
-      const incomingChallengeUid = urlParams.get('challenge');
+      // --- URL CHALLENGE / DEEP LINK INTERCEPTOR ---
+      let incomingChallengeUid = new URLSearchParams(window.location.search).get('challenge');
+      if(!incomingChallengeUid) {
+          incomingChallengeUid = localStorage.getItem('pendingChallenge');
+      }
       
       if (incomingChallengeUid && incomingChallengeUid !== user.uid) {
-         const confirmJoin = confirm("Someone challenged you to an accountability duel! Accept and link profiles?");
-         if(confirmJoin) {
-             try {
-                // Update Current User (Self)
-                await updateDoc(userDocRef, { challengerUid: incomingChallengeUid });
-                // Attempt to Update Challenger (Requires open Firestore rules!)
-                await updateDoc(doc(db, "users", incomingChallengeUid), { challengerUid: user.uid });
-             } catch(e) {
-                console.warn("Could not two-way sync. Check Firebase Rules.");
+         try {
+             const cSnap = await getDoc(doc(db, "users", incomingChallengeUid));
+             if(cSnap.exists()) {
+                 const cData = cSnap.data();
+                 const myTotal = userDoc.exists() && userDoc.data().baseMatrix ? userDoc.data().baseMatrix.length : 4;
+                 const myDur = userDoc.exists() && userDoc.data().duration ? userDoc.data().duration : 7;
+                 
+                 const cTotal = cData.baseMatrix ? cData.baseMatrix.length : (cData.totalHabits || 4);
+                 const cDur = cData.duration || 7;
+
+                 if (myTotal === cTotal && myDur === cDur) {
+                     const confirmJoin = confirm("Someone challenged you to an accountability duel! Match parameters validated. Link profiles?");
+                     if(confirmJoin) {
+                        await updateDoc(userDocRef, { challengerUid: incomingChallengeUid });
+                        await updateDoc(doc(db, "users", incomingChallengeUid), { challengerUid: user.uid });
+                        localStorage.setItem('openCommunity', 'true');
+                     }
+                 } else {
+                     alert(`CHALLENGE REJECTED: Matrix Mismatch.\nYou have ${myTotal} tasks for ${myDur} days.\nChallenger has ${cTotal} tasks for ${cDur} days.\nParameters must be identical to duel.`);
+                 }
              }
+         } catch(e) {
+             console.warn("Could not sync duel. Check Firebase Rules.");
          }
-         // Clean URL so it doesn't prompt again
+         localStorage.removeItem('pendingChallenge');
          window.history.replaceState({}, document.title, window.location.pathname);
-         // Reload to pull new state cleanly
          window.location.reload();
          return;
       }
@@ -822,12 +898,18 @@
         window.taskDuration = data.duration || 7;
         window.appSetupDate = data.setupDate ? data.setupDate.toDate() : new Date();
         window.completionTimestamps = data.completionTimestamps || {};
-        window.challengerUid = data.challengerUid || null; // Bind Community status
+        window.challengerUid = data.challengerUid || null; 
+        window.totalXP = data.totalXP || 0; 
 
         document.getElementById('task-count-header').innerText = `${window.totalTasks} TASKS`;
         document.getElementById('tour-txt-days').innerText = `${window.taskDuration} DAYS`;
+        
+        // Render XP to UI
+        document.getElementById('global-xp-display').innerText = `${window.totalXP} XP`;
+        document.getElementById('profile-xp').innerText = window.totalXP;
+        window.updateProfileRank(window.totalXP);
 
-        // DYNAMIC RENDERING OF DASHBOARD TASKS
+        // DYNAMIC RENDERING OF DASHBOARD TASKS WITH XP BADGES
         if (data.baseMatrix) {
             let taskHtml = '';
             data.baseMatrix.forEach((task, index) => {
@@ -840,9 +922,15 @@
                   </label>
                   <div class="flex-1">
                     <h4 class="text-sm font-bold text-white mb-0.5" id="task-name-${i}">${task.name}</h4>
-                    <p class="text-[10px] text-gray-500 font-medium flex items-center gap-1">
-                      <span class="text-[var(--accent-purple)]">🔒 Locked</span> • <span id="task-time-${i}">${task.time}</span>
-                    </p>
+                    <div class="flex items-center gap-3">
+                       <p class="text-[10px] text-gray-500 font-medium flex items-center gap-1">
+                         <span class="text-[var(--accent-purple)]">🔒 Locked</span> • <span id="task-time-${i}">${task.time}</span>
+                       </p>
+                       <p class="text-[8px] font-black tracking-widest flex items-center gap-1.5 opacity-80">
+                         <span class="text-[var(--accent-mint)]">+100XP</span>
+                         <span class="text-red-500">-50XP</span>
+                       </p>
+                    </div>
                     <p class="text-[10px] text-red-500 font-bold mt-0.5 tracking-wider hidden" id="task-countdown-${i}"></p>
                   </div>
                   <div class="text-2xl opacity-70" id="task-emoji-${i}">${task.emoji}</div>
@@ -872,28 +960,34 @@
         window.currentDayIndex = Math.min(Math.max(daysPassed, 0), window.taskDuration - 1); 
 
         document.getElementById('day-badge').innerText = `DAY ${window.currentDayIndex + 1}`;
+        document.getElementById('profile-streak').innerText = `Day ${window.currentDayIndex + 1} / ${window.taskDuration}`;
 
         let lastActiveDay = data.lastActiveDay || 0;
         let dailyHistory = data.dailyHistory || [];
         let checkedTasks = data.checkedTasks || [];
 
-        // Midnight Rollover & Harsh Reset Check (Ensures Day 2 is Fresh!)
+        // Midnight Rollover & XP Calculation
         if (window.currentDayIndex > lastActiveDay) {
           let percent = Math.round((checkedTasks.length / window.totalTasks) * 100);
           
+          // XP MATH: +100 for completed, -50 for missed
+          let earnedXP = (checkedTasks.length * 100) - ((window.totalTasks - checkedTasks.length) * 50);
+          let newTotalXP = window.totalXP + earnedXP;
+          
           if (percent < 100) {
-            // THE HARSH RESET: Failed to hit 100%. Wipes history and unchecks everything.
+            // HARSH RESET (Preserves XP!)
             await updateDoc(userDocRef, {
               setupDate: serverTimestamp(),
               dailyHistory: [], 
               checkedTasks: [], 
               completionTimestamps: {},
-              lastActiveDay: 0
+              lastActiveDay: 0,
+              totalXP: newTotalXP
             });
             window.location.reload();
             return; 
           } else {
-            // SUCCESS: 100%. Archive day. Wipe current checks for a fresh Day 2.
+            // SUCCESS
             dailyHistory[lastActiveDay] = percent; 
             checkedTasks = []; 
             window.completionTimestamps = {};
@@ -903,8 +997,13 @@
               dailyHistory: dailyHistory,
               checkedTasks: checkedTasks,
               completionTimestamps: window.completionTimestamps,
-              lastActiveDay: lastActiveDay
+              lastActiveDay: lastActiveDay,
+              totalXP: newTotalXP
             });
+            window.totalXP = newTotalXP;
+            document.getElementById('global-xp-display').innerText = `${window.totalXP} XP`;
+            document.getElementById('profile-xp').innerText = window.totalXP;
+            window.updateProfileRank(window.totalXP);
           }
         }
 
@@ -929,7 +1028,12 @@
         
         if (window.startLiveClocks) window.startLiveClocks();
 
-        // Single Memory Tour Trigger
+        // Check if we should auto-open Community Tab
+        if (localStorage.getItem('openCommunity') === 'true') {
+            localStorage.removeItem('openCommunity');
+            setTimeout(() => { window.switchTab('comm'); }, 600);
+        }
+
         if (!data.tourCompleted) {
           setTimeout(window.startVirtualTour, 500);
           await updateDoc(userDocRef, { tourCompleted: true });
