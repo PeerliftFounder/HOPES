@@ -24,6 +24,7 @@
       min-height: 100vh;
       overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
+      user-select: none;
     }
 
     /* RADIANT BACKGROUND GLOW */
@@ -56,8 +57,11 @@
 
     .app-container { max-width: 420px; margin: 0 auto; min-height: 100vh; background: rgba(5, 5, 7, 0.4); }
 
+    /* SVG Ring Animations */
     .progress-ring__circle { transition: stroke-dashoffset 1.5s cubic-bezier(0.16, 1, 0.3, 1); transform: rotate(-90deg); transform-origin: 50% 50%; }
+    .vis-ring-path { transition: stroke-dashoffset 1s cubic-bezier(0.16, 1, 0.3, 1); }
 
+    /* Checkbox UI */
     .task-check-wrapper { position: relative; display: inline-block; width: 24px; height: 24px; flex-shrink: 0; }
     .task-checkbox { opacity: 0; width: 0; height: 0; position: absolute; }
     .task-custom-check {
@@ -67,11 +71,12 @@
     .task-checkbox:checked ~ .task-custom-check { background-color: var(--accent-mint); border-color: var(--accent-mint); box-shadow: 0 0 15px rgba(0, 229, 155, 0.4); }
     .task-checkbox:checked ~ .task-custom-check::after { content: '✓'; color: #000; font-size: 14px; font-weight: 800; }
 
+    /* Nav Bar */
     .nav-bar {
       background: rgba(10, 10, 15, 0.65); backdrop-filter: blur(30px) saturate(200%); -webkit-backdrop-filter: blur(30px) saturate(200%);
       border-top: 1px solid rgba(255,255,255,0.1); padding-bottom: env(safe-area-inset-bottom, 16px);
     }
-    .nav-item { font-size: 1.5rem; transition: transform 0.2s, opacity 0.3s; cursor: pointer; position: relative; user-select: none; }
+    .nav-item { font-size: 1.5rem; transition: transform 0.2s, opacity 0.3s; cursor: pointer; position: relative; user-select: none; display: flex; justify-content: center; align-items: center; }
     .nav-item:active { transform: scale(0.85); }
     .nav-tooltip {
       position: absolute; top: -45px; left: 50%; transform: translateX(-50%) translateY(10px) scale(0.9);
@@ -81,17 +86,6 @@
     }
     .nav-tooltip.visible { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
 
-    .task-input-container { background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; transition: all 0.3s; }
-    .task-input-container:focus-within { border-color: rgba(255,255,255,0.2); box-shadow: 0 0 15px rgba(0, 229, 155, 0.05); }
-    .clean-input { background: transparent; border: none; outline: none; color: white; width: 100%; }
-    .time-type-box {
-      width: 70px; height: 70px; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 16px; text-align: center; font-size: 2rem; font-family: monospace; color: white; outline: none;
-    }
-    .time-type-box:focus { border-color: var(--accent-mint); box-shadow: 0 0 15px rgba(0,229,155,0.2); }
-    .time-type-box::-webkit-outer-spin-button, .time-type-box::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-    .time-type-box[type=number] { -moz-appearance: textfield; }
-
     #tour-backdrop { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); z-index: 99990; transition: opacity 0.4s ease; }
     body.tour-active .surface-card { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
     .tour-highlight {
@@ -100,6 +94,7 @@
       background-color: #050507 !important; border-radius: 8px; transition: all 0.4s ease;
       scroll-margin-top: 150px; scroll-margin-bottom: 150px;
     }
+    
     .hide-scrollbar::-webkit-scrollbar { display: none; }
     .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
@@ -108,109 +103,44 @@
       display: flex; flex-direction: column; justify-content: center; align-items: center;
       transition: opacity 0.5s ease;
     }
+
+    /* Rejection Shake Animation */
+    @keyframes shake {
+      0%, 100% { transform: translate(-50%, -50%) translateX(0); }
+      25% { transform: translate(-50%, -50%) translateX(-6px); }
+      50% { transform: translate(-50%, -50%) translateX(6px); }
+      75% { transform: translate(-50%, -50%) translateX(-6px); }
+    }
+    .animate-shake { animation: shake 0.4s ease-in-out; }
   </style>
 </head>
 <body class="relative pb-[40vh]"> 
 
   <div id="page-loader">
     <div class="w-10 h-10 border-4 border-white/10 border-t-[var(--accent-mint)] rounded-full animate-spin mb-4"></div>
-    <p class="text-xs font-bold tracking-widest text-[var(--accent-mint)] uppercase">Syncing Database...</p>
+    <p class="text-xs font-bold tracking-widest text-[var(--accent-mint)] uppercase">Syncing Matrix...</p>
   </div>
 
   <div class="liquid-bg"></div>
   <div class="ambient-glow"></div>
 
-  <div id="auto-swap-banner" class="hidden fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-[var(--accent-mint)]/10 backdrop-blur-xl border border-[var(--accent-mint)]/30 rounded-full px-5 py-2 flex items-center gap-3 transition-all duration-500 shadow-[0_0_20px_rgba(0,229,155,0.2)]">
-    <span class="text-lg">⚡</span>
-    <span id="auto-swap-text" class="text-[10px] font-extrabold tracking-wider text-white uppercase">2 EDITS REMAINING TODAY</span>
-  </div>
-
+  <!-- THE MEMORY TOUR BACKDROP -->
   <div id="tour-backdrop" style="display: none; opacity: 0;"></div>
 
   <div id="tour-card" class="fixed left-1/2 -translate-x-1/2 w-[90%] max-w-[380px] bg-black border border-[var(--accent-mint)]/50 rounded-2xl p-5 shadow-[0_20px_50px_rgba(0,0,0,0.9)] z-[99999] transition-all duration-500 ease-in-out" style="display: none; bottom: 48px;">
     <div class="flex justify-between items-center mb-3">
-      <span class="text-[10px] font-extrabold tracking-[0.2em] text-[var(--accent-mint)] uppercase" id="tour-step-indicator">STEP 1 / 6</span>
-      <button onclick="endTour()" class="text-[10px] text-gray-500 hover:text-white font-bold tracking-wider uppercase pointer-events-auto">Skip</button>
+      <span class="text-[10px] font-extrabold tracking-[0.2em] text-[var(--accent-mint)] uppercase" id="tour-step-indicator">RULE 1 / 3</span>
     </div>
-    <p class="text-sm text-gray-200 leading-relaxed font-medium mb-5" id="tour-text">Welcome to your dashboard onboarding sequence.</p>
+    <p class="text-sm text-gray-200 leading-relaxed font-medium mb-5" id="tour-text">Welcome to your dashboard.</p>
     <div class="flex justify-end pointer-events-auto">
       <button onclick="nextTourStep()" id="tour-next-btn" class="bg-white text-black px-5 py-2 rounded-lg text-xs font-extrabold uppercase tracking-wider hover:scale-95 transition-transform">Next</button>
     </div>
   </div>
 
-  <div id="emoji-modal" class="fixed inset-0 z-[150] items-center justify-center bg-black/90 backdrop-blur-md transition-opacity duration-300" style="display: none; opacity: 0;">
-    <div id="emoji-content" class="surface-card p-5 w-[90%] max-w-sm scale-95 transition-transform duration-300">
-      <h3 class="text-[10px] font-bold text-gray-400 mb-4 text-center uppercase tracking-[0.2em]">Select Identifier</h3>
-      <div class="grid grid-cols-4 gap-2 text-2xl text-center" id="emoji-grid"></div>
-      <button onclick="closeEmojiModal()" class="w-full mt-5 py-2.5 rounded-lg bg-white/5 text-gray-300 text-sm font-bold border border-white/10 hover:bg-white/10 transition">Close</button>
-    </div>
-  </div>
-
-  <div id="time-modal" class="fixed inset-0 z-[150] items-center justify-center bg-black/90 backdrop-blur-md transition-opacity duration-300" style="display: none; opacity: 0;">
-    <div id="time-content" class="surface-card p-6 w-[90%] max-w-xs scale-95 transition-transform duration-300 text-center">
-      <h3 class="text-[10px] font-bold text-[var(--accent-mint)] mb-6 uppercase tracking-[0.2em]">Type 24H Time</h3>
-      <div class="flex justify-center items-center gap-3 mb-8">
-        <input type="number" id="type-hours" placeholder="00" min="0" max="23" class="time-type-box" oninput="validateTimeInput(this, 23, 'type-mins')">
-        <span class="text-3xl text-gray-500 font-bold">:</span>
-        <input type="number" id="type-mins" placeholder="00" min="0" max="59" class="time-type-box" oninput="validateTimeInput(this, 59, null)">
-      </div>
-      <button onclick="confirmTime()" class="w-full py-3 rounded-lg font-bold text-black bg-[var(--accent-mint)] shadow-[0_0_15px_rgba(0,229,155,0.3)] transition uppercase tracking-widest text-sm">Confirm</button>
-      <button onclick="closeTimeModal()" class="w-full mt-3 py-2.5 rounded-lg bg-transparent text-gray-400 text-sm font-bold transition">Cancel</button>
-    </div>
-  </div>
-
-  <div id="edit-modal" class="fixed inset-0 z-[120] items-center justify-center bg-black/90 backdrop-blur-xl transition-opacity duration-300" style="display: none; opacity: 0;">
-    <div id="edit-content" class="bg-[#0a0a0f] border border-white/10 p-6 w-[90%] max-w-sm rounded-3xl shadow-2xl transform scale-95 transition-transform duration-300">
-      <h3 class="text-[11px] font-bold text-[var(--accent-mint)] mb-3 text-center uppercase tracking-[0.2em]">⚡ Single Daily Edit</h3>
-      <p class="text-[11px] text-gray-400 mb-6 text-center leading-relaxed">Modifying this slot locks your editor completely for the next 24 hours.</p>
-      
-      <div class="space-y-5 mb-8">
-        <div>
-          <label class="text-[10px] font-bold text-[var(--accent-purple)] tracking-wider block mb-2 uppercase" id="edit-target-label">FLEX HABIT</label>
-          <input type="text" id="edit-new-name" class="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-3 text-sm font-semibold text-white outline-none focus:border-[var(--accent-mint)]">
-        </div>
-        <div>
-          <label class="text-[10px] font-bold text-gray-500 tracking-wider block mb-2">NEW TIMESTAMP (24H)</label>
-          <div class="flex items-center gap-3">
-            <input type="number" id="edit-hours" placeholder="00" min="0" max="23" class="w-16 bg-black/60 border border-white/10 rounded-xl p-3 text-center font-mono text-base outline-none focus:border-[var(--accent-mint)]">
-            <span class="text-gray-500 font-bold text-lg">:</span>
-            <input type="number" id="edit-mins" placeholder="00" min="0" max="59" class="w-16 bg-black/60 border border-white/10 rounded-xl p-3 text-center font-mono text-base outline-none focus:border-[var(--accent-mint)]">
-          </div>
-        </div>
-      </div>
-
-      <button onclick="executeSingleEdit()" class="w-full py-4 rounded-xl font-extrabold text-black bg-[var(--accent-mint)] shadow-[0_0_20px_rgba(0,229,155,0.3)] uppercase tracking-widest text-xs hover:scale-[0.98] transition-transform">
-        Save Task
-      </button>
-      <button onclick="closeEditModal()" class="w-full mt-2 py-3 rounded-lg bg-transparent text-gray-500 text-xs font-bold transition-colors uppercase tracking-wider">
-        Cancel
-      </button>
-    </div>
-  </div>
-
-  <div id="expansion-modal" class="fixed inset-0 z-[110] items-end sm:items-center justify-center bg-black/95 backdrop-blur-xl transition-opacity duration-300" style="display: none; opacity: 0;">
-    <div id="expansion-content" class="bg-[#0a0a0f] border border-white/10 w-full max-w-[420px] h-[85vh] sm:h-[80vh] rounded-t-3xl sm:rounded-3xl p-5 flex flex-col translate-y-full sm:translate-y-0 sm:scale-95 shadow-[0_-20px_50px_rgba(0,0,0,0.9)] transition-transform duration-500">
-      <div class="w-12 h-1.5 bg-white/20 rounded-full mx-auto mb-6 shrink-0"></div>
-      <div class="flex justify-between items-center mb-6 shrink-0">
-        <div>
-          <h2 class="text-xl font-extrabold text-[var(--accent-mint)]">Expand Matrix</h2>
-          <p class="text-xs text-gray-400">Configure Slots 05 to 07</p>
-        </div>
-        <button onclick="closeExpansionModal()" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-gray-400 hover:text-white">✕</button>
-      </div>
-
-      <div class="flex-1 overflow-y-auto hide-scrollbar space-y-3 pr-1" id="extended-tasks-container"></div>
-
-      <div class="pt-6 shrink-0 border-t border-white/10 mt-4">
-        <button onclick="lockFinalMatrix()" class="w-full py-4 rounded-xl font-extrabold text-black bg-[var(--accent-mint)] shadow-[0_0_20px_rgba(0,229,155,0.3)] uppercase tracking-widest text-sm hover:scale-[0.98] transition-transform">
-          Lock Final Matrix
-        </button>
-      </div>
-    </div>
-  </div>
-
+  <!-- APPLICATION CONTAINER -->
   <div class="app-container flex flex-col pt-6 px-5 z-10">
     
+    <!-- LIVE IST CLOCK -->
     <div class="flex justify-center w-full mb-6">
       <div class="bg-black/60 border border-white/10 px-4 py-1.5 rounded-full flex items-center gap-2 shadow-[0_0_15px_rgba(0,0,0,0.5)]">
         <span class="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></span>
@@ -219,6 +149,7 @@
       </div>
     </div>
 
+    <!-- 7-DAY DATE TRACKER -->
     <div id="week-tracker" class="flex justify-between items-center mb-6 w-full px-1"></div>
 
     <header class="mb-8 flex justify-between items-start">
@@ -228,19 +159,20 @@
         </h1>
         <p class="text-sm text-gray-400 font-medium">Small steps today, better tomorrow.</p>
       </div>
-      
-      <button id="logout-btn" class="mt-1 w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-all shadow-[0_0_15px_rgba(0,0,0,0.2)] active:scale-95" aria-label="Log Out">
+      <button id="logout-btn" class="mt-1 w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-all shadow-[0_0_15px_rgba(0,0,0,0.2)] active:scale-95">
         <svg class="w-4 h-4 translate-x-[1px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
       </button>
     </header>
 
+    <!-- 🏠 DASHBOARD VIEW WRAPPER -->
     <div id="dashboard-view" class="block w-full">
+        <!-- Speedometer Card -->
         <section id="tour-speedo-card" class="surface-card p-6 mb-8 flex items-center justify-between transition-all duration-300 rounded-2xl">
           <div>
-            <h2 id="tour-txt-protocol" class="text-lg font-bold text-white mb-1 px-1 -ml-1 transition-all duration-300">Level 1</h2>
-            <p class="text-xs text-gray-400 mb-3 px-1 -ml-1">Complete base tasks to unlock.</p>
+            <h2 id="tour-txt-protocol" class="text-lg font-bold text-white mb-1 px-1 -ml-1 transition-all duration-300">Live Matrix</h2>
+            <p class="text-xs text-gray-400 mb-3 px-1 -ml-1">Execute your architecture.</p>
             <div class="flex">
-              <span id="tour-txt-days" class="px-2.5 py-1 bg-[var(--accent-purple)]/20 border border-[var(--accent-purple)]/30 rounded text-[10px] font-bold tracking-widest text-[var(--accent-purple)] transition-all duration-300">7 DAYS</span>
+              <span id="tour-txt-days" class="px-2.5 py-1 bg-[var(--accent-purple)]/20 border border-[var(--accent-purple)]/30 rounded text-[10px] font-bold tracking-widest text-[var(--accent-purple)] transition-all duration-300 uppercase">-- DAYS</span>
             </div>
           </div>
 
@@ -250,95 +182,21 @@
               <circle id="speedometer" class="progress-ring__circle text-[var(--accent-mint)]" stroke-width="8" stroke-linecap="round" fill="transparent" r="42" cx="50" cy="50" stroke="currentColor" />
             </svg>
             <div class="text-center relative z-10 flex flex-col items-center mt-1">
-              <span class="text-[9px] text-[var(--accent-purple)] font-black tracking-[0.2em] mb-0.5" id="day-badge">DAY 1</span>
+              <span class="text-[9px] text-[var(--accent-purple)] font-black tracking-[0.2em] mb-0.5" id="day-badge">DAY --</span>
               <span class="text-xl font-extrabold text-white leading-none" id="task-percent">0%</span>
             </div>
           </div>
         </section>
 
+        <!-- DYNAMIC TASK LIST -->
         <section id="tour-target-base" class="mb-6 transition-all duration-300 rounded-2xl p-2 -mx-2">
           <div class="flex items-center justify-between mb-4 pl-1">
-            <h3 class="text-xs font-bold uppercase tracking-widest text-gray-300">Base Matrix</h3>
-            <span class="text-[10px] text-gray-500 font-bold">4 TASKS</span>
+            <h3 class="text-xs font-bold uppercase tracking-widest text-gray-300">Daily Commitments</h3>
+            <span class="text-[10px] text-gray-500 font-bold" id="task-count-header">-- TASKS</span>
           </div>
 
           <div class="space-y-3" id="daily-tasks">
-            
-            <div>
-              <div class="bg-black/60 border border-white/5 rounded-2xl p-4 flex items-center gap-4 relative overflow-hidden transition-all duration-300 task-row">
-                <div class="absolute left-0 top-0 w-1 h-full bg-[var(--accent-purple)]"></div>
-                <label class="task-check-wrapper">
-                  <input type="checkbox" class="task-checkbox logic-check">
-                  <div class="task-custom-check"></div>
-                </label>
-                <div class="flex-1">
-                  <h4 class="text-sm font-bold text-white mb-0.5" id="task-name-1">Loading...</h4>
-                  <p class="text-[10px] text-gray-500 font-medium flex items-center gap-1">
-                    <span class="text-[var(--accent-purple)]">🔒 Anchor</span> • <span id="task-time-1">--:--</span>
-                  </p>
-                  <p class="text-[10px] text-red-500 font-bold mt-0.5 tracking-wider hidden" id="task-countdown-1"></p>
-                </div>
-                <div class="text-2xl opacity-70" id="task-emoji-1">🔄</div>
-              </div>
-              
-              <div class="mt-2 flex justify-start pl-1">
-                <span id="single-edit-status" class="text-[9px] bg-[var(--accent-mint)]/10 text-[var(--accent-mint)] border border-[var(--accent-mint)]/20 px-2.5 py-1 rounded-md font-bold tracking-wider uppercase transition-all duration-500 shadow-[0_0_10px_rgba(0,229,155,0.05)] inline-block">
-                  ⚡ Single Edit Available
-                </span>
-              </div>
-            </div>
-
-            <div class="bg-black/60 border border-white/5 rounded-2xl p-4 flex items-center gap-4 transition-all duration-300 task-row flex-task-row hover:bg-white/10" onclick="handleTaskClick(2, event)">
-              <label class="task-check-wrapper" onclick="event.stopPropagation()">
-                <input type="checkbox" class="task-checkbox logic-check">
-                <div class="task-custom-check"></div>
-              </label>
-              <div class="flex-1">
-                <h4 class="text-sm font-bold text-white mb-0.5" id="task-name-2">Loading...</h4>
-                <p class="text-[10px] text-gray-500 font-medium" id="task-time-2">--:--</p>
-                <p class="text-[10px] text-red-500 font-bold mt-0.5 tracking-wider hidden" id="task-countdown-2"></p>
-              </div>
-              <div class="text-2xl opacity-70" id="task-emoji-2">🔄</div>
-            </div>
-
-            <div class="bg-black/60 border border-white/5 rounded-2xl p-4 flex items-center gap-4 transition-all duration-300 task-row flex-task-row hover:bg-white/10" onclick="handleTaskClick(3, event)">
-              <label class="task-check-wrapper" onclick="event.stopPropagation()">
-                <input type="checkbox" class="task-checkbox logic-check">
-                <div class="task-custom-check"></div>
-              </label>
-              <div class="flex-1">
-                <h4 class="text-sm font-bold text-white mb-0.5" id="task-name-3">Loading...</h4>
-                <p class="text-[10px] text-gray-500 font-medium" id="task-time-3">--:--</p>
-                <p class="text-[10px] text-red-500 font-bold mt-0.5 tracking-wider hidden" id="task-countdown-3"></p>
-              </div>
-              <div class="text-2xl opacity-70" id="task-emoji-3">🔄</div>
-            </div>
-
-            <div class="bg-black/60 border border-white/5 rounded-2xl p-4 flex items-center gap-4 transition-all duration-300 task-row flex-task-row hover:bg-white/10" onclick="handleTaskClick(4, event)">
-              <label class="task-check-wrapper" onclick="event.stopPropagation()">
-                <input type="checkbox" class="task-checkbox logic-check">
-                <div class="task-custom-check"></div>
-              </label>
-              <div class="flex-1">
-                <h4 class="text-sm font-bold text-white mb-0.5" id="task-name-4">Loading...</h4>
-                <p class="text-[10px] text-gray-500 font-medium" id="task-time-4">--:--</p>
-                <p class="text-[10px] text-red-500 font-bold mt-0.5 tracking-wider hidden" id="task-countdown-4"></p>
-              </div>
-              <div class="text-2xl opacity-70" id="task-emoji-4">🔄</div>
-            </div>
-
-          </div>
-        </section>
-
-        <section id="tour-target-expansion" class="mt-6 mb-6">
-          <div id="locked-expansion-ui" class="relative overflow-hidden rounded-xl bg-black/60 border border-white/5 p-6 flex flex-col items-center justify-center opacity-70">
-            <div class="absolute inset-0 bg-gradient-to-t from-[var(--accent-mint)]/5 to-transparent"></div>
-            <div class="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-3 shadow-[0_0_20px_rgba(0,229,155,0.1)]">
-              <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-            </div>
-            <h4 class="text-sm font-bold text-white mb-1">Matrix Locked</h4>
-            <p class="text-[10px] text-gray-500 tracking-widest uppercase font-bold text-center">Clear Level 1 Base to unlock 3 Expansion Slots</p>
-            <div class="absolute -bottom-4 w-3/4 h-8 bg-[var(--accent-mint)]/20 blur-xl rounded-full"></div>
+            <!-- JavaScript Injects Custom Tasks Here -->
           </div>
         </section>
 
@@ -346,16 +204,31 @@
           <div class="text-center space-y-2">
             <p class="text-[10px] font-black tracking-[0.3em] text-[var(--accent-mint)] uppercase">Hopes 2026</p>
             <p class="text-[9px] font-bold tracking-widest text-gray-500 uppercase">Consistency Over Perfection</p>
-            <div class="flex items-center justify-center gap-4 text-[9px] font-semibold text-gray-600 mt-2">
-              <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
-              <span>•</span>
-              <a href="#" class="hover:text-white transition-colors">Terms and Conditions</a>
-            </div>
           </div>
         </footer>
-
     </div>
 
+    <!-- 🌀 VISUALIZE VIEW WRAPPER (THE RINGS ENGINE) -->
+    <div id="visualize-view" class="hidden w-full pb-20">
+      <div id="tour-target-visualize" class="surface-card p-5 mt-2 flex flex-col items-center">
+        <h3 class="text-sm font-bold text-white mb-1">Activity Rings</h3>
+        <p class="text-[10px] text-gray-400 mb-8 uppercase tracking-widest">Execute and Seal</p>
+
+        <div class="relative w-full max-w-[320px] aspect-square flex items-center justify-center">
+          <!-- Dynamically Generated SVG Rings -->
+          <svg id="rings-svg" class="absolute inset-0 w-full h-full drop-shadow-[0_0_15px_rgba(0,0,0,0.5)]" viewBox="0 0 300 300"></svg>
+          
+          <!-- MASTER SEAL BUTTON -->
+          <button id="seal-btn" class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-24 h-24 rounded-full bg-black/90 border border-white/10 flex flex-col items-center justify-center shadow-[0_0_30px_rgba(0,0,0,0.8)] transition-all select-none focus:outline-none">
+             <span class="text-[10px] font-black tracking-widest text-gray-400 uppercase leading-tight" id="seal-text">Hold To<br>Seal</span>
+          </button>
+        </div>
+        
+        <p class="text-[9px] text-gray-500 font-bold uppercase tracking-widest mt-8 text-center px-4 leading-relaxed">Rings auto-seal at midnight. Manual seals require 100% completion.</p>
+      </div>
+    </div>
+
+    <!-- 📈 GRAPH VIEW WRAPPER -->
     <div id="graph-view" class="hidden w-full pb-20">
       <div class="surface-card p-5 mt-2">
         <div class="flex justify-between items-center mb-6">
@@ -395,31 +268,21 @@
 
   </div>
 
-  <div id="level-up-pill" class="fixed bottom-28 left-1/2 -translate-x-1/2 w-[90%] max-w-[380px] z-[80] bg-gradient-to-r from-[var(--accent-purple)] to-[var(--accent-mint)] p-[1px] rounded-2xl shadow-[0_10px_40px_rgba(0,229,155,0.3)] transition-all duration-500 ease-in-out opacity-0 pointer-events-none translate-y-10">
-    <div class="bg-black/95 backdrop-blur-md rounded-2xl p-4 flex items-center justify-between">
-      <div class="flex-1">
-        <h4 class="text-sm font-extrabold text-white">Base Locked.</h4>
-        <p class="text-[10px] text-gray-400 font-medium leading-tight mt-0.5 pr-2">Commit your next 3 tasks to continue.</p>
-      </div>
-      <button onclick="openExpansionModal()" class="bg-[var(--accent-mint)] text-black px-4 py-2 rounded-xl text-xs font-extrabold uppercase tracking-wider hover:scale-95 transition-transform pointer-events-auto">
-        Continue
-      </button>
-    </div>
-  </div>
-
+  <!-- Bottom Navigation Bar -->
   <nav class="nav-bar fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[420px] z-50 rounded-t-3xl">
     <div class="flex justify-around items-center px-6 py-4 max-w-[420px] mx-auto">
-      <div id="nav-btn-dash" class="nav-item text-[var(--accent-mint)] scale-110 drop-shadow-[0_0_10px_rgba(0,229,155,0.5)] transition-all" onclick="switchTab('dash')">
-        🏠
+      <div id="nav-btn-dash" class="nav-item text-[var(--accent-mint)] scale-110 drop-shadow-[0_0_10px_rgba(0,229,155,0.5)] transition-all bg-white/10 p-3 rounded-full border border-white/5 shadow-inner" onclick="switchTab('dash')" onmousedown="showTooltip('tt-dash')" onmouseup="hideTooltip('tt-dash')" ontouchstart="showTooltip('tt-dash')" ontouchend="hideTooltip('tt-dash')">
+        <div id="tt-dash" class="nav-tooltip" style="top: -55px;">DASHBOARD</div>🏠
       </div>
-      <div id="nav-swap-btn" class="nav-item opacity-20 pointer-events-none" onmousedown="showTooltip('tt-swap')" onmouseup="hideTooltip('tt-swap')" ontouchstart="showTooltip('tt-swap')" ontouchend="hideTooltip('tt-swap')">
-        <div id="tt-swap" class="nav-tooltip">SWAP LOCKED</div>🔀
+      <!-- NEW VISUALIZE TAB -->
+      <div id="nav-btn-vis" class="nav-item transition-all" onclick="switchTab('vis')" onmousedown="showTooltip('tt-vis')" onmouseup="hideTooltip('tt-vis')" ontouchstart="showTooltip('tt-vis')" ontouchend="hideTooltip('tt-vis')">
+        <div id="tt-vis" class="nav-tooltip">VISUALIZE</div>🌀
       </div>
       <div class="nav-item" onmousedown="showTooltip('tt-prof')" onmouseup="hideTooltip('tt-prof')" ontouchstart="showTooltip('tt-prof')" ontouchend="hideTooltip('tt-prof')">
         <div id="tt-prof" class="nav-tooltip">PROFILE</div>👤
       </div>
-      <div id="nav-btn-graph" class="nav-item transition-all" onclick="switchTab('graph')">
-        📈
+      <div id="nav-btn-graph" class="nav-item transition-all" onclick="switchTab('graph')" onmousedown="showTooltip('tt-graph')" onmouseup="hideTooltip('tt-graph')" ontouchstart="showTooltip('tt-graph')" ontouchend="hideTooltip('tt-graph')">
+        <div id="tt-graph" class="nav-tooltip">GRAPH</div>📈
       </div>
       <div class="nav-item" onmousedown="showTooltip('tt-comm')" onmouseup="showTooltip('tt-comm')" ontouchstart="showTooltip('tt-comm')" ontouchend="hideTooltip('tt-comm')">
         <div id="tt-comm" class="nav-tooltip">COMMUNITY</div>🌍
@@ -429,18 +292,16 @@
 
   <script>
     /* --- SYSTEM STATE VARIABLES --- */
-    window.isMatrixExpanded = false;
     window.isTourRunning = false; 
     window.currentDayIndex = 0;
-    window.dailySwapsUsed = 0;
-    window.singleEditSpent = false;
-    window.isSwapModeActive = false;
+    window.totalTasks = 4;
+    window.taskDuration = 7;
     
-    // Graph Variables mapping to Firebase
+    // Graph/Time Databases mapped to Firebase
     window.appSetupDate = null;
     window.completionTimestamps = {}; 
-    window.dailyTimestampsHistory = [{},{},{},{},{},{},{}];
-    window.dailyTargetHistory = [{},{},{},{},{},{},{}];
+    window.dailyTimestampsHistory = [];
+    window.dailyTargetHistory = [];
     window.graphMode = 'daily';
     window.graphViewDay = 0;
 
@@ -503,7 +364,7 @@
             const clockEl = document.getElementById('live-ist-clock');
             if(clockEl) clockEl.innerText = timeString;
 
-            for(let i=1; i<=7; i++) {
+            for(let i=1; i<=window.totalTasks; i++) {
                 const timeEl = document.getElementById(`task-time-${i}`);
                 const countdownEl = document.getElementById(`task-countdown-${i}`);
                 const checkbox = document.querySelector(`#task-name-${i}`)?.closest('.task-row')?.querySelector('.logic-check');
@@ -511,7 +372,7 @@
                 if(!timeEl || !countdownEl || !checkbox) continue;
                 
                 let timeStr = timeEl.innerText;
-                if(timeStr === '--:--' || timeStr.includes('Add') || checkbox.checked) {
+                if(timeStr === '--:--' || checkbox.checked) {
                     countdownEl.classList.add('hidden');
                     continue;
                 }
@@ -548,88 +409,28 @@
     circle.style.strokeDasharray = `${circumference} ${circumference}`;
     circle.style.strokeDashoffset = circumference;
 
-    function setProgress(completedCount) {
-      const percent = Math.round((completedCount / 7) * 100); 
+    window.updateTotalProgress = function() { 
+      const completedCount = document.querySelectorAll('.logic-check:checked').length;
+      const percent = Math.round((completedCount / window.totalTasks) * 100); 
       const offset = circumference - (percent / 100) * circumference;
       circle.style.strokeDashoffset = offset;
       document.getElementById('task-percent').innerText = percent + '%';
 
-      const pill = document.getElementById('level-up-pill');
-      const swapBtn = document.getElementById('nav-swap-btn');
-      
-      if (!window.isMatrixExpanded) {
-        if (completedCount === 4) {
-          pill.style.display = 'block';
-          setTimeout(() => { 
-            pill.classList.replace('opacity-0', 'opacity-100'); 
-            pill.classList.replace('pointer-events-none', 'pointer-events-auto');
-            pill.classList.replace('translate-y-10', 'translate-y-0');
-          }, 10);
+      if (completedCount === window.totalTasks) {
           circle.classList.add('drop-shadow-[0_0_10px_rgba(0,229,155,0.8)]');
-        } else {
-          pill.classList.replace('opacity-100', 'opacity-0'); 
-          pill.classList.replace('pointer-events-auto', 'pointer-events-none');
-          pill.classList.replace('translate-y-0', 'translate-y-10');
-          setTimeout(() => { pill.style.display = 'none'; }, 300);
-          circle.classList.remove('drop-shadow-[0_0_10px_rgba(0,229,155,0.8)]');
-        }
-        
-        if(window.currentDayIndex === 0) {
-          swapBtn.classList.add('opacity-20', 'pointer-events-none');
-          swapBtn.querySelector('.nav-tooltip').innerText = "SWAP LOCKED";
-        }
+          const todayCircle = document.getElementById('day-circle-0');
+          if (todayCircle) todayCircle.className = 'w-8 h-8 rounded-full flex items-center justify-center text-xs font-extrabold bg-[var(--accent-mint)] text-black border border-[var(--accent-mint)] shadow-[0_0_15px_rgba(0,229,155,0.5)] transition-all duration-500';
       } else {
-        pill.style.display = 'none';
-        
-        if(window.currentDayIndex > 0) {
-          swapBtn.classList.remove('opacity-20', 'pointer-events-none');
-          swapBtn.querySelector('.nav-tooltip').innerText = "EDIT TASKS";
-        }
-
-        if (completedCount === 7) circle.classList.add('drop-shadow-[0_0_10px_rgba(0,229,155,0.8)]');
-        else circle.classList.remove('drop-shadow-[0_0_10px_rgba(0,229,155,0.8)]');
+          circle.classList.remove('drop-shadow-[0_0_10px_rgba(0,229,155,0.8)]');
+          const todayCircle = document.getElementById('day-circle-0');
+          if (todayCircle) todayCircle.className = 'w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold bg-white/10 border border-white/20 text-white shadow-inner transition-all duration-500';
       }
-
-      const todayCircle = document.getElementById('day-circle-0');
-      if (todayCircle) {
-        if (completedCount === 7) {
-          todayCircle.className = 'w-8 h-8 rounded-full flex items-center justify-center text-xs font-extrabold bg-[var(--accent-mint)] text-black border border-[var(--accent-mint)] shadow-[0_0_15px_rgba(0,229,155,0.5)] transition-all duration-500';
-        } else {
-          todayCircle.className = 'w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold bg-white/10 border border-white/20 text-white shadow-inner transition-all duration-500';
-        }
+      
+      // Update Rings if Visualize tab is open
+      if (!document.getElementById('visualize-view').classList.contains('hidden')) {
+         window.renderVisualizeRings();
       }
     }
-
-    document.querySelectorAll('.logic-check').forEach((box, index) => {
-      box.addEventListener('change', (e) => {
-        let checkedCount = document.querySelectorAll('.logic-check:checked').length;
-        setProgress(checkedCount);
-        
-        const row = e.target.closest('.task-row');
-        const taskIdStr = row.querySelector('h4').id; 
-        const taskId = parseInt(taskIdStr.split('-')[2]); 
-
-        let nowIST = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"}));
-        let timeStr = nowIST.getHours().toString().padStart(2, '0') + ':' + nowIST.getMinutes().toString().padStart(2, '0');
-
-        if(box.checked) {
-          row.classList.add('opacity-50', 'border-[var(--accent-mint)]/30');
-          row.querySelector('h4').classList.add('line-through', 'text-gray-400');
-          window.completionTimestamps[taskId] = timeStr; 
-        } else {
-          row.classList.remove('opacity-50', 'border-[var(--accent-mint)]/30');
-          row.querySelector('h4').classList.remove('line-through', 'text-gray-400');
-          delete window.completionTimestamps[taskId];
-        }
-
-        if(window.syncCheckboxesToDatabase) {
-           let checkedIndexes = [];
-           document.querySelectorAll('.logic-check').forEach((b, i) => { if(b.checked) checkedIndexes.push(i); });
-           window.syncCheckboxesToDatabase(checkedIndexes, window.completionTimestamps);
-        }
-      });
-    });
-    setProgress(0);
 
     /* --- NAV BAR TOGGLES --- */
     document.querySelectorAll('.nav-item').forEach(item => { item.addEventListener('contextmenu', e => e.preventDefault()); });
@@ -638,29 +439,159 @@
 
     window.switchTab = function(tabName) {
         const btnDash = document.getElementById('nav-btn-dash');
+        const btnVis = document.getElementById('nav-btn-vis');
         const btnGraph = document.getElementById('nav-btn-graph');
+        
         const viewDash = document.getElementById('dashboard-view');
+        const viewVis = document.getElementById('visualize-view');
         const viewGraph = document.getElementById('graph-view');
 
-        btnDash.className = "nav-item transition-all";
-        btnGraph.className = "nav-item transition-all";
+        // Reset
+        [btnDash, btnVis, btnGraph].forEach(btn => btn.className = "nav-item transition-all");
+        [viewDash, viewVis, viewGraph].forEach(view => view.classList.add('hidden'));
         
+        const activeClass = "nav-item text-[var(--accent-mint)] scale-110 drop-shadow-[0_0_10px_rgba(0,229,155,0.5)] transition-all bg-white/10 p-3 rounded-full border border-white/5 shadow-inner";
+
         if(tabName === 'dash') {
-            btnDash.className = "nav-item text-[var(--accent-mint)] scale-110 drop-shadow-[0_0_10px_rgba(0,229,155,0.5)] transition-all bg-white/10 p-3 rounded-full border border-white/5 shadow-inner";
+            btnDash.className = activeClass;
             viewDash.classList.remove('hidden');
-            viewGraph.classList.add('hidden');
+        } else if (tabName === 'vis') {
+            btnVis.className = activeClass;
+            viewVis.classList.remove('hidden');
+            window.renderVisualizeRings();
         } else if (tabName === 'graph') {
-            btnGraph.className = "nav-item text-[var(--accent-mint)] scale-110 drop-shadow-[0_0_10px_rgba(0,229,155,0.5)] transition-all bg-white/10 p-3 rounded-full border border-white/5 shadow-inner";
-            viewDash.classList.add('hidden');
+            btnGraph.className = activeClass;
             viewGraph.classList.remove('hidden');
             if(window.renderGraph) window.renderGraph();
         }
     };
 
+    /* --- 🌀 FLAWLESS SVG VISUALIZE ENGINE --- */
+    window.renderVisualizeRings = function() {
+        const svg = document.getElementById('rings-svg');
+        const tasks = Array.from(document.querySelectorAll('.task-row'));
+        const total = tasks.length;
+        
+        let html = `
+          <defs>
+             <linearGradient id="sealGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="var(--accent-mint)" />
+                <stop offset="100%" stop-color="var(--accent-purple)" />
+             </linearGradient>
+          </defs>
+        `;
+        
+        // Vibrant Ring Colors
+        const colors = ['#00E59B', '#9D4EDD', '#3B82F6', '#F43F5E', '#EAB308', '#A855F7', '#14B8A6', '#F97316', '#EC4899', '#8B5CF6'];
+        
+        // Scalable Geometry (Center is 150,150. Max radius 140. Min radius 60 for center button)
+        const maxR = 140;
+        const minR = 60;
+        const gap = total > 1 ? (maxR - minR) / Math.max(1, total - 1) : 0;
+        
+        tasks.forEach((taskRow, i) => {
+            const isChecked = taskRow.querySelector('.logic-check').checked;
+            const name = taskRow.querySelector('h4').innerText.toUpperCase();
+            
+            const r = total > 1 ? maxR - (i * gap) : 100;
+            const color = colors[i % colors.length];
+            const circumference = 2 * Math.PI * r;
+            const offset = isChecked ? 0 : circumference;
+            
+            // Path logic: Starts top-center and goes clockwise
+            const pathD = `M 150 ${150 - r} A ${r} ${r} 0 1 1 149.9 ${150 - r}`;
+            
+            html += `
+              <!-- Faint Background Track -->
+              <path d="${pathD}" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="8" stroke-linecap="round" />
+              
+              <!-- Live Progress Track -->
+              <path id="ring-path-${i}" d="${pathD}" fill="none" stroke="${color}" stroke-width="8" stroke-linecap="round" 
+                    stroke-dasharray="${circumference}" stroke-dashoffset="${offset}" class="vis-ring-path drop-shadow-[0_0_8px_${color}80]" />
+              
+              <!-- Curved Typography -->
+              <text fill="rgba(255,255,255,0.7)" font-size="8" font-weight="900" letter-spacing="1">
+                 <textPath href="#ring-path-${i}" startOffset="3%" dominant-baseline="middle" alignment-baseline="middle">
+                    ${name}
+                 </textPath>
+              </text>
+            `;
+        });
+        
+        // Add the invisible interaction seal path
+        html += `
+          <path id="seal-progress-path" d="M 150 102 A 48 48 0 1 1 149.9 102" fill="none" stroke="url(#sealGrad)" stroke-width="4" stroke-linecap="round" stroke-dasharray="301" stroke-dashoffset="301" style="transition: stroke-dashoffset 0.1s linear;" />
+        `;
+        
+        svg.innerHTML = html;
+    };
+
+    /* --- HOLD-TO-SEAL MECHANIC --- */
+    const sealBtn = document.getElementById('seal-btn');
+    const sealText = document.getElementById('seal-text');
+    let holdTimer;
+    let holdProgress = 0; // 0 to 100
+    
+    function startHold(e) {
+       e.preventDefault();
+       // Check Rules
+       const completed = document.querySelectorAll('.logic-check:checked').length;
+       if(completed < window.totalTasks) {
+           // Reject!
+           sealBtn.classList.add('animate-shake', 'border-red-500');
+           sealText.innerHTML = "FINISH<br>TASKS";
+           sealText.classList.replace('text-gray-400', 'text-red-500');
+           setTimeout(() => {
+               sealBtn.classList.remove('animate-shake', 'border-red-500');
+               sealText.innerHTML = "HOLD TO<br>SEAL";
+               sealText.classList.replace('text-red-500', 'text-gray-400');
+           }, 800);
+           return;
+       }
+       
+       // Start Filling
+       holdTimer = setInterval(() => {
+           holdProgress += 4; // Fills in ~1.25 seconds
+           const path = document.getElementById('seal-progress-path');
+           if (path) {
+               // Path circumference is ~301
+               const offset = 301 - (holdProgress / 100 * 301);
+               path.style.strokeDashoffset = offset;
+           }
+           
+           if(holdProgress >= 100) {
+               clearInterval(holdTimer);
+               executeSeal();
+           }
+       }, 50);
+    }
+    
+    function stopHold() {
+       clearInterval(holdTimer);
+       if(holdProgress < 100) {
+           holdProgress = 0;
+           const path = document.getElementById('seal-progress-path');
+           if (path) path.style.strokeDashoffset = 301;
+       }
+    }
+    
+    function executeSeal() {
+       sealText.innerHTML = "SEALED<br>✓";
+       sealText.className = "text-[12px] font-black tracking-widest text-[var(--accent-mint)] uppercase";
+       sealBtn.classList.add('shadow-[0_0_50px_rgba(0,229,155,0.6)]', 'border-[var(--accent-mint)]');
+       // In a full app, this would trigger an immediate Firebase log to archive the day immediately instead of waiting for midnight.
+       alert("Day Sealed Successfully. Consistency maintained.");
+    }
+    
+    sealBtn.addEventListener('mousedown', startHold);
+    sealBtn.addEventListener('touchstart', startHold, {passive: false});
+    window.addEventListener('mouseup', stopHold);
+    window.addEventListener('touchend', stopHold);
+
     /* --- FLAWLESS SVG GRAPH ENGINE --- */
     window.getCurrentTargets = function() {
         let t = {};
-        for(let j=1; j<=7; j++) {
+        for(let j=1; j<=window.totalTasks; j++) {
             let el = document.getElementById(`task-time-${j}`);
             if(el && el.innerText.includes(':') && el.innerText !== '--:--') {
                 t[j] = el.innerText;
@@ -695,10 +626,8 @@
     window.renderGraph = function() {
         const svg = document.getElementById('graph-svg-canvas');
         const labelsContainer = document.getElementById('graph-x-labels');
-        let svgContent = '';
-        let labelContent = '';
+        let svgContent = ''; let labelContent = '';
         
-        // Exact percentages to space 7 columns across the full width perfectly
         let xCoords = [0, 16.6, 33.3, 50, 66.6, 83.3, 100]; 
 
         svgContent += `
@@ -706,12 +635,10 @@
             <clipPath id="clip-above"><rect x="0" y="0" width="100%" height="50%"/></clipPath>
             <clipPath id="clip-below"><rect x="0" y="50%" width="100%" height="50%"/></clipPath>
             <linearGradient id="grad-green" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="rgba(0, 229, 155, 0.7)"/>
-              <stop offset="100%" stop-color="rgba(0, 229, 155, 0)"/>
+              <stop offset="0%" stop-color="rgba(0, 229, 155, 0.7)"/><stop offset="100%" stop-color="rgba(0, 229, 155, 0)"/>
             </linearGradient>
             <linearGradient id="grad-red" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="rgba(239, 68, 68, 0)"/>
-              <stop offset="100%" stop-color="rgba(239, 68, 68, 0.7)"/>
+              <stop offset="0%" stop-color="rgba(239, 68, 68, 0)"/><stop offset="100%" stop-color="rgba(239, 68, 68, 0.7)"/>
             </linearGradient>
           </defs>
           <line x1="0" y1="50%" x2="100%" y2="50%" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" stroke-dasharray="4 4" />
@@ -723,18 +650,16 @@
             let targets = window.graphViewDay === window.currentDayIndex ? window.getCurrentTargets() : (window.dailyTargetHistory[window.graphViewDay] || {});
             let completions = window.graphViewDay === window.currentDayIndex ? window.completionTimestamps : (window.dailyTimestampsHistory[window.graphViewDay] || {});
 
-            for(let i=1; i<=7; i++) {
+            for(let i=1; i<=Math.min(7, window.totalTasks); i++) {
                 labelContent += `<div style="position: absolute; left: ${xCoords[i-1]}%; transform: translateX(-50%);">T${i}</div>`;
                 svgContent += `<line x1="${xCoords[i-1]}%" y1="0" x2="${xCoords[i-1]}%" y2="100%" stroke="rgba(255,255,255,0.05)" stroke-width="1" />`;
 
                 if(targets[i] && completions[i]) {
                     let [tH, tM] = targets[i].split(':').map(Number);
                     let [cH, cM] = completions[i].split(':').map(Number);
-                    let tMins = tH * 60 + tM;
-                    let cMins = cH * 60 + cM;
+                    let tMins = tH * 60 + tM; let cMins = cH * 60 + cM;
 
-                    let dev = tMins - cMins; 
-                    dev = Math.max(-120, Math.min(120, dev)); 
+                    let dev = tMins - cMins; dev = Math.max(-120, Math.min(120, dev)); 
                     let yPercent = 50 - (dev / 120 * 40); 
                     pointsArray.push(`${xCoords[i-1]},${yPercent}`);
                 }
@@ -744,10 +669,8 @@
             const dayLabels = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
             for(let i=0; i<7; i++) {
-                let d = new Date(setupMidnight);
-                d.setDate(d.getDate() + i);
-                let label = dayLabels[d.getDay()];
-                labelContent += `<div style="position: absolute; left: ${xCoords[i]}%; transform: translateX(-50%);">${label}</div>`;
+                let d = new Date(setupMidnight); d.setDate(d.getDate() + i);
+                labelContent += `<div style="position: absolute; left: ${xCoords[i]}%; transform: translateX(-50%);">${dayLabels[d.getDay()]}</div>`;
                 svgContent += `<line x1="${xCoords[i]}%" y1="0" x2="${xCoords[i]}%" y2="100%" stroke="rgba(255,255,255,0.05)" stroke-width="1" />`;
 
                 if (i <= window.currentDayIndex) {
@@ -755,17 +678,15 @@
                     let completions = i === window.currentDayIndex ? window.completionTimestamps : (window.dailyTimestampsHistory[i] || {});
 
                     let totalDev = 0; let count = 0;
-                    for(let j=1; j<=7; j++) {
+                    for(let j=1; j<=window.totalTasks; j++) {
                          if(targets[j] && completions[j]) {
                             let [tH, tM] = targets[j].split(':').map(Number);
                             let [cH, cM] = completions[j].split(':').map(Number);
-                            totalDev += ((tH * 60 + tM) - (cH * 60 + cM));
-                            count++;
+                            totalDev += ((tH * 60 + tM) - (cH * 60 + cM)); count++;
                          }
                     }
                     if(count > 0) {
-                        let avgDev = totalDev / count;
-                        avgDev = Math.max(-120, Math.min(120, avgDev));
+                        let avgDev = totalDev / count; avgDev = Math.max(-120, Math.min(120, avgDev));
                         let yPercent = 50 - (avgDev / 120 * 40);
                         pointsArray.push(`${xCoords[i]},${yPercent}`);
                     }
@@ -774,8 +695,7 @@
         }
 
         if(pointsArray.length > 0) {
-            let firstX = pointsArray[0].split(',')[0];
-            let lastX = pointsArray[pointsArray.length-1].split(',')[0];
+            let firstX = pointsArray[0].split(',')[0]; let lastX = pointsArray[pointsArray.length-1].split(',')[0];
             let polyPoints = `${firstX},50 ${pointsArray.join(' ')} ${lastX},50`;
 
             svgContent += `<polygon points="${polyPoints}" fill="url(#grad-green)" clip-path="url(#clip-above)" />`;
@@ -788,318 +708,37 @@
                 svgContent += `<circle cx="${px}%" cy="${py}%" r="3.5" fill="${color}" stroke="#050507" stroke-width="1.5" />`;
             });
         } else {
-            svgContent += `<text x="50%" y="50%" fill="rgba(255,255,255,0.2)" font-size="10" font-weight="bold" text-anchor="middle" dominant-baseline="middle">AWAITING TASK COMPLETION</text>`;
+            svgContent += `<text x="50%" y="50%" fill="rgba(255,255,255,0.2)" font-size="10" font-weight="bold" text-anchor="middle" dominant-baseline="middle">AWAITING COMPLETION</text>`;
         }
-
-        svg.innerHTML = svgContent;
-        labelsContainer.innerHTML = labelContent;
+        svg.innerHTML = svgContent; labelsContainer.innerHTML = labelContent;
     };
 
-    /* --- AUTO SWAP ENGINE (DAY 2+) --- */
-    window.activateSwapMode = function() {
-      if (window.dailySwapsUsed >= 2) return; 
-
-      window.isSwapModeActive = true;
-      
-      const swapBanner = document.getElementById('auto-swap-banner');
-      const swapText = document.getElementById('auto-swap-text');
-      
-      swapText.innerText = `${2 - window.dailySwapsUsed} EDITS REMAINING TODAY`;
-      swapBanner.classList.remove('hidden');
-
-      document.querySelectorAll('.task-row').forEach((row, idx) => {
-          if(idx === 0) return; 
-          row.classList.add('cursor-pointer', 'border', 'border-[var(--accent-mint)]/50', 'shadow-[0_0_10px_rgba(0,229,155,0.1)]');
-          row.onclick = (e) => {
-              if(!window.isSwapModeActive) return;
-              handleTaskClick(idx + 1, e); 
-          };
-      });
-    };
-
-    /* --- BLOCK CLICKS DURING TOUR --- */
-    document.addEventListener('click', (e) => {
-      if (window.isTourRunning && !e.target.closest('#tour-card')) { e.stopPropagation(); e.preventDefault(); }
-    }, true);
-
-    /* --- MANUAL SWAP BUTTON TRIGGER --- */
-    document.getElementById('nav-swap-btn').addEventListener('click', () => {
-      if (window.currentDayIndex === 0) return alert("Swaps unlock on Day 2.");
-      if (window.dailySwapsUsed >= 2) return alert("You have used your 2 edits for today.");
-      window.activateSwapMode();
-    });
-
-    /* --- EDIT PROTOCOL --- */
-    const editModalSys = document.getElementById('edit-modal');
-    const editContentSys = document.getElementById('edit-content');
-    let activeEditTaskId = null;
-
-    window.handleTaskClick = function(taskId, event) {
-      if (event.target.closest('.task-check-wrapper')) return;
-      if (window.isTourRunning) return;
-
-      if (window.currentDayIndex === 0) {
-          if (window.singleEditSpent) return;
-          if (taskId > 4) return;
-      } else {
-          if (!window.isSwapModeActive) return;
-          if (window.dailySwapsUsed >= 2) return alert("You have reached your 2 swap limit for today.");
-      }
-
-      activeEditTaskId = taskId;
-      const currentName = document.getElementById(`task-name-${taskId}`).innerText;
-      const currentTime = document.getElementById(`task-time-${taskId}`).innerText;
-
-      document.getElementById('edit-target-label').innerText = `FLEX HABIT 0${taskId}`;
-      document.getElementById('edit-new-name').value = currentName;
-
-      if(currentTime && currentTime.includes(':')) {
-        const parts = currentTime.split(':');
-        document.getElementById('edit-hours').value = parts[0];
-        document.getElementById('edit-mins').value = parts[1];
-      }
-      
-      editModalSys.style.display = 'flex';
-      setTimeout(() => { editModalSys.style.opacity = '1'; editContentSys.classList.replace('scale-95', 'scale-100'); }, 10);
-    }
-    
-    window.closeEditModal = function() {
-      editContentSys.classList.replace('scale-100', 'scale-95');
-      editModalSys.style.opacity = '0';
-      setTimeout(() => { editModalSys.style.display = 'none'; }, 300);
-    }
-    
-    window.executeSingleEdit = function() {
-      const newName = document.getElementById('edit-new-name').value.trim();
-      let hr = document.getElementById('edit-hours').value || "00";
-      let mn = document.getElementById('edit-mins').value || "00";
-
-      if(!newName) return alert("Please specify a habit name.");
-      if(hr.length === 1) hr = "0" + hr;
-      if(mn.length === 1) mn = "0" + mn;
-
-      document.getElementById(`task-name-${activeEditTaskId}`).innerText = newName;
-      document.getElementById(`task-time-${activeEditTaskId}`).innerText = `${hr}:${mn}`;
-
-      if (window.currentDayIndex === 0) {
-          window.singleEditSpent = true;
-          document.getElementById('single-edit-status').innerText = "🔒 Edit Spent Today";
-          document.getElementById('single-edit-status').className = "text-[9px] bg-white/10 text-gray-500 border border-white/10 px-2.5 py-1 rounded-md font-bold tracking-wider uppercase transition-all duration-500 inline-block";
-          document.querySelectorAll('.flex-task-row').forEach(row => { row.classList.remove('cursor-pointer', 'hover:bg-white/10'); });
-      } else {
-          window.dailySwapsUsed++;
-          window.isSwapModeActive = false; 
-          document.getElementById('auto-swap-banner').classList.add('hidden'); 
-          document.querySelectorAll('.task-row').forEach(row => row.classList.remove('cursor-pointer', 'border', 'border-[var(--accent-mint)]/50', 'shadow-[0_0_10px_rgba(0,229,155,0.1)]'));
-      }
-
-      closeEditModal();
-      if (window.syncEditToDatabase) window.syncEditToDatabase();
-      if (!document.getElementById('graph-view').classList.contains('hidden')) window.renderGraph();
-    }
-
-    /* --- EXPANSION MODAL GENERATOR --- */
-    const expandModal = document.getElementById('expansion-modal');
-    const expandContent = document.getElementById('expansion-content');
-    const extendedContainer = document.getElementById('extended-tasks-container');
-
-    for(let i = 5; i <= 7; i++) {
-      let num = `0${i}`;
-      extendedContainer.innerHTML += `
-        <div class="task-input-container p-2.5 flex flex-col sm:flex-row gap-2.5 border border-white/5 rounded-xl bg-black/40">
-          <div class="flex items-center gap-3 w-full">
-            <button onclick="openEmojiModal('ext-emoji-${i}')" id="ext-emoji-${i}" class="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-xl flex-shrink-0 text-gray-500 hover:text-white transition-colors">➕</button>
-            <input type="text" id="ext-name-${i}" placeholder="Habit ${num}..." class="clean-input text-sm font-semibold w-full">
-          </div>
-          <div class="flex items-center justify-end sm:w-auto w-full">
-            <button type="button" onclick="openTimeModal('ext-time-${i}')" id="ext-time-${i}" class="w-full sm:w-auto bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg px-4 py-2.5 text-xs font-bold text-gray-400 transition-all flex items-center justify-center gap-2">
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-              <span>Add Time</span>
-            </button>
-          </div>
-        </div>
-      `;
-    }
-
-    window.openExpansionModal = function() {
-      expandModal.style.display = 'flex';
-      setTimeout(() => { expandModal.style.opacity = '1'; expandContent.classList.remove('translate-y-full', 'sm:scale-95'); }, 10);
-    }
-    window.closeExpansionModal = function() {
-      expandContent.classList.add('translate-y-full', 'sm:scale-95');
-      expandModal.style.opacity = '0';
-      setTimeout(() => { expandModal.style.display = 'none'; }, 400);
-    }
-
-    /* Sub-Modals */
-    const emojis = ['🔒', '🎯', '📚', '🏃', '🧘', '💧', '🥗', '💻', '🌅', '🌙', '🏋️', '📝', '🚗', '🙏', '💊', '📖'];
-    const emojiGrid = document.getElementById('emoji-grid');
-    const emojiModalSys = document.getElementById('emoji-modal');
-    const emojiContentSys = document.getElementById('emoji-content');
-    let currentEmojiTarget = null;
-
-    emojis.forEach(emoji => {
-      const btn = document.createElement('button');
-      btn.className = 'p-2 rounded-xl text-2xl bg-white/5 hover:bg-white/10 border border-white/5 transition-transform active:scale-90';
-      btn.innerText = emoji; btn.onclick = () => selectEmoji(emoji); emojiGrid.appendChild(btn);
-    });
-
-    window.openEmojiModal = function(buttonId) {
-      currentEmojiTarget = buttonId; emojiModalSys.style.display = 'flex';
-      setTimeout(() => { emojiModalSys.style.opacity = '1'; emojiContentSys.classList.replace('scale-95', 'scale-100'); }, 10);
-    }
-    window.closeEmojiModal = function() {
-      emojiContentSys.classList.replace('scale-100', 'scale-95'); emojiModalSys.style.opacity = '0';
-      setTimeout(() => { emojiModalSys.style.display = 'none'; }, 200);
-    }
-    window.selectEmoji = function(emoji) { if(currentEmojiTarget) { document.getElementById(currentEmojiTarget).innerText = emoji; } closeEmojiModal(); }
-
-    const timeModalSys = document.getElementById('time-modal');
-    const timeContentSys = document.getElementById('time-content');
-    const inputHours = document.getElementById('type-hours');
-    const inputMins = document.getElementById('type-mins');
-    let currentTimeTarget = null;
-
-    window.openTimeModal = function(buttonId) {
-      currentTimeTarget = document.getElementById(buttonId); inputHours.value = ''; inputMins.value = '';
-      timeModalSys.style.display = 'flex';
-      setTimeout(() => { timeModalSys.style.opacity = '1'; timeContentSys.classList.replace('scale-95', 'scale-100'); inputHours.focus(); }, 10);
-    }
-    window.closeTimeModal = function() {
-      timeContentSys.classList.replace('scale-100', 'scale-95'); timeModalSys.style.opacity = '0';
-      setTimeout(() => { timeModalSys.style.display = 'none'; }, 200);
-    }
-    window.validateTimeInput = function(input, maxVal, nextInputId) {
-      let val = parseInt(input.value); if (val > maxVal) input.value = maxVal;
-      if (input.value.length === 2 && nextInputId) { document.getElementById(nextInputId).focus(); }
-    }
-    window.confirmTime = function() {
-      let h = inputHours.value || "00"; let m = inputMins.value || "00";
-      if (h.length === 1) h = "0" + h; if (m.length === 1) m = "0" + m;
-      if(currentTimeTarget) { 
-        const span = currentTimeTarget.querySelector('span');
-        if(span) span.innerText = `${h}:${m}`; else currentTimeTarget.innerText = `${h}:${m}`;
-        currentTimeTarget.classList.remove('bg-white/5', 'hover:bg-white/10', 'border-white/10', 'text-gray-400');
-        currentTimeTarget.classList.add('bg-[var(--accent-mint)]/10', 'border-[var(--accent-mint)]/30', 'text-[var(--accent-mint)]', 'shadow-[0_0_10px_rgba(0,229,155,0.15)]');
-      }
-      closeTimeModal();
-    }
-
-    /* --- LOCK FINAL MATRIX --- */
-    window.lockFinalMatrix = function() {
-      let expandedTasksArray = [];
-      for(let i=5; i<=7; i++) {
-        let name = document.getElementById(`ext-name-${i}`).value.trim();
-        let timeBtn = document.getElementById(`ext-time-${i}`);
-        let timeSpan = timeBtn.querySelector('span');
-        let time = timeSpan ? timeSpan.innerText : timeBtn.innerText;
-        let emoji = document.getElementById(`ext-emoji-${i}`).innerText;
-
-        if(!name || time === 'Add Time' || emoji === '➕') { 
-          return alert(`Incomplete Data: Please set a Name, Time, and Emoji for Habit 0${i} before locking.`); 
-        }
-
-        expandedTasksArray.push({ name: name, time: time, emoji: emoji });
-      }
-
-      if (window.saveExpansionToDatabase) {
-        window.saveExpansionToDatabase(expandedTasksArray);
-      }
-    }
-
-    window.renderExpansionMatrix = function(expandedTasksArray) {
-      let injectedHtml = '';
-      for(let i=0; i<expandedTasksArray.length; i++) {
-        let task = expandedTasksArray[i];
-        let idx = i + 5;
-        injectedHtml += `
-          <div class="bg-black/60 border border-white/5 rounded-2xl p-4 flex items-center gap-4 transition-all duration-300 task-row">
-            <label class="task-check-wrapper">
-              <input type="checkbox" class="task-checkbox logic-check" onchange="updateTotalProgress()">
-              <div class="task-custom-check"></div>
-            </label>
-            <div class="flex-1">
-              <h4 class="text-sm font-bold text-white mb-0.5" id="task-name-${idx}">${task.name}</h4>
-              <p class="text-[10px] text-gray-500 font-medium" id="task-time-${idx}">${task.time}</p>
-              <p class="text-[10px] text-red-500 font-bold mt-0.5 tracking-wider hidden" id="task-countdown-${idx}"></p>
-            </div>
-            <div class="text-2xl opacity-70">${task.emoji}</div>
-          </div>`;
-      }
-
-      window.isMatrixExpanded = true;
-      const expSection = document.getElementById('tour-target-expansion');
-      expSection.classList.remove('opacity-40', 'pointer-events-none', 'bg-black/40', 'p-5');
-      expSection.innerHTML = `
-        <div class="flex items-center gap-2 mb-4 pl-1">
-          <svg class="w-3.5 h-3.5 text-[var(--accent-mint)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-          <h3 class="text-xs font-bold uppercase tracking-widest text-gray-200">Expansion Matrix</h3>
-        </div>
-        <div class="space-y-3" id="extended-daily-tasks">${injectedHtml}</div>`;
-
-      closeExpansionModal();
-      document.getElementById('level-up-pill').style.display = 'none';
-
-      document.querySelectorAll('#extended-daily-tasks .logic-check').forEach((box, i) => {
-        box.addEventListener('change', (e) => {
-          let idx = parseInt(e.target.closest('.task-row').querySelector('h4').id.split('-')[2]);
-          const row = e.target.closest('.task-row');
-          
-          let nowIST = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"}));
-          let timeStr = nowIST.getHours().toString().padStart(2, '0') + ':' + nowIST.getMinutes().toString().padStart(2, '0');
-
-          if(box.checked) {
-            row.classList.add('opacity-50', 'border-[var(--accent-mint)]/30');
-            row.querySelector('h4').classList.add('line-through', 'text-gray-400');
-            window.completionTimestamps[idx] = timeStr;
-          } else {
-            row.classList.remove('opacity-50', 'border-[var(--accent-mint)]/30');
-            row.querySelector('h4').classList.remove('line-through', 'text-gray-400');
-            delete window.completionTimestamps[idx];
-          }
-          window.updateTotalProgress();
-          
-          if(window.syncCheckboxesToDatabase) {
-             let checkedIndexes = [];
-             document.querySelectorAll('.logic-check').forEach((b, i) => { if(b.checked) checkedIndexes.push(i); });
-             window.syncCheckboxesToDatabase(checkedIndexes, window.completionTimestamps);
-          }
-        });
-      });
-
-      window.updateTotalProgress();
-    };
-
-    /* --- VIRTUAL TOUR ENGINE --- */
+    /* --- ONE-TIME VIRTUAL TOUR ENGINE --- */
     window.startVirtualTour = function() {
-      initWeekTracker();
       window.isTourRunning = true; document.body.classList.add('tour-active');
       document.getElementById('tour-backdrop').style.display = 'block'; document.getElementById('tour-card').style.display = 'block';
       setTimeout(() => { document.getElementById('tour-backdrop').style.opacity = '1'; document.getElementById('tour-card').style.opacity = '1'; }, 10);
       executeTourStep(1);
     }
     const tourSteps = {
-      1: { elementId: "tour-txt-protocol", text: "Level 1 acts as your base habit architecture. It handles setting your unbreakable foundation constraints." },
-      2: { elementId: "tour-txt-days", text: "This baseline config will execute un-halted for a continuous 7 days to cement neuro-habits commitments." },
-      3: { elementId: "tour-txt-percent", text: "This live tracker displays your accurate daily absolute completion percentage." },
-      4: { elementId: "tour-target-base", text: "The Base Matrix aggregates your 4 habits. Complete these to unlock the rest inputs." },
-      5: { elementId: "single-edit-status", text: "You are granted ONE fluid modification on Day 1 (today) to your Base Habits. Simply tap any Base Habit to edit its text/time. Once done, the matrix locks for 24 hours and no further edits are possible." },
-      6: { elementId: "tour-target-expansion", text: "The Expansion Matrix unlocks slots 5 through 7, bringing additional options only after the base 4 habits are done." }
+      1: { elementId: "tour-txt-protocol", text: "Welcome to your locked matrix. Everything here is strict. There are no edits or swaps allowed." },
+      2: { elementId: "tour-txt-days", text: "This architecture will execute for your chosen duration." },
+      3: { elementId: "nav-btn-vis", text: "Tap the Visualize Ring to watch your live progress and formally seal your day when finished." }
     };
     function executeTourStep(step) {
       document.querySelectorAll('.tour-highlight').forEach(el => { el.classList.remove('tour-highlight'); });
       const config = tourSteps[step]; const element = document.getElementById(config.elementId);
       if(element) {
         element.classList.add('tour-highlight');
-        if (step >= 5) { document.getElementById('tour-card').style.bottom = 'auto'; document.getElementById('tour-card').style.top = '80px'; } 
-        else { document.getElementById('tour-card').style.top = 'auto'; document.getElementById('tour-card').style.bottom = '48px'; }
+        if (step === 3) { document.getElementById('tour-card').style.bottom = 'auto'; document.getElementById('tour-card').style.top = '120px'; } 
+        else { document.getElementById('tour-card').style.top = 'auto'; document.getElementById('tour-card').style.bottom = '90px'; }
         element.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
-      document.getElementById('tour-step-indicator').innerText = `STEP ${step} / 6`; document.getElementById('tour-text').innerText = config.text;
-      document.getElementById('tour-next-btn').innerText = step === 6 ? "Finish" : "Next";
+      document.getElementById('tour-step-indicator').innerText = `RULE ${step} / 3`; document.getElementById('tour-text').innerText = config.text;
+      document.getElementById('tour-next-btn').innerText = step === 3 ? "Begin" : "Next";
     }
     let currentStep = 1;
-    window.nextTourStep = function() { if(currentStep < 6) { currentStep++; executeTourStep(currentStep); } else { window.endTour(); } }
+    window.nextTourStep = function() { if(currentStep < 3) { currentStep++; executeTourStep(currentStep); } else { window.endTour(); } }
     window.endTour = function() {
       document.querySelectorAll('.tour-highlight').forEach(el => { el.classList.remove('tour-highlight'); });
       document.body.classList.remove('tour-active'); document.getElementById('tour-backdrop').style.opacity = '0'; document.getElementById('tour-card').style.opacity = '0';
@@ -1108,6 +747,9 @@
     }
   </script>
 
+  <!-- ========================================== -->
+  <!-- FIREBASE BACKEND INTEGRATION (MODULE V10)  -->
+  <!-- ========================================== -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -1148,12 +790,67 @@
       if (userDoc.exists()) {
         const data = userDoc.data();
 
+        window.totalTasks = data.totalHabits || 4;
+        window.taskDuration = data.duration || 7;
         window.appSetupDate = data.setupDate ? data.setupDate.toDate() : new Date();
         window.completionTimestamps = data.completionTimestamps || {};
-        window.dailyTimestampsHistory = data.dailyTimestampsHistory || [{},{},{},{},{},{},{}];
-        window.dailyTargetHistory = data.dailyTargetHistory || [{},{},{},{},{},{},{}];
+        window.dailyTimestampsHistory = data.dailyTimestampsHistory || [];
+        window.dailyTargetHistory = data.dailyTargetHistory || [];
 
-        initWeekTracker(); 
+        document.getElementById('task-count-header').innerText = `${window.totalTasks} TASKS`;
+        document.getElementById('tour-txt-days').innerText = `${window.taskDuration} DAYS`;
+
+        // DYNAMIC RENDERING OF DASHBOARD TASKS (No Expansions, No Edits)
+        if (data.baseMatrix) {
+            let taskHtml = '';
+            data.baseMatrix.forEach((task, index) => {
+                let i = index + 1;
+                taskHtml += `
+                <div class="bg-black/60 border border-white/5 rounded-2xl p-4 flex items-center gap-4 transition-all duration-300 task-row" id="task-row-${i}">
+                  <label class="task-check-wrapper">
+                    <input type="checkbox" class="task-checkbox logic-check" data-task-id="${i}">
+                    <div class="task-custom-check"></div>
+                  </label>
+                  <div class="flex-1">
+                    <h4 class="text-sm font-bold text-white mb-0.5" id="task-name-${i}">${task.name}</h4>
+                    <p class="text-[10px] text-gray-500 font-medium flex items-center gap-1">
+                      <span class="text-[var(--accent-purple)]">🔒 Locked</span> • <span id="task-time-${i}">${task.time}</span>
+                    </p>
+                    <p class="text-[10px] text-red-500 font-bold mt-0.5 tracking-wider hidden" id="task-countdown-${i}"></p>
+                  </div>
+                  <div class="text-2xl opacity-70" id="task-emoji-${i}">${task.emoji}</div>
+                </div>`;
+            });
+            document.getElementById('daily-tasks').innerHTML = taskHtml;
+
+            // Rebind Listeners to newly injected checkboxes
+            document.querySelectorAll('.logic-check').forEach((box) => {
+                box.addEventListener('change', (e) => {
+                    window.updateTotalProgress();
+                    const row = e.target.closest('.task-row');
+                    const taskId = parseInt(row.querySelector('h4').id.split('-')[2]); 
+
+                    let nowIST = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"}));
+                    let timeStr = nowIST.getHours().toString().padStart(2, '0') + ':' + nowIST.getMinutes().toString().padStart(2, '0');
+
+                    if(box.checked) {
+                        row.classList.add('opacity-50', 'border-[var(--accent-mint)]/30');
+                        row.querySelector('h4').classList.add('line-through', 'text-gray-400');
+                        window.completionTimestamps[taskId] = timeStr; 
+                    } else {
+                        row.classList.remove('opacity-50', 'border-[var(--accent-mint)]/30');
+                        row.querySelector('h4').classList.remove('line-through', 'text-gray-400');
+                        delete window.completionTimestamps[taskId];
+                    }
+
+                    if(window.syncCheckboxesToDatabase) {
+                       let checkedIndexes = [];
+                       document.querySelectorAll('.logic-check').forEach((b, i) => { if(b.checked) checkedIndexes.push(i); });
+                       window.syncCheckboxesToDatabase(checkedIndexes, window.completionTimestamps);
+                    }
+                });
+            });
+        }
 
         let currentISTDate = new Date();
         try {
@@ -1172,45 +869,41 @@
 
         const diffTime = currentMidnight - setupMidnight;
         const daysPassed = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-        window.currentDayIndex = Math.min(Math.max(daysPassed, 0), 6); 
+        window.currentDayIndex = Math.min(Math.max(daysPassed, 0), window.taskDuration - 1); 
         window.graphViewDay = window.currentDayIndex;
 
         document.getElementById('day-badge').innerText = `DAY ${window.currentDayIndex + 1}`;
         document.getElementById('graph-current-day-label').innerText = 'TODAY';
 
         let lastActiveDay = data.lastActiveDay || 0;
-        let dailyHistory = data.dailyHistory || [0,0,0,0,0,0,0];
+        let dailyHistory = data.dailyHistory || [];
         let checkedTasks = data.checkedTasks || [];
-        window.dailySwapsUsed = data.dailySwapsUsed || 0;
-        window.singleEditSpent = data.singleEditSpentDay1 || false;
 
-        // Perform Rollover
+        // Perform Midnight Auto-Seal Rollover & Harsh Reset Check
         if (window.currentDayIndex > lastActiveDay) {
-          let totalTasks = data.expansionMatrix ? 7 : 4;
-          let percent = Math.round((checkedTasks.length / totalTasks) * 100);
+          let percent = Math.round((checkedTasks.length / window.totalTasks) * 100);
           
           if (percent < 100) {
+            // THE HARSH RESET: Failed to hit 100%. Complete System Reset.
             await updateDoc(userDocRef, {
               setupDate: serverTimestamp(),
-              dailyHistory: [0,0,0,0,0,0,0], 
-              dailyTimestampsHistory: [{},{},{},{},{},{},{}],
-              dailyTargetHistory: [{},{},{},{},{},{},{}],
+              dailyHistory: [], 
+              dailyTimestampsHistory: [],
+              dailyTargetHistory: [],
               checkedTasks: [], 
               completionTimestamps: {},
-              dailySwapsUsed: 0,
-              lastActiveDay: 0,
-              expansionMatrix: deleteField() 
+              lastActiveDay: 0
             });
             window.location.reload();
             return; 
           } else {
+            // SUCCESS: 100%. Archive day. Auto-sealed at midnight.
             dailyHistory[lastActiveDay] = percent; 
             window.dailyTimestampsHistory[lastActiveDay] = window.completionTimestamps;
             window.dailyTargetHistory[lastActiveDay] = window.getCurrentTargets();
 
             checkedTasks = []; 
             window.completionTimestamps = {};
-            window.dailySwapsUsed = 0; 
             lastActiveDay = window.currentDayIndex;
 
             await updateDoc(userDocRef, {
@@ -1219,37 +912,12 @@
               dailyTargetHistory: window.dailyTargetHistory,
               checkedTasks: checkedTasks,
               completionTimestamps: window.completionTimestamps,
-              dailySwapsUsed: 0,
               lastActiveDay: lastActiveDay
             });
           }
         }
 
-        if (data.baseMatrix) {
-          for(let i = 0; i < 4; i++) {
-            if(data.baseMatrix[i]) {
-              document.getElementById(`task-name-${i+1}`).innerText = data.baseMatrix[i].name || "Unnamed Task";
-              document.getElementById(`task-time-${i+1}`).innerText = data.baseMatrix[i].time || "--:--";
-              document.getElementById(`task-emoji-${i+1}`).innerText = data.baseMatrix[i].emoji || "🔄";
-            }
-          }
-        }
-
-        if (window.currentDayIndex > 0) {
-           document.getElementById('single-edit-status').style.display = 'none';
-           // AUTO-ACTIVATE SWAP ENGINE ON DAY 2+
-           if (window.dailySwapsUsed < 2) {
-               window.activateSwapMode();
-           }
-        } else if (window.singleEditSpent) {
-           document.getElementById('single-edit-status').innerText = "🔒 Edit Spent Today";
-           document.getElementById('single-edit-status').className = "text-[9px] bg-white/10 text-gray-500 border border-white/10 px-2.5 py-1 rounded-md font-bold tracking-wider uppercase inline-block";
-        }
-
-        if (data.expansionMatrix) {
-          window.renderExpansionMatrix(data.expansionMatrix);
-        }
-
+        // Restore Checkboxes securely
         if (checkedTasks.length > 0) {
           setTimeout(() => {
             const boxes = document.querySelectorAll('.logic-check');
@@ -1270,8 +938,10 @@
         
         if (window.startLiveClocks) window.startLiveClocks();
 
-        if (!data.expansionMatrix && window.currentDayIndex === 0) {
+        // Single Memory Tour Trigger
+        if (!data.tourCompleted) {
           setTimeout(window.startVirtualTour, 500);
+          await updateDoc(userDocRef, { tourCompleted: true });
         }
       } else {
         window.location.href = 'lock.html';
@@ -1288,56 +958,6 @@
            });
          } catch(e) {}
        }
-    };
-
-    window.syncEditToDatabase = async function() {
-      const user = auth.currentUser;
-      if (user) {
-        let bMatrix = [];
-        for(let i=1; i<=4; i++){
-            bMatrix.push({
-                name: document.getElementById(`task-name-${i}`).innerText,
-                time: document.getElementById(`task-time-${i}`).innerText,
-                emoji: document.getElementById(`task-emoji-${i}`).innerText
-            });
-        }
-        let eMatrix = [];
-        for(let i=5; i<=7; i++){
-            const el = document.getElementById(`task-name-${i}`);
-            if(el) {
-                eMatrix.push({
-                    name: el.innerText,
-                    time: document.getElementById(`task-time-${i}`).innerText,
-                    emoji: document.getElementById(`task-emoji-${i}`).innerText
-                });
-            }
-        }
-        
-        let updates = {
-            baseMatrix: bMatrix,
-            singleEditSpentDay1: window.singleEditSpent,
-            dailySwapsUsed: window.dailySwapsUsed
-        };
-        if(eMatrix.length > 0) updates.expansionMatrix = eMatrix;
-        
-        try {
-          await updateDoc(doc(db, "users", user.uid), updates);
-        } catch (e) {}
-      }
-    };
-
-    window.saveExpansionToDatabase = async function(expandedTasksArray) {
-      const user = auth.currentUser;
-      if (user) {
-        try {
-          await updateDoc(doc(db, "users", user.uid), {
-            expansionMatrix: expandedTasksArray
-          });
-          window.renderExpansionMatrix(expandedTasksArray);
-        } catch(e) {
-          alert("Network error. Could not lock expansion tasks.");
-        }
-      }
     };
   </script>
 </body>
