@@ -159,7 +159,6 @@
   <div class="ambient-stage">
     <div class="neon-pill-spinner"></div>
     <div class="zen-person">
-      <!-- Custom SVG: Kokra Hair, Fit Slim Body, Full Clothes -->
       <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" class="w-full h-full">
         <defs>
           <linearGradient id="hoodieGrad" x1="0" y1="0" x2="0" y2="1">
@@ -195,13 +194,11 @@
 
   <!-- IMMERSIVE INITIATION SEQUENCE OVERLAY -->
   <div id="initiation-overlay" class="fixed inset-0 z-[200] bg-black/95 flex items-center justify-center p-5">
-    <!-- Centered Ambient Neon Glow Core -->
     <div class="absolute w-72 h-72 rounded-full bg-gradient-to-r from-[var(--accent-purple)] to-[var(--accent-mint)] opacity-20 filter blur-[80px] pointer-events-none"></div>
     
     <div class="surface-card p-6 w-full max-w-[380px] border border-white/10 relative z-10 text-center transition-all duration-500" id="initiation-card">
       <div id="initiation-content-wrapper" class="min-h-[220px] flex flex-col justify-center"></div>
       
-      <!-- Staggered Next Button Container -->
       <div class="mt-6 flex justify-center">
         <button id="initiation-next-btn" onclick="advanceInitiation()" class="w-full py-3.5 rounded-xl font-extrabold text-black bg-[var(--accent-mint)] shadow-[0_0_20px_rgba(0,229,155,0.3)] uppercase tracking-widest text-xs transition-opacity duration-300">
           Continue
@@ -296,45 +293,38 @@
       </div>
     </section>
 
-    <!-- COMPACT TASK MATRIX -->
-    <section class="max-w-2xl mx-auto space-y-6" id="matrix-container">
-      
-      <div class="relative">
-        <div class="flex items-center gap-2 mb-2 pl-1">
+    <!-- MATRIX CONFIGURATION SELECTORS -->
+    <section class="max-w-2xl mx-auto space-y-6 mb-8 bg-black/40 border border-white/5 p-5 rounded-2xl">
+      <!-- Habit Count -->
+      <div>
+        <div class="flex items-center gap-2 mb-3 pl-1">
+          <span class="w-2 h-2 rounded-full bg-[var(--accent-mint)] shadow-[0_0_8px_#00E59B]"></span>
+          <h3 class="text-xs font-bold uppercase tracking-widest text-white">Number of Habits</h3>
+        </div>
+        <div class="flex flex-wrap gap-2" id="habit-count-selector"></div>
+      </div>
+
+      <!-- Duration -->
+      <div class="pt-2">
+        <div class="flex items-center gap-2 mb-3 pl-1">
           <span class="w-2 h-2 rounded-full bg-[var(--accent-purple)] shadow-[0_0_8px_#9D4EDD]"></span>
-          <h3 class="text-xs font-bold uppercase tracking-widest text-white">The Anchor</h3>
-          <span class="text-[9px] bg-[var(--accent-purple)]/20 text-purple-300 px-2 py-0.5 rounded border border-[var(--accent-purple)]/30 ml-auto font-bold tracking-widest">COMPULSORY</span>
+          <h3 class="text-xs font-bold uppercase tracking-widest text-white">Operational Period</h3>
         </div>
-        
-        <div class="task-input-container p-2.5 flex flex-col sm:flex-row gap-2.5">
-          <div class="flex items-center gap-3 w-full">
-            <button onclick="openEmojiModal('emoji-btn-1')" id="emoji-btn-1" class="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-xl hover:bg-white/10 transition-colors flex-shrink-0">🔒</button>
-            <input type="text" placeholder="Your unbreakable habit..." class="clean-input text-sm font-semibold task-check">
-          </div>
-          <div class="flex items-center justify-end sm:w-auto w-full">
-            <button type="button" onclick="openTimeModal('time-btn-1')" id="time-btn-1" data-selected="false" class="w-full sm:w-auto bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg px-4 py-2.5 text-xs font-bold task-time text-gray-400 transition-colors flex items-center justify-center gap-2">
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-              <span>Add Time</span>
-            </button>
-          </div>
-        </div>
+        <div class="flex flex-wrap gap-2" id="duration-selector"></div>
       </div>
-
-      <div class="flex items-center gap-2 mb-2 pl-1 pt-4">
-        <span class="w-2 h-2 rounded-full bg-[var(--accent-mint)] shadow-[0_0_8px_#00E59B]"></span>
-        <h3 class="text-xs font-bold uppercase tracking-widest text-gray-200">Habits</h3>
-        <span class="text-[9px] text-gray-500 ml-auto font-bold tracking-widest">3 SLOTS</span>
-      </div>
-
-      <div id="flex-tasks" class="space-y-3"></div>
-
-      <div class="pt-6 pb-12 flex justify-center">
-        <button id="lodge-btn" disabled class="w-full md:w-auto md:min-w-[250px] py-3.5 px-6 rounded-xl font-bold text-white bg-white/5 border border-white/10 opacity-50 cursor-not-allowed transition-all duration-500 tracking-[0.2em] uppercase text-xs">
-          Awaiting Input
-        </button>
-      </div>
-
     </section>
+
+    <!-- DYNAMIC TASK MATRIX -->
+    <section class="max-w-2xl mx-auto mb-6" id="matrix-container">
+      <!-- Injected by JavaScript -->
+    </section>
+    
+    <div class="max-w-2xl mx-auto pt-6 pb-12 flex justify-center">
+      <button id="lodge-btn" disabled class="w-full md:w-auto md:min-w-[250px] py-3.5 px-6 rounded-xl font-bold text-white bg-white/5 border border-white/10 opacity-50 cursor-not-allowed transition-all duration-500 tracking-[0.2em] uppercase text-xs">
+        Awaiting Input
+      </button>
+    </div>
+
   </main>
 
   <script>
@@ -386,8 +376,117 @@
       }
     }
 
+    /* --- DYNAMIC CONFIGURATION ENGINE --- */
+    let selectedHabitCount = 4;
+    let selectedDuration = 7;
+
+    function initConfigSelectors() {
+        const habitContainer = document.getElementById('habit-count-selector');
+        let hHtml = '';
+        for(let i=3; i<=10; i++) {
+            hHtml += `<button onclick="setHabitCount(${i})" id="btn-habits-${i}" class="px-4 py-2 rounded-xl text-xs font-bold transition-all border ${i === selectedHabitCount ? 'bg-[var(--accent-mint)]/20 border-[var(--accent-mint)] text-[var(--accent-mint)] shadow-[0_0_10px_rgba(0,229,155,0.2)]' : 'bg-white/5 border-white/10 text-gray-400 hover:bg-white/10 hover:text-white'}">${i}</button>`;
+        }
+        habitContainer.innerHTML = hHtml;
+
+        const durationContainer = document.getElementById('duration-selector');
+        const durations = [7, 14, 21, 28];
+        let dHtml = '';
+        durations.forEach(d => {
+            dHtml += `<button onclick="setDuration(${d})" id="btn-dur-${d}" class="px-4 py-2 rounded-xl text-xs font-bold transition-all border ${d === selectedDuration ? 'bg-[var(--accent-purple)]/20 border-[var(--accent-purple)] text-[var(--accent-purple)] shadow-[0_0_10px_rgba(157,78,221,0.2)]' : 'bg-white/5 border-white/10 text-gray-400 hover:bg-white/10 hover:text-white'}">${d} Days</button>`;
+        });
+        durationContainer.innerHTML = dHtml;
+    }
+
+    // Helper to remember typed data before UI rebuilds
+    function getCurrentInputState() {
+       let state = [];
+       const allTextInputs = document.querySelectorAll('.task-check');
+       const allTimeButtons = document.querySelectorAll('.task-time');
+       const allEmojiButtons = document.querySelectorAll('.emoji-btn');
+       for(let i=0; i<allTextInputs.length; i++) {
+           state.push({
+               name: allTextInputs[i].value,
+               time: allTimeButtons[i].innerText,
+               emoji: allEmojiButtons[i].innerText,
+               timeSelected: allTimeButtons[i].dataset.selected
+           });
+       }
+       return state;
+    }
+
+    window.setHabitCount = function(count) {
+        let prevState = getCurrentInputState();
+        selectedHabitCount = count;
+        initConfigSelectors();
+        renderTaskInputs(prevState);
+        checkCompletion();
+    };
+
+    window.setDuration = function(days) {
+        selectedDuration = days;
+        initConfigSelectors();
+    };
+
+    function renderTaskInputs(prevState = []) {
+        const container = document.getElementById('matrix-container');
+        
+        let html = `
+          <div class="flex items-center gap-2 mb-4 pl-1">
+            <span class="w-2 h-2 rounded-full bg-[var(--accent-mint)] shadow-[0_0_8px_#00E59B]"></span>
+            <h3 class="text-xs font-bold uppercase tracking-widest text-white">Daily Commitments</h3>
+            <span class="text-[9px] bg-[var(--accent-mint)]/10 text-[var(--accent-mint)] border border-[var(--accent-mint)]/20 px-2 py-0.5 rounded ml-auto font-bold tracking-widest">${selectedHabitCount} SLOTS</span>
+          </div>
+          <div class="space-y-3">
+        `;
+        
+        for(let i=1; i<=selectedHabitCount; i++) {
+            let num = i < 10 ? `0${i}` : i;
+            html += `
+                <div class="task-input-container p-2.5 flex flex-col sm:flex-row gap-2.5">
+                  <div class="flex items-center gap-3 w-full">
+                    <button onclick="openEmojiModal('emoji-btn-${i}')" id="emoji-btn-${i}" class="emoji-btn w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-xl hover:bg-white/10 transition-colors flex-shrink-0 text-gray-400">➕</button>
+                    <input type="text" placeholder="Habit ${num}..." class="clean-input text-sm font-medium task-check">
+                  </div>
+                  <div class="flex items-center justify-end sm:w-auto w-full">
+                    <button type="button" onclick="openTimeModal('time-btn-${i}')" id="time-btn-${i}" data-selected="false" class="w-full sm:w-auto bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg px-4 py-2.5 text-xs font-bold task-time text-gray-400 transition-colors flex items-center justify-center gap-2">
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                      <span>Add Time</span>
+                    </button>
+                  </div>
+                </div>
+            `;
+        }
+        
+        html += `</div>`;
+        container.innerHTML = html;
+
+        // Restore previous data if exists
+        const newTextInputs = document.querySelectorAll('.task-check');
+        const newTimeButtons = document.querySelectorAll('.task-time');
+        const newEmojiButtons = document.querySelectorAll('.emoji-btn');
+
+        for(let i=0; i<Math.min(prevState.length, selectedHabitCount); i++) {
+            newTextInputs[i].value = prevState[i].name;
+            newEmojiButtons[i].innerText = prevState[i].emoji;
+            if(prevState[i].timeSelected === "true") {
+                newTimeButtons[i].innerHTML = `<span>${prevState[i].time}</span>`;
+                newTimeButtons[i].dataset.selected = "true";
+                newTimeButtons[i].classList.replace('bg-white/5', 'bg-[var(--accent-mint)]/10');
+                newTimeButtons[i].classList.replace('border-white/10', 'border-[var(--accent-mint)]/30');
+                newTimeButtons[i].classList.replace('text-gray-400', 'text-[var(--accent-mint)]');
+                newTimeButtons[i].classList.add('shadow-[0_0_10px_rgba(0,229,155,0.15)]');
+            }
+        }
+
+        document.querySelectorAll('.task-check').forEach(input => { input.addEventListener('input', checkCompletion); });
+    }
+
     /* --- DOM LOAD & MODALS --- */
-    window.addEventListener('DOMContentLoaded', () => { renderInitiationStep(1); });
+    window.addEventListener('DOMContentLoaded', () => { 
+        renderInitiationStep(1); 
+        initConfigSelectors();
+        renderTaskInputs();
+    });
 
     const emojis = ['🔒', '🎯', '📚', '🏃', '🧘', '💧', '🥗', '💻', '🌅', '🌙', '🏋️', '📝', '🚗', '🙏', '💊', '📖'];
     const emojiGrid = document.getElementById('emoji-grid');
@@ -397,7 +496,7 @@
 
     emojis.forEach(emoji => {
       const btn = document.createElement('button');
-      btn.className = 'emoji-btn p-2 rounded-xl text-2xl bg-white/5 hover:bg-white/10 border border-white/5 transition-transform active:scale-90';
+      btn.className = 'p-2 rounded-xl text-2xl bg-white/5 hover:bg-white/10 border border-white/5 transition-transform active:scale-90';
       btn.innerText = emoji; btn.onclick = () => selectEmoji(emoji); emojiGrid.appendChild(btn);
     });
 
@@ -447,23 +546,6 @@
       closeTimeModal();
     }
 
-    const flexTasksContainer = document.getElementById('flex-tasks');
-    for (let i = 2; i <= 4; i++) {
-      flexTasksContainer.innerHTML += `
-        <div class="task-input-container p-2.5 flex flex-col sm:flex-row gap-2.5">
-          <div class="flex items-center gap-3 w-full">
-            <button onclick="openEmojiModal('emoji-btn-${i}')" id="emoji-btn-${i}" class="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-xl hover:bg-white/10 transition-colors flex-shrink-0 text-gray-400">➕</button>
-            <input type="text" placeholder="Flex habit 0${i}..." class="clean-input text-sm font-medium task-check">
-          </div>
-          <div class="flex items-center justify-end sm:w-auto w-full">
-            <button type="button" onclick="openTimeModal('time-btn-${i}')" id="time-btn-${i}" data-selected="false" class="w-full sm:w-auto bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg px-4 py-2.5 text-xs font-bold task-time text-gray-400 transition-colors flex items-center justify-center gap-2">
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-              <span>Add Time</span>
-            </button>
-          </div>
-        </div>`;
-    }
-
     const carousel = document.getElementById('carousel');
     const cards = document.querySelectorAll('.carousel-card');
     const dots = document.getElementById('carousel-dots').children;
@@ -500,18 +582,20 @@
     const diStatus = document.getElementById('di-status');
     const diEmojis = document.getElementById('di-emojis');
 
-    function checkCompletion() {
+    window.checkCompletion = function() {
       const allTextInputs = document.querySelectorAll('.task-check');
       const allTimeButtons = document.querySelectorAll('.task-time');
-      const allEmojiButtons = [ document.getElementById('emoji-btn-1'), document.getElementById('emoji-btn-2'), document.getElementById('emoji-btn-3'), document.getElementById('emoji-btn-4') ];
+      const allEmojiButtons = document.querySelectorAll('.emoji-btn');
+      
       let completed = 0; let activeEmojis = [];
 
-      for(let i = 0; i < allTextInputs.length; i++) {
-        if(allTextInputs[i].value.trim() !== '' && allTimeButtons[i].dataset.selected === 'true') {
+      for(let i = 0; i < selectedHabitCount; i++) {
+        if(allTextInputs[i] && allTextInputs[i].value.trim() !== '' && allTimeButtons[i].dataset.selected === 'true') {
           completed++; activeEmojis.push(allEmojiButtons[i].innerText);
         }
       }
-      diText.innerText = `${completed} / 4`;
+      
+      diText.innerText = `${completed} / ${selectedHabitCount}`;
 
       if (completed > 0) {
         diEmojis.innerHTML = activeEmojis.join('<span class="w-1"></span>');
@@ -522,7 +606,7 @@
         diEmojis.classList.remove('w-auto', 'opacity-100', 'ml-1', 'pl-2', 'border-l', 'border-white/20');
       }
 
-      if (completed === 4) {
+      if (completed === selectedHabitCount) {
         diStatus.className = 'w-2 h-2 rounded-full bg-[var(--accent-mint)] shadow-[0_0_8px_#00E59B] flex-shrink-0';
         diIsland.classList.add('shadow-[0_0_20px_rgba(0,229,155,0.2)]', 'border-[var(--accent-mint)]/50');
         diIsland.classList.remove('border-white/10');
@@ -530,7 +614,7 @@
         lodgeBtn.className = "w-full md:w-auto md:min-w-[250px] py-3.5 px-6 rounded-xl font-extrabold text-black bg-[var(--accent-mint)] shadow-[0_0_20px_rgba(0,229,155,0.3)] cursor-pointer transition-all duration-500 tracking-[0.2em] uppercase text-xs transform hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(0,229,155,0.5)]";
         
         let savedTasks = [];
-        for(let i = 0; i < 4; i++) {
+        for(let i = 0; i < selectedHabitCount; i++) {
           savedTasks.push({ name: allTextInputs[i].value.trim(), time: allTimeButtons[i].innerText, emoji: allEmojiButtons[i].innerText });
         }
         
@@ -548,7 +632,6 @@
         lodgeBtn.className = "w-full md:w-auto md:min-w-[250px] py-3.5 px-6 rounded-xl font-bold text-white bg-white/5 border border-white/10 opacity-50 cursor-not-allowed transition-all duration-500 tracking-[0.2em] uppercase text-xs";
       }
     }
-    document.querySelectorAll('.task-check').forEach(input => { input.addEventListener('input', checkCompletion); });
   </script>
 
   <!-- ========================================== -->
@@ -604,9 +687,10 @@
       try {
         const user = auth.currentUser;
         if(user) {
-          // BULLETPROOF FIX: setDoc with { merge: true } forces it to save even if the file is missing
           await setDoc(doc(db, "users", user.uid), {
             baseMatrix: savedTasks,
+            totalHabits: window.selectedHabitCount || 4,
+            duration: window.selectedDuration || 7,
             hasCompletedSetup: true,
             setupDate: serverTimestamp() // Locks in precise server time
           }, { merge: true });
