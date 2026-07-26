@@ -10,16 +10,6 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   
-  <script>
-    // DEEP LINK MEMORY: Catches the invite link instantly before any Firebase redirects occur
-    const urlParams = new URLSearchParams(window.location.search);
-    const incomingChallenge = urlParams.get('challenge');
-    if(incomingChallenge) {
-        localStorage.setItem('pendingChallenge', incomingChallenge);
-        window.history.replaceState({}, document.title, window.location.pathname);
-    }
-  </script>
-
   <style>
     :root {
       --accent-mint: #00E59B;
@@ -37,6 +27,7 @@
       user-select: none;
     }
 
+    /* RADIANT BACKGROUND GLOW */
     @keyframes liquidTheme {
       0% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
@@ -87,6 +78,13 @@
     }
     .nav-item { font-size: 1.5rem; transition: transform 0.2s, opacity 0.3s; cursor: pointer; position: relative; user-select: none; display: flex; justify-content: center; align-items: center; }
     .nav-item:active { transform: scale(0.85); }
+    .nav-tooltip {
+      position: absolute; top: -45px; left: 50%; transform: translateX(-50%) translateY(10px) scale(0.9);
+      background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2);
+      padding: 6px 12px; border-radius: 8px; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; color: white;
+      pointer-events: none; opacity: 0; transition: all 0.2s;
+    }
+    .nav-tooltip.visible { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
 
     #tour-backdrop { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); z-index: 99990; transition: opacity 0.4s ease; }
     body.tour-active .surface-card { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
@@ -115,6 +113,7 @@
     .animate-shake { animation: shake 0.4s ease-in-out; }
   </style>
 </head>
+<!-- PERFECTED BOTTOM PADDING: Solves the "unending CSS abyss" issue -->
 <body class="relative pb-24"> 
 
   <div id="page-loader">
@@ -130,7 +129,7 @@
 
   <div id="tour-card" class="fixed left-1/2 -translate-x-1/2 w-[90%] max-w-[380px] bg-black border border-[var(--accent-mint)]/50 rounded-2xl p-5 shadow-[0_20px_50px_rgba(0,0,0,0.9)] z-[99999] transition-all duration-500 ease-in-out" style="display: none; bottom: 48px;">
     <div class="flex justify-between items-center mb-3">
-      <span class="text-[10px] font-extrabold tracking-[0.2em] text-[var(--accent-mint)] uppercase" id="tour-step-indicator">RULE 1 / 4</span>
+      <span class="text-[10px] font-extrabold tracking-[0.2em] text-[var(--accent-mint)] uppercase" id="tour-step-indicator">RULE 1 / 3</span>
     </div>
     <p class="text-sm text-gray-200 leading-relaxed font-medium mb-5" id="tour-text">Welcome to your dashboard.</p>
     <div class="flex justify-end pointer-events-auto">
@@ -153,26 +152,20 @@
     <!-- DATE TRACKER -->
     <div id="week-tracker" class="flex justify-between items-center mb-6 w-full px-1"></div>
 
-    <header class="mb-8 flex justify-between items-center">
+    <header class="mb-8 flex justify-between items-start">
       <div>
         <h1 class="text-3xl font-extrabold tracking-tight text-white mb-1">
           <span id="greeting-text">Good evening</span>, <span class="text-[var(--accent-mint)]" id="user-name">...</span> <span class="text-2xl">👋</span>
         </h1>
         <p class="text-sm text-gray-400 font-medium">Small steps today, better tomorrow.</p>
       </div>
-      
-      <!-- GLOBAL XP DISPLAY -->
-      <div class="flex flex-col items-end">
-        <div class="flex items-center gap-2 bg-black/60 border border-[var(--accent-mint)]/30 px-3 py-2 rounded-xl shadow-[0_0_15px_rgba(0,229,155,0.1)]">
-          <span class="text-sm">🏆</span>
-          <span id="global-xp-display" class="text-[11px] font-black tracking-widest text-[var(--accent-mint)]">0 XP</span>
-        </div>
-      </div>
+      <button id="logout-btn" class="mt-1 w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-all shadow-[0_0_15px_rgba(0,0,0,0.2)] active:scale-95">
+        <svg class="w-4 h-4 translate-x-[1px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+      </button>
     </header>
 
     <!-- 🏠 DASHBOARD VIEW WRAPPER -->
     <div id="dashboard-view" class="block w-full">
-        <!-- Speedometer Card -->
         <section id="tour-speedo-card" class="surface-card p-6 mb-8 flex items-center justify-between transition-all duration-300 rounded-2xl">
           <div>
             <h2 id="tour-txt-protocol" class="text-lg font-bold text-white mb-1 px-1 -ml-1 transition-all duration-300">Live Matrix</h2>
@@ -221,8 +214,10 @@
         <p class="text-[10px] text-gray-400 mb-8 uppercase tracking-widest">Execute and Seal</p>
 
         <div class="relative w-full max-w-[320px] aspect-square flex items-center justify-center">
+          <!-- Dynamically Generated SVG Rings -->
           <svg id="rings-svg" class="absolute inset-0 w-full h-full drop-shadow-[0_0_15px_rgba(0,0,0,0.5)]" viewBox="0 0 300 300"></svg>
           
+          <!-- MASTER SEAL BUTTON -->
           <button id="seal-btn" class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-24 h-24 rounded-full bg-black/90 border border-white/10 flex flex-col items-center justify-center shadow-[0_0_30px_rgba(0,0,0,0.8)] transition-all select-none focus:outline-none">
              <span class="text-[10px] font-black tracking-widest text-gray-400 uppercase leading-tight text-center" id="seal-text">Hold To<br>Seal</span>
           </button>
@@ -235,70 +230,39 @@
     <!-- 🌍 COMMUNITY / DUAL CHALLENGE VIEW WRAPPER -->
     <div id="community-view" class="hidden w-full pb-10">
       
-      <!-- STATE 0: RULES OF ENGAGEMENT -->
-      <div id="comm-rules-state" class="block">
-        <div class="surface-card p-6 mt-2 border border-[var(--accent-purple)]/30">
-          <div class="flex items-center justify-center mb-6">
-            <span class="text-3xl drop-shadow-[0_0_15px_rgba(157,78,221,0.5)]">⚔️</span>
-          </div>
-          <h3 class="text-lg font-black text-white text-center tracking-wide uppercase mb-1">Rules of Engagement</h3>
-          <p class="text-[10px] text-[var(--accent-purple)] font-bold text-center tracking-widest uppercase mb-6">Dual Challenge Protocol</p>
-          
-          <div class="space-y-5 mb-8">
-            <div class="bg-black/40 p-4 rounded-xl border border-white/5">
-              <h4 class="text-xs font-bold text-white mb-1 tracking-wider uppercase">1. Existing Forces Only</h4>
-              <p class="text-[10px] text-gray-400 leading-relaxed">You will fight this challenge using your exact existing matrix architecture. You cannot create new, temporary habits for a duel.</p>
-            </div>
-            <div class="bg-black/40 p-4 rounded-xl border border-[var(--accent-mint)]/20 shadow-[0_0_10px_rgba(0,229,155,0.05)]">
-              <h4 class="text-xs font-bold text-[var(--accent-mint)] mb-1 tracking-wider uppercase">2. Symmetrical Warfare</h4>
-              <p class="text-[10px] text-gray-400 leading-relaxed">Both challengers must possess the <span class="font-bold text-white">exact same number of tasks</span> and the <span class="font-bold text-white">exact same operational duration</span>. Mismatched invites are automatically rejected.</p>
-            </div>
-            <div class="bg-red-500/10 p-4 rounded-xl border border-red-500/30">
-              <h4 class="text-xs font-bold text-red-500 mb-1 tracking-wider uppercase">3. Desertion Penalty</h4>
-              <p class="text-[10px] text-gray-400 leading-relaxed">If a challenge is accepted, exiting or quitting the duel before the operational period ends incurs a permanent <span class="font-bold text-red-500">-500 XP penalty</span>.</p>
-            </div>
-          </div>
-          
-          <button onclick="acceptCommRules()" class="w-full py-4 rounded-xl font-extrabold text-black bg-[var(--accent-purple)] shadow-[0_0_20px_rgba(157,78,221,0.4)] uppercase tracking-widest text-xs hover:scale-95 transition-transform">
-            Acknowledge & Proceed
-          </button>
-        </div>
-      </div>
-
       <!-- STATE 1: NO CHALLENGE ACTIVE (INVITE UI) -->
-      <div id="comm-invite-state" class="hidden">
+      <div id="comm-invite-state" class="block">
         <div class="surface-card p-6 mt-2 text-center flex flex-col items-center">
-          <div class="w-16 h-16 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-4">
-            <span class="text-2xl">🔗</span>
+          <div class="w-16 h-16 rounded-full bg-[var(--accent-purple)]/20 border border-[var(--accent-purple)]/50 flex items-center justify-center mb-4 shadow-[0_0_20px_rgba(157,78,221,0.3)]">
+            <span class="text-2xl">⚔️</span>
           </div>
-          <h3 class="text-lg font-bold text-white mb-2">Generate Invite</h3>
-          <p class="text-xs text-gray-400 mb-8 leading-relaxed">Invite a friend to lock into a 1-on-1 accountability duel. Send this link to them to initiate the connection.</p>
+          <h3 class="text-lg font-bold text-white mb-2">Dual Challenge</h3>
+          <p class="text-xs text-gray-400 mb-8 leading-relaxed">Invite a friend to lock into a 1-on-1 accountability challenge. Their live progress will sync directly to your dashboard.</p>
           
-          <button id="btn-generate-invite" onclick="generateInvite()" class="w-full py-4 rounded-xl font-extrabold text-black bg-[var(--accent-mint)] shadow-[0_0_20px_rgba(0,229,155,0.3)] uppercase tracking-widest text-xs hover:scale-95 transition-transform">
-            Generate Link
+          <button id="btn-generate-invite" onclick="generateInvite()" class="w-full py-4 rounded-xl font-extrabold text-black bg-[var(--accent-purple)] shadow-[0_0_20px_rgba(157,78,221,0.4)] uppercase tracking-widest text-xs hover:scale-95 transition-transform">
+            Generate Invite Link
           </button>
 
-          <div id="invite-link-container" class="hidden w-full mt-6 bg-black/60 border border-[var(--accent-mint)]/30 rounded-xl p-4 flex flex-col gap-3">
-             <p class="text-[10px] font-bold tracking-widest text-[var(--accent-mint)] uppercase">Link Ready</p>
-             <input type="text" id="invite-link-input" readonly class="w-full bg-transparent text-[10px] text-gray-300 outline-none text-center font-mono">
-             <button onclick="copyInviteLink()" class="px-4 py-3 bg-[var(--accent-mint)]/20 rounded-lg text-xs font-bold text-[var(--accent-mint)] hover:bg-[var(--accent-mint)]/30 transition-all border border-[var(--accent-mint)]/20 uppercase tracking-widest">Copy To Clipboard</button>
+          <div id="invite-link-container" class="hidden w-full mt-6 bg-black/60 border border-white/10 rounded-xl p-4 flex flex-col gap-3">
+             <p class="text-[10px] font-bold tracking-widest text-[var(--accent-mint)] uppercase">Link Generated</p>
+             <input type="text" id="invite-link-input" readonly class="w-full bg-transparent text-xs text-gray-300 outline-none text-center font-mono">
+             <button onclick="copyInviteLink()" class="px-4 py-2 bg-white/10 rounded-lg text-xs font-bold text-white hover:bg-white/20 transition-all border border-white/5">Copy Link</button>
           </div>
         </div>
       </div>
 
       <!-- STATE 2: ACTIVE DUAL CHALLENGE UI -->
       <div id="comm-active-state" class="hidden">
-        <div class="surface-card p-6 mt-2 relative overflow-hidden">
-          
+        <div class="surface-card p-6 mt-2">
           <div class="flex items-center justify-between mb-8">
             <h3 class="text-sm font-bold text-white">Dual Challenge</h3>
             <span class="px-2 py-1 bg-[var(--accent-mint)]/20 border border-[var(--accent-mint)]/30 rounded text-[9px] font-black tracking-widest text-[var(--accent-mint)] uppercase flex items-center gap-1">
-              <span class="w-1.5 h-1.5 rounded-full bg-[var(--accent-mint)] animate-pulse"></span> LIVE
+              <span class="w-1.5 h-1.5 rounded-full bg-[var(--accent-mint)] animate-pulse"></span> ACTIVE
             </span>
           </div>
 
           <!-- SIDE BY SIDE RINGS -->
-          <div class="flex justify-between items-center gap-4 mb-10 relative z-10">
+          <div class="flex justify-between items-center gap-4 mb-10">
             <!-- YOUR RING -->
             <div class="w-1/2 flex flex-col items-center">
               <div class="relative w-full max-w-[120px] aspect-square flex items-center justify-center rounded-full mb-3">
@@ -309,10 +273,9 @@
                 <span class="text-xl font-extrabold text-white absolute z-10" id="dual-percent-you">0%</span>
               </div>
               <span class="text-[10px] font-black tracking-widest text-white uppercase">You</span>
-              <span class="text-[8px] text-[var(--accent-mint)] font-bold mt-1 tracking-widest" id="dual-xp-you">0 XP</span>
             </div>
 
-            <div class="text-xl opacity-50 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 -mt-4">⚔️</div>
+            <div class="text-xl opacity-50">⚔️</div>
 
             <!-- CHALLENGER'S RING -->
             <div class="w-1/2 flex flex-col items-center">
@@ -324,21 +287,15 @@
                 <span class="text-xl font-extrabold text-white absolute z-10" id="dual-percent-challenger">0%</span>
               </div>
               <span class="text-[10px] font-black tracking-widest text-[var(--accent-purple)] uppercase">Challenger</span>
-              <span class="text-[8px] text-[var(--accent-purple)] font-bold mt-1 tracking-widest" id="dual-xp-challenger">0 XP</span>
             </div>
           </div>
 
-          <div class="border-t border-white/10 pt-6 relative z-10">
-            <h4 class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-4">Your Matrix Forces</h4>
+          <!-- HABITS REMINDER -->
+          <div class="border-t border-white/10 pt-6">
+            <h4 class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-4">Your Commitments</h4>
             <div id="dual-tasks-list" class="space-y-2">
               <!-- Injected by JS to match dashboard -->
             </div>
-          </div>
-          
-          <div class="mt-10 pt-6 border-t border-red-500/20 text-center relative z-10">
-             <button onclick="quitChallenge()" class="text-[10px] font-bold tracking-widest text-red-500 uppercase hover:text-red-400 transition-colors py-2 px-4 rounded border border-red-500/30 bg-red-500/10">
-                Quit Challenge (-500 XP)
-             </button>
           </div>
 
         </div>
@@ -356,9 +313,10 @@
       <div id="nav-btn-vis" class="nav-item transition-all" onclick="switchTab('vis')" onmousedown="showTooltip('tt-vis')" onmouseup="hideTooltip('tt-vis')" ontouchstart="showTooltip('tt-vis')" ontouchend="hideTooltip('tt-vis')">
         <div id="tt-vis" class="nav-tooltip">VISUALIZE</div>🌀
       </div>
-      <div class="nav-item" onclick="alert('Profile view coming soon.')">
-        👤
+      <div class="nav-item" onmousedown="showTooltip('tt-prof')" onmouseup="hideTooltip('tt-prof')" ontouchstart="showTooltip('tt-prof')" ontouchend="hideTooltip('tt-prof')">
+        <div id="tt-prof" class="nav-tooltip">PROFILE</div>👤
       </div>
+      <!-- NEW COMMUNITY TAB -->
       <div id="nav-btn-comm" class="nav-item transition-all" onclick="switchTab('comm')" onmousedown="showTooltip('tt-comm')" onmouseup="hideTooltip('tt-comm')" ontouchstart="showTooltip('tt-comm')" ontouchend="hideTooltip('tt-comm')">
         <div id="tt-comm" class="nav-tooltip">COMMUNITY</div>🌍
       </div>
@@ -369,14 +327,12 @@
     /* --- SYSTEM STATE VARIABLES --- */
     window.isTourRunning = false; 
     window.currentDayIndex = 0;
-    window.totalTasks = 4; // Dynamically overwritten by Firebase
+    window.totalTasks = 4; // Dynamically overwritten by Firebase/DOM
     window.taskDuration = 7;
     
     window.appSetupDate = null;
     window.completionTimestamps = {}; 
     window.challengerUid = null; 
-    window.totalXP = 0;
-    window.commRulesAccepted = false; // Prevents showing rules repeatedly
 
     /* --- WEEK TRACKER LOGIC --- */
     function initWeekTracker() {
@@ -696,20 +652,13 @@
     window.addEventListener('touchend', stopHold);
 
     /* --- 🌍 COMMUNITY / DUAL CHALLENGE ENGINE --- */
-    window.acceptCommRules = function() {
-        window.commRulesAccepted = true;
-        document.getElementById('comm-rules-state').classList.add('hidden');
-        document.getElementById('comm-invite-state').classList.remove('hidden');
-    }
-
     window.generateInvite = function() {
         const linkInput = document.getElementById('invite-link-input');
         const container = document.getElementById('invite-link-container');
         
+        // Generates the unique link using the current user's UID (requires Firebase Auth)
         if(window.currentUserUid) {
-            // Point the link to the root directory so it handles auth cleanly
-            const baseUrl = window.location.origin + window.location.pathname.replace(/[^/]*$/, '');
-            const link = baseUrl + '?challenge=' + window.currentUserUid;
+            const link = window.location.origin + window.location.pathname + '?challenge=' + window.currentUserUid;
             linkInput.value = link;
             container.classList.remove('hidden');
         }
@@ -723,14 +672,12 @@
     };
 
     window.renderCommunityView = function() {
-        const stateRules = document.getElementById('comm-rules-state');
         const stateInvite = document.getElementById('comm-invite-state');
         const stateActive = document.getElementById('comm-active-state');
         const tasksList = document.getElementById('dual-tasks-list');
 
         if(window.challengerUid) {
-            // Challenge Active! Bypass Rules and Invite entirely.
-            stateRules.classList.add('hidden');
+            // Challenge Active!
             stateInvite.classList.add('hidden');
             stateActive.classList.remove('hidden');
 
@@ -754,28 +701,18 @@
             });
             tasksList.innerHTML = tasksHtml;
 
-            if(window.fetchChallengerProgress) window.fetchChallengerProgress();
+            // Trigger Firebase fetch for Challenger's live percentage
+            if(window.fetchChallengerProgress) {
+                window.fetchChallengerProgress();
+            }
+
+            // Make sure own ring is updated
             window.updateTotalProgress();
 
         } else {
-            // No Challenge Active -> Show Rules first
+            // No Challenge Active
+            stateInvite.classList.remove('hidden');
             stateActive.classList.add('hidden');
-            if (window.commRulesAccepted) {
-                stateRules.classList.add('hidden');
-                stateInvite.classList.remove('hidden');
-            } else {
-                stateRules.classList.remove('hidden');
-                stateInvite.classList.add('hidden');
-            }
-        }
-    };
-
-    window.quitChallenge = function() {
-        const confirmQuit = confirm("DANGER: Deserting an active duel will permanently deduct 500 XP from your global score. Are you absolutely sure?");
-        if(confirmQuit) {
-            if(window.executeQuitFirebase) {
-                window.executeQuitFirebase();
-            }
         }
     };
 
@@ -787,25 +724,24 @@
       executeTourStep(1);
     }
     const tourSteps = {
-      1: { elementId: "tour-speedo-card", text: "Welcome to your locked matrix. Everything here is strict. No edits or swaps allowed." },
-      2: { elementId: "tour-target-base", text: "Complete habits to earn +100XP. Missing one drops -50XP. Missed days reset your streak." },
-      3: { elementId: "nav-btn-vis", text: "Tap Visualize to watch your live rings. Hold the center button to seal your day." },
-      4: { elementId: "nav-btn-comm", text: "Duel a friend here. You must have identical matrices to link up." }
+      1: { elementId: "tour-txt-protocol", text: "Welcome to your locked matrix. Everything here is strict. There are no edits or swaps allowed." },
+      2: { elementId: "tour-txt-days", text: "This architecture will execute for your chosen duration." },
+      3: { elementId: "nav-btn-vis", text: "Tap the Visualize Ring to watch your live progress and formally seal your day when finished." }
     };
     function executeTourStep(step) {
       document.querySelectorAll('.tour-highlight').forEach(el => { el.classList.remove('tour-highlight'); });
       const config = tourSteps[step]; const element = document.getElementById(config.elementId);
       if(element) {
         element.classList.add('tour-highlight');
-        if (step === 3 || step === 4) { document.getElementById('tour-card').style.bottom = 'auto'; document.getElementById('tour-card').style.top = '120px'; } 
+        if (step === 3) { document.getElementById('tour-card').style.bottom = 'auto'; document.getElementById('tour-card').style.top = '120px'; } 
         else { document.getElementById('tour-card').style.top = 'auto'; document.getElementById('tour-card').style.bottom = '90px'; }
         element.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
-      document.getElementById('tour-step-indicator').innerText = `RULE ${step} / 4`; document.getElementById('tour-text').innerText = config.text;
-      document.getElementById('tour-next-btn').innerText = step === 4 ? "Begin" : "Next";
+      document.getElementById('tour-step-indicator').innerText = `RULE ${step} / 3`; document.getElementById('tour-text').innerText = config.text;
+      document.getElementById('tour-next-btn').innerText = step === 3 ? "Begin" : "Next";
     }
     let currentStep = 1;
-    window.nextTourStep = function() { if(currentStep < 4) { currentStep++; executeTourStep(currentStep); } else { window.endTour(); } }
+    window.nextTourStep = function() { if(currentStep < 3) { currentStep++; executeTourStep(currentStep); } else { window.endTour(); } }
     window.endTour = function() {
       document.querySelectorAll('.tour-highlight').forEach(el => { el.classList.remove('tour-highlight'); });
       document.body.classList.remove('tour-active'); document.getElementById('tour-backdrop').style.opacity = '0'; document.getElementById('tour-card').style.opacity = '0';
@@ -848,198 +784,158 @@
         return;
       }
 
-      window.currentUserUid = user.uid; 
+      window.currentUserUid = user.uid; // Set for invite link generation
       const firstName = user.displayName ? user.displayName.split(' ')[0] : 'Operator';
       document.getElementById('user-name').innerText = firstName;
       
       const userDocRef = doc(db, "users", user.uid);
       const userDoc = await getDoc(userDocRef);
 
-      // Verify completion of setup before proceeding
-      if (!userDoc.exists() || !userDoc.data().hasCompletedSetup) {
-         let pending = new URLSearchParams(window.location.search).get('challenge');
-         if (pending) localStorage.setItem('pendingChallenge', pending);
-         window.location.href = 'lock.html';
-         return;
-      }
-
-      const data = userDoc.data();
-      window.totalTasks = data.baseMatrix ? data.baseMatrix.length : (data.totalHabits || 4);
-      window.taskDuration = data.duration || 7;
-      window.appSetupDate = data.setupDate ? data.setupDate.toDate() : new Date();
-      window.completionTimestamps = data.completionTimestamps || {};
-      window.challengerUid = data.challengerUid || null; 
-      window.totalXP = data.totalXP || 0; 
-
-      // --- URL CHALLENGE / DEEP LINK INTERCEPTOR ---
-      let incomingChallengeUid = new URLSearchParams(window.location.search).get('challenge');
-      if(!incomingChallengeUid) {
-          incomingChallengeUid = localStorage.getItem('pendingChallenge');
-      }
+      // --- URL CHALLENGE INTERCEPTOR ---
+      const urlParams = new URLSearchParams(window.location.search);
+      const incomingChallengeUid = urlParams.get('challenge');
       
       if (incomingChallengeUid && incomingChallengeUid !== user.uid) {
-         try {
-             const cSnap = await getDoc(doc(db, "users", incomingChallengeUid));
-             if(cSnap.exists()) {
-                 const cData = cSnap.data();
-                 const cTotal = cData.baseMatrix ? cData.baseMatrix.length : (cData.totalHabits || 4);
-                 const cDur = cData.duration || 7;
-
-                 // Symmetrical Check
-                 if (window.totalTasks === cTotal && window.taskDuration === cDur) {
-                     const confirmJoin = confirm("Someone challenged you to an accountability duel! Match parameters validated. Link profiles?");
-                     if(confirmJoin) {
-                        await updateDoc(userDocRef, { challengerUid: incomingChallengeUid });
-                        await updateDoc(doc(db, "users", incomingChallengeUid), { challengerUid: user.uid });
-                        localStorage.setItem('openCommunity', 'true');
-                     }
-                 } else {
-                     alert(`CHALLENGE REJECTED: Matrix Mismatch.\nYou have ${window.totalTasks} tasks for ${window.taskDuration} days.\nChallenger has ${cTotal} tasks for ${cDur} days.\nParameters must be identical to duel.`);
-                 }
-             } else {
-                 alert("Challenge Link Invalid: User not found.");
+         const confirmJoin = confirm("Someone challenged you to an accountability duel! Accept and link profiles?");
+         if(confirmJoin) {
+             try {
+                // Update Current User (Self)
+                await updateDoc(userDocRef, { challengerUid: incomingChallengeUid });
+                // Attempt to Update Challenger (Requires open Firestore rules!)
+                await updateDoc(doc(db, "users", incomingChallengeUid), { challengerUid: user.uid });
+             } catch(e) {
+                console.warn("Could not two-way sync. Check Firebase Rules.");
              }
-         } catch(e) {
-             console.warn("Could not sync duel. Check Firebase Rules.");
          }
-         // Clean up memory and URL
-         localStorage.removeItem('pendingChallenge');
+         // Clean URL so it doesn't prompt again
          window.history.replaceState({}, document.title, window.location.pathname);
+         // Reload to pull new state cleanly
          window.location.reload();
          return;
       }
       // ---------------------------------
 
-      document.getElementById('task-count-header').innerText = `${window.totalTasks} TASKS`;
-      document.getElementById('tour-txt-days').innerText = `${window.taskDuration} DAYS`;
-      document.getElementById('global-xp-display').innerText = `${window.totalXP} XP`;
+      if (userDoc.exists()) {
+        const data = userDoc.data();
 
-      // DYNAMIC RENDERING OF DASHBOARD TASKS WITH XP BADGES
-      if (data.baseMatrix) {
-          let taskHtml = '';
-          data.baseMatrix.forEach((task, index) => {
-              let i = index + 1;
-              taskHtml += `
-              <div class="bg-black/60 border border-white/5 rounded-2xl p-4 flex items-center gap-4 transition-all duration-300 task-row" id="task-row-${i}">
-                <label class="task-check-wrapper">
-                  <input type="checkbox" class="task-checkbox logic-check" data-task-id="${i}">
-                  <div class="task-custom-check"></div>
-                </label>
-                <div class="flex-1">
-                  <h4 class="text-sm font-bold text-white mb-0.5" id="task-name-${i}">${task.name}</h4>
-                  <div class="flex items-center gap-3">
-                     <p class="text-[10px] text-gray-500 font-medium flex items-center gap-1">
-                       <span class="text-[var(--accent-purple)]">🔒 Locked</span> • <span id="task-time-${i}">${task.time}</span>
-                     </p>
-                     <p class="text-[8.5px] font-black tracking-widest flex items-center gap-1.5 opacity-90">
-                       <span class="text-[var(--accent-mint)]">+100XP</span>
-                       <span class="text-red-500">-50XP</span>
-                     </p>
+        window.totalTasks = data.baseMatrix ? data.baseMatrix.length : (data.totalHabits || 4);
+        window.taskDuration = data.duration || 7;
+        window.appSetupDate = data.setupDate ? data.setupDate.toDate() : new Date();
+        window.completionTimestamps = data.completionTimestamps || {};
+        window.challengerUid = data.challengerUid || null; // Bind Community status
+
+        document.getElementById('task-count-header').innerText = `${window.totalTasks} TASKS`;
+        document.getElementById('tour-txt-days').innerText = `${window.taskDuration} DAYS`;
+
+        // DYNAMIC RENDERING OF DASHBOARD TASKS
+        if (data.baseMatrix) {
+            let taskHtml = '';
+            data.baseMatrix.forEach((task, index) => {
+                let i = index + 1;
+                taskHtml += `
+                <div class="bg-black/60 border border-white/5 rounded-2xl p-4 flex items-center gap-4 transition-all duration-300 task-row" id="task-row-${i}">
+                  <label class="task-check-wrapper">
+                    <input type="checkbox" class="task-checkbox logic-check" data-task-id="${i}">
+                    <div class="task-custom-check"></div>
+                  </label>
+                  <div class="flex-1">
+                    <h4 class="text-sm font-bold text-white mb-0.5" id="task-name-${i}">${task.name}</h4>
+                    <p class="text-[10px] text-gray-500 font-medium flex items-center gap-1">
+                      <span class="text-[var(--accent-purple)]">🔒 Locked</span> • <span id="task-time-${i}">${task.time}</span>
+                    </p>
+                    <p class="text-[10px] text-red-500 font-bold mt-0.5 tracking-wider hidden" id="task-countdown-${i}"></p>
                   </div>
-                  <p class="text-[10px] text-red-500 font-bold mt-0.5 tracking-wider hidden" id="task-countdown-${i}"></p>
-                </div>
-                <div class="text-2xl opacity-70" id="task-emoji-${i}">${task.emoji}</div>
-              </div>`;
-          });
-          document.getElementById('daily-tasks').innerHTML = taskHtml;
-          window.attachCheckboxListeners();
-      }
-
-      let currentISTDate = new Date();
-      try {
-        const response = await fetch('https://worldtimeapi.org/api/timezone/Asia/Kolkata');
-        const timeData = await response.json();
-        currentISTDate = new Date(timeData.datetime);
-      } catch (e) {
-        currentISTDate = new Date(new Date().getTime() + (new Date().getTimezoneOffset() * 60000) + (3600000 * 5.5));
-      }
-
-      const currentMidnight = new Date(currentISTDate);
-      currentMidnight.setHours(0,0,0,0);
-
-      const setupMidnight = new Date(window.appSetupDate);
-      setupMidnight.setHours(0,0,0,0);
-
-      const diffTime = currentMidnight - setupMidnight;
-      const daysPassed = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-      window.currentDayIndex = Math.min(Math.max(daysPassed, 0), window.taskDuration - 1); 
-
-      document.getElementById('day-badge').innerText = `DAY ${window.currentDayIndex + 1}`;
-
-      let lastActiveDay = data.lastActiveDay || 0;
-      let dailyHistory = data.dailyHistory || [];
-      let checkedTasks = data.checkedTasks || [];
-
-      // Midnight Rollover & XP Calculation
-      if (window.currentDayIndex > lastActiveDay) {
-        let percent = Math.round((checkedTasks.length / window.totalTasks) * 100);
-        
-        // XP MATH: +100 for completed, -50 for missed
-        let earnedXP = (checkedTasks.length * 100) - ((window.totalTasks - checkedTasks.length) * 50);
-        let newTotalXP = window.totalXP + earnedXP;
-        
-        if (percent < 100) {
-          // HARSH RESET
-          await updateDoc(userDocRef, {
-            setupDate: serverTimestamp(),
-            dailyHistory: [], 
-            checkedTasks: [], 
-            completionTimestamps: {},
-            lastActiveDay: 0,
-            totalXP: newTotalXP // Log the point deduction before reset
-          });
-          window.location.reload();
-          return; 
-        } else {
-          // SUCCESS
-          dailyHistory[lastActiveDay] = percent; 
-          checkedTasks = []; 
-          window.completionTimestamps = {};
-          lastActiveDay = window.currentDayIndex;
-
-          await updateDoc(userDocRef, {
-            dailyHistory: dailyHistory,
-            checkedTasks: checkedTasks,
-            completionTimestamps: window.completionTimestamps,
-            lastActiveDay: lastActiveDay,
-            totalXP: newTotalXP
-          });
-          window.totalXP = newTotalXP;
-          document.getElementById('global-xp-display').innerText = `${window.totalXP} XP`;
+                  <div class="text-2xl opacity-70" id="task-emoji-${i}">${task.emoji}</div>
+                </div>`;
+            });
+            document.getElementById('daily-tasks').innerHTML = taskHtml;
+            window.attachCheckboxListeners();
         }
-      }
 
-      // Restore Checkboxes securely
-      if (checkedTasks.length > 0) {
-        setTimeout(() => {
-          const boxes = document.querySelectorAll('.logic-check');
-          checkedTasks.forEach(idx => {
-            if (boxes[idx]) {
-              boxes[idx].checked = true;
-              const row = boxes[idx].closest('.task-row');
-              row.classList.add('opacity-50', 'border-[var(--accent-mint)]/30');
-              row.querySelector('h4').classList.add('line-through', 'text-gray-400');
-            }
-          });
-          window.updateTotalProgress();
-        }, 300);
-      }
+        let currentISTDate = new Date();
+        try {
+          const response = await fetch('https://worldtimeapi.org/api/timezone/Asia/Kolkata');
+          const timeData = await response.json();
+          currentISTDate = new Date(timeData.datetime);
+        } catch (e) {
+          currentISTDate = new Date(new Date().getTime() + (new Date().getTimezoneOffset() * 60000) + (3600000 * 5.5));
+        }
 
-      loader.style.opacity = '0';
-      setTimeout(() => { loader.style.display = 'none'; }, 500);
-      
-      if (window.startLiveClocks) window.startLiveClocks();
+        const currentMidnight = new Date(currentISTDate);
+        currentMidnight.setHours(0,0,0,0);
 
-      // Check if we should auto-open Community Tab
-      if (localStorage.getItem('openCommunity') === 'true') {
-          localStorage.removeItem('openCommunity');
-          setTimeout(() => { window.switchTab('comm'); }, 600);
-      }
+        const setupMidnight = new Date(window.appSetupDate);
+        setupMidnight.setHours(0,0,0,0);
 
-      // Trigger tour if fresh
-      if (!data.tourCompleted) {
-        setTimeout(window.startVirtualTour, 500);
-        await updateDoc(userDocRef, { tourCompleted: true });
+        const diffTime = currentMidnight - setupMidnight;
+        const daysPassed = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+        window.currentDayIndex = Math.min(Math.max(daysPassed, 0), window.taskDuration - 1); 
+
+        document.getElementById('day-badge').innerText = `DAY ${window.currentDayIndex + 1}`;
+
+        let lastActiveDay = data.lastActiveDay || 0;
+        let dailyHistory = data.dailyHistory || [];
+        let checkedTasks = data.checkedTasks || [];
+
+        // Midnight Rollover & Harsh Reset Check (Ensures Day 2 is Fresh!)
+        if (window.currentDayIndex > lastActiveDay) {
+          let percent = Math.round((checkedTasks.length / window.totalTasks) * 100);
+          
+          if (percent < 100) {
+            // THE HARSH RESET: Failed to hit 100%. Wipes history and unchecks everything.
+            await updateDoc(userDocRef, {
+              setupDate: serverTimestamp(),
+              dailyHistory: [], 
+              checkedTasks: [], 
+              completionTimestamps: {},
+              lastActiveDay: 0
+            });
+            window.location.reload();
+            return; 
+          } else {
+            // SUCCESS: 100%. Archive day. Wipe current checks for a fresh Day 2.
+            dailyHistory[lastActiveDay] = percent; 
+            checkedTasks = []; 
+            window.completionTimestamps = {};
+            lastActiveDay = window.currentDayIndex;
+
+            await updateDoc(userDocRef, {
+              dailyHistory: dailyHistory,
+              checkedTasks: checkedTasks,
+              completionTimestamps: window.completionTimestamps,
+              lastActiveDay: lastActiveDay
+            });
+          }
+        }
+
+        // Restore Checkboxes securely
+        if (checkedTasks.length > 0) {
+          setTimeout(() => {
+            const boxes = document.querySelectorAll('.logic-check');
+            checkedTasks.forEach(idx => {
+              if (boxes[idx]) {
+                boxes[idx].checked = true;
+                const row = boxes[idx].closest('.task-row');
+                row.classList.add('opacity-50', 'border-[var(--accent-mint)]/30');
+                row.querySelector('h4').classList.add('line-through', 'text-gray-400');
+              }
+            });
+            window.updateTotalProgress();
+          }, 300);
+        }
+
+        loader.style.opacity = '0';
+        setTimeout(() => { loader.style.display = 'none'; }, 500);
+        
+        if (window.startLiveClocks) window.startLiveClocks();
+
+        // Single Memory Tour Trigger
+        if (!data.tourCompleted) {
+          setTimeout(window.startVirtualTour, 500);
+          await updateDoc(userDocRef, { tourCompleted: true });
+        }
+      } else {
+        window.location.href = 'lock.html';
       }
     });
 
@@ -1055,7 +951,7 @@
        }
     };
 
-    // --- FETCH CHALLENGER PROGRESS & XP ---
+    // --- FETCH CHALLENGER PROGRESS ---
     window.fetchChallengerProgress = async function() {
         if(!window.challengerUid) return;
         
@@ -1065,23 +961,11 @@
             
             if(cSnap.exists()) {
                 const cData = cSnap.data();
-
-                // Security Check: Did they quit?
-                if(cData.challengerUid !== window.currentUserUid) {
-                    window.challengerUid = null;
-                    await updateDoc(doc(db, "users", window.currentUserUid), { challengerUid: null });
-                    alert("Your challenger has deserted the duel.");
-                    window.renderCommunityView();
-                    return;
-                }
-
                 const cTotal = cData.baseMatrix ? cData.baseMatrix.length : (cData.totalHabits || 1);
                 const cCompleted = cData.checkedTasks ? cData.checkedTasks.length : 0;
-                const cXp = cData.totalXP || 0;
                 
                 const cPercent = Math.round((cCompleted / cTotal) * 100);
                 document.getElementById('dual-percent-challenger').innerText = cPercent + '%';
-                document.getElementById('dual-xp-challenger').innerText = `${cXp} XP`;
 
                 const dualCircle = document.getElementById('dual-ring-challenger');
                 if(dualCircle) {
@@ -1090,41 +974,9 @@
                     dualCircle.style.strokeDasharray = `${circ} ${circ}`;
                     dualCircle.style.strokeDashoffset = circ - (cPercent / 100) * circ;
                 }
-                
-                // Keep own XP updated in duel view
-                document.getElementById('dual-xp-you').innerText = `${window.totalXP} XP`;
             }
         } catch(e) {
-            console.warn("Could not fetch challenger. Check Firebase rules.");
-        }
-    };
-
-    // --- QUIT CHALLENGE FIREBASE HOOK ---
-    window.executeQuitFirebase = async function() {
-        const user = auth.currentUser;
-        if(user) {
-            window.totalXP -= 500;
-            document.getElementById('global-xp-display').innerText = `${window.totalXP} XP`;
-            
-            try {
-                // Update self
-                await updateDoc(doc(db, "users", user.uid), { 
-                    challengerUid: null,
-                    totalXP: window.totalXP
-                });
-                
-                // Attempt to update challenger if rules permit
-                if(window.challengerUid) {
-                    await updateDoc(doc(db, "users", window.challengerUid), { challengerUid: null });
-                }
-                
-                window.challengerUid = null;
-                alert("Challenge Terminated. 500 XP deducted.");
-                window.renderCommunityView(); // Reset UI
-            } catch(e) {
-                console.error("Quit error:", e);
-                alert("Error quitting challenge.");
-            }
+            console.warn("Could not fetch challenger progress. Check Firebase rules.");
         }
     };
   </script>
