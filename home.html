@@ -114,7 +114,7 @@
     .animate-shake { animation: shake 0.4s ease-in-out; }
   </style>
 </head>
-<body class="relative pb-[40vh]"> 
+<body class="relative pb-28"> 
 
   <div id="page-loader">
     <div class="w-10 h-10 border-4 border-white/10 border-t-[var(--accent-mint)] rounded-full animate-spin mb-4"></div>
@@ -149,7 +149,7 @@
       </div>
     </div>
 
-    <!-- 7-DAY DATE TRACKER -->
+    <!-- DATE TRACKER -->
     <div id="week-tracker" class="flex justify-between items-center mb-6 w-full px-1"></div>
 
     <header class="mb-8 flex justify-between items-start">
@@ -209,7 +209,7 @@
     </div>
 
     <!-- 🌀 VISUALIZE VIEW WRAPPER (THE RINGS ENGINE) -->
-    <div id="visualize-view" class="hidden w-full pb-20">
+    <div id="visualize-view" class="hidden w-full pb-10">
       <div id="tour-target-visualize" class="surface-card p-5 mt-2 flex flex-col items-center">
         <h3 class="text-sm font-bold text-white mb-1">Activity Rings</h3>
         <p class="text-[10px] text-gray-400 mb-8 uppercase tracking-widest">Execute and Seal</p>
@@ -220,49 +220,11 @@
           
           <!-- MASTER SEAL BUTTON -->
           <button id="seal-btn" class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-24 h-24 rounded-full bg-black/90 border border-white/10 flex flex-col items-center justify-center shadow-[0_0_30px_rgba(0,0,0,0.8)] transition-all select-none focus:outline-none">
-             <span class="text-[10px] font-black tracking-widest text-gray-400 uppercase leading-tight" id="seal-text">Hold To<br>Seal</span>
+             <span class="text-[10px] font-black tracking-widest text-gray-400 uppercase leading-tight text-center" id="seal-text">Hold To<br>Seal</span>
           </button>
         </div>
         
         <p class="text-[9px] text-gray-500 font-bold uppercase tracking-widest mt-8 text-center px-4 leading-relaxed">Rings auto-seal at midnight. Manual seals require 100% completion.</p>
-      </div>
-    </div>
-
-    <!-- 📈 GRAPH VIEW WRAPPER -->
-    <div id="graph-view" class="hidden w-full pb-20">
-      <div class="surface-card p-5 mt-2">
-        <div class="flex justify-between items-center mb-6">
-           <div>
-             <h3 class="text-sm font-bold text-white mb-0.5">Telemetry</h3>
-             <p class="text-[9px] font-bold text-gray-500 uppercase tracking-widest">Deviation from Baseline</p>
-           </div>
-           <div class="flex bg-black/40 rounded-lg p-1 border border-white/5">
-             <button id="btn-graph-daily" class="px-3 py-1.5 text-[9px] tracking-widest font-extrabold rounded-md bg-[var(--accent-mint)] text-black transition-all shadow-[0_0_10px_rgba(0,229,155,0.2)]" onclick="setGraphMode('daily')">DAILY</button>
-             <button id="btn-graph-weekly" class="px-3 py-1.5 text-[9px] tracking-widest font-extrabold rounded-md text-gray-500 hover:text-white transition-all" onclick="setGraphMode('weekly')">WEEKLY</button>
-           </div>
-        </div>
-
-        <div id="graph-daily-nav" class="flex justify-between items-center mb-6 bg-white/5 rounded-full px-5 py-2 border border-white/10">
-           <button onclick="changeGraphDay(-1)" class="text-gray-400 hover:text-white active:scale-90 transition-transform">
-             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-           </button>
-           <span id="graph-current-day-label" class="text-[10px] font-black text-white tracking-[0.2em] uppercase">TODAY</span>
-           <button onclick="changeGraphDay(1)" class="text-gray-400 hover:text-white active:scale-90 transition-transform">
-             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-           </button>
-        </div>
-
-        <div class="relative w-full h-[220px]">
-           <div class="absolute left-0 top-0 h-full flex flex-col justify-between text-[8px] font-bold text-gray-500 py-1">
-              <span class="text-[var(--accent-mint)]">+2h Early</span>
-              <span class="text-white bg-white/10 px-1.5 py-0.5 rounded ml-2">TARGET</span>
-              <span class="text-red-500">-2h Late</span>
-           </div>
-           <div class="pl-[60px] pr-2 h-full w-full relative">
-             <svg id="graph-svg-canvas" class="w-full h-full overflow-visible"></svg>
-             <div id="graph-x-labels" class="absolute bottom-0 translate-y-full left-[60px] right-2 h-8 flex text-[9px] font-bold text-gray-500 pt-3"></div>
-           </div>
-        </div>
       </div>
     </div>
 
@@ -281,9 +243,6 @@
       <div class="nav-item" onmousedown="showTooltip('tt-prof')" onmouseup="hideTooltip('tt-prof')" ontouchstart="showTooltip('tt-prof')" ontouchend="hideTooltip('tt-prof')">
         <div id="tt-prof" class="nav-tooltip">PROFILE</div>👤
       </div>
-      <div id="nav-btn-graph" class="nav-item transition-all" onclick="switchTab('graph')" onmousedown="showTooltip('tt-graph')" onmouseup="hideTooltip('tt-graph')" ontouchstart="showTooltip('tt-graph')" ontouchend="hideTooltip('tt-graph')">
-        <div id="tt-graph" class="nav-tooltip">GRAPH</div>📈
-      </div>
       <div class="nav-item" onmousedown="showTooltip('tt-comm')" onmouseup="showTooltip('tt-comm')" ontouchstart="showTooltip('tt-comm')" ontouchend="hideTooltip('tt-comm')">
         <div id="tt-comm" class="nav-tooltip">COMMUNITY</div>🌍
       </div>
@@ -294,16 +253,11 @@
     /* --- SYSTEM STATE VARIABLES --- */
     window.isTourRunning = false; 
     window.currentDayIndex = 0;
-    window.totalTasks = 4; // Will be dynamically overwritten by Firebase/DOM
+    window.totalTasks = 4; // Dynamically overwritten by Firebase/DOM
     window.taskDuration = 7;
     
-    // Graph/Time Databases mapped to Firebase
     window.appSetupDate = null;
     window.completionTimestamps = {}; 
-    window.dailyTimestampsHistory = [];
-    window.dailyTargetHistory = [];
-    window.graphMode = 'daily';
-    window.graphViewDay = 0;
 
     /* --- WEEK TRACKER LOGIC --- */
     function initWeekTracker() {
@@ -408,7 +362,6 @@
     circle.style.strokeDashoffset = circumference;
 
     window.updateTotalProgress = function() { 
-      // Strictly calculate based on actual rendered DOM elements
       const checkboxes = document.querySelectorAll('.logic-check');
       const total = checkboxes.length || 1; // Prevent div by zero
       const completedCount = document.querySelectorAll('.logic-check:checked').length;
@@ -429,13 +382,11 @@
           if (todayCircle) todayCircle.className = 'w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold bg-white/10 border border-white/20 text-white shadow-inner transition-all duration-500';
       }
       
-      // Live update rings if the visualization tab is active
       if (!document.getElementById('visualize-view').classList.contains('hidden')) {
          window.renderVisualizeRings();
       }
     }
 
-    // Attach listeners function (called after Firebase injects the tasks)
     window.attachCheckboxListeners = function() {
         document.querySelectorAll('.logic-check').forEach((box) => {
           box.addEventListener('change', (e) => {
@@ -476,15 +427,13 @@
     window.switchTab = function(tabName) {
         const btnDash = document.getElementById('nav-btn-dash');
         const btnVis = document.getElementById('nav-btn-vis');
-        const btnGraph = document.getElementById('nav-btn-graph');
         
         const viewDash = document.getElementById('dashboard-view');
         const viewVis = document.getElementById('visualize-view');
-        const viewGraph = document.getElementById('graph-view');
 
         // Reset
-        [btnDash, btnVis, btnGraph].forEach(btn => btn.className = "nav-item transition-all");
-        [viewDash, viewVis, viewGraph].forEach(view => view.classList.add('hidden'));
+        [btnDash, btnVis].forEach(btn => btn.className = "nav-item transition-all");
+        [viewDash, viewVis].forEach(view => view.classList.add('hidden'));
         
         const activeClass = "nav-item text-[var(--accent-mint)] scale-110 drop-shadow-[0_0_10px_rgba(0,229,155,0.5)] transition-all bg-white/10 p-3 rounded-full border border-white/5 shadow-inner";
 
@@ -495,10 +444,6 @@
             btnVis.className = activeClass;
             viewVis.classList.remove('hidden');
             window.renderVisualizeRings();
-        } else if (tabName === 'graph') {
-            btnGraph.className = activeClass;
-            viewGraph.classList.remove('hidden');
-            if(window.renderGraph) window.renderGraph();
         }
     };
 
@@ -519,7 +464,6 @@
         
         const colors = ['#00E59B', '#9D4EDD', '#3B82F6', '#F43F5E', '#EAB308', '#A855F7', '#14B8A6', '#F97316', '#EC4899', '#8B5CF6'];
         
-        // Dynamically scale rings based on exact number of tasks
         const maxR = 140;
         const minR = 60;
         const gap = total > 1 ? (maxR - minR) / Math.max(1, total - 1) : 0;
@@ -547,7 +491,6 @@
             `;
         });
         
-        // Seal Progress Track
         html += `
           <path id="seal-progress-path" d="M 150 102 A 48 48 0 1 1 149.9 102" fill="none" stroke="url(#sealGrad)" stroke-width="4" stroke-linecap="round" stroke-dasharray="301" stroke-dashoffset="301" style="transition: stroke-dashoffset 0.1s linear;" />
         `;
@@ -562,13 +505,11 @@
     
     function startHold(e) {
        e.preventDefault();
-       // Safe Validation: Check exact rendered DOM tasks, not a hardcoded variable
        const checkboxes = document.querySelectorAll('.logic-check');
        const totalRendered = checkboxes.length || 1;
        const completed = document.querySelectorAll('.logic-check:checked').length;
        
        if(completed < totalRendered) {
-           // Rejected! Tasks are missing.
            sealBtn.classList.add('animate-shake', 'border-red-500');
            sealText.innerHTML = "FINISH<br>TASKS";
            sealText.classList.replace('text-gray-400', 'text-red-500');
@@ -580,7 +521,6 @@
            return;
        }
        
-       // Success! Start Animation
        holdTimer = setInterval(() => {
            holdProgress += 4; 
            const path = document.getElementById('seal-progress-path');
@@ -607,9 +547,8 @@
     
     function executeSeal() {
        sealText.innerHTML = "SEALED<br>✓";
-       sealText.className = "text-[12px] font-black tracking-widest text-[var(--accent-mint)] uppercase";
+       sealText.className = "text-[12px] font-black tracking-widest text-[var(--accent-mint)] uppercase text-center";
        sealBtn.classList.add('shadow-[0_0_50px_rgba(0,229,155,0.6)]', 'border-[var(--accent-mint)]');
-       // Real app triggers Firebase here!
        alert("Day Sealed Successfully. Consistency maintained.");
     }
     
@@ -617,131 +556,6 @@
     sealBtn.addEventListener('touchstart', startHold, {passive: false});
     window.addEventListener('mouseup', stopHold);
     window.addEventListener('touchend', stopHold);
-
-    /* --- FLAWLESS SVG GRAPH ENGINE --- */
-    window.getCurrentTargets = function() {
-        let t = {};
-        for(let j=1; j<=window.totalTasks; j++) {
-            let el = document.getElementById(`task-time-${j}`);
-            if(el && el.innerText.includes(':') && el.innerText !== '--:--') {
-                t[j] = el.innerText;
-            }
-        }
-        return t;
-    };
-
-    window.setGraphMode = function(mode) {
-       window.graphMode = mode;
-       document.getElementById('btn-graph-daily').className = mode === 'daily' ? 'px-3 py-1.5 text-[9px] tracking-widest font-extrabold rounded-md bg-[var(--accent-mint)] text-black transition-all shadow-[0_0_10px_rgba(0,229,155,0.2)]' : 'px-3 py-1.5 text-[9px] tracking-widest font-extrabold rounded-md text-gray-500 hover:text-white transition-all';
-       document.getElementById('btn-graph-weekly').className = mode === 'weekly' ? 'px-3 py-1.5 text-[9px] tracking-widest font-extrabold rounded-md bg-[var(--accent-mint)] text-black transition-all shadow-[0_0_10px_rgba(0,229,155,0.2)]' : 'px-3 py-1.5 text-[9px] tracking-widest font-extrabold rounded-md text-gray-500 hover:text-white transition-all';
-
-       if(mode === 'weekly') {
-          document.getElementById('graph-daily-nav').classList.add('hidden');
-       } else {
-          document.getElementById('graph-daily-nav').classList.remove('hidden');
-       }
-       window.renderGraph();
-    };
-
-    window.changeGraphDay = function(dir) {
-        let newDay = window.graphViewDay + dir;
-        if(newDay >= 0 && newDay <= window.currentDayIndex) {
-            window.graphViewDay = newDay;
-            let dayNames = ['DAY 1', 'DAY 2', 'DAY 3', 'DAY 4', 'DAY 5', 'DAY 6', 'DAY 7'];
-            document.getElementById('graph-current-day-label').innerText = newDay === window.currentDayIndex ? 'TODAY' : dayNames[newDay];
-            window.renderGraph();
-        }
-    };
-
-    window.renderGraph = function() {
-        const svg = document.getElementById('graph-svg-canvas');
-        const labelsContainer = document.getElementById('graph-x-labels');
-        let svgContent = ''; let labelContent = '';
-        
-        let xCoords = [0, 16.6, 33.3, 50, 66.6, 83.3, 100]; 
-
-        svgContent += `
-          <defs>
-            <clipPath id="clip-above"><rect x="0" y="0" width="100%" height="50%"/></clipPath>
-            <clipPath id="clip-below"><rect x="0" y="50%" width="100%" height="50%"/></clipPath>
-            <linearGradient id="grad-green" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="rgba(0, 229, 155, 0.7)"/><stop offset="100%" stop-color="rgba(0, 229, 155, 0)"/>
-            </linearGradient>
-            <linearGradient id="grad-red" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="rgba(239, 68, 68, 0)"/><stop offset="100%" stop-color="rgba(239, 68, 68, 0.7)"/>
-            </linearGradient>
-          </defs>
-          <line x1="0" y1="50%" x2="100%" y2="50%" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" stroke-dasharray="4 4" />
-        `;
-
-        let pointsArray = [];
-
-        if (window.graphMode === 'daily') {
-            let targets = window.graphViewDay === window.currentDayIndex ? window.getCurrentTargets() : (window.dailyTargetHistory[window.graphViewDay] || {});
-            let completions = window.graphViewDay === window.currentDayIndex ? window.completionTimestamps : (window.dailyTimestampsHistory[window.graphViewDay] || {});
-
-            for(let i=1; i<=Math.min(7, window.totalTasks); i++) {
-                labelContent += `<div style="position: absolute; left: ${xCoords[i-1]}%; transform: translateX(-50%);">T${i}</div>`;
-                svgContent += `<line x1="${xCoords[i-1]}%" y1="0" x2="${xCoords[i-1]}%" y2="100%" stroke="rgba(255,255,255,0.05)" stroke-width="1" />`;
-
-                if(targets[i] && completions[i]) {
-                    let [tH, tM] = targets[i].split(':').map(Number);
-                    let [cH, cM] = completions[i].split(':').map(Number);
-                    let tMins = tH * 60 + tM; let cMins = cH * 60 + cM;
-
-                    let dev = tMins - cMins; dev = Math.max(-120, Math.min(120, dev)); 
-                    let yPercent = 50 - (dev / 120 * 40); 
-                    pointsArray.push(`${xCoords[i-1]},${yPercent}`);
-                }
-            }
-        } else {
-            let setupMidnight = new Date(window.appSetupDate || new Date());
-            const dayLabels = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
-
-            for(let i=0; i<7; i++) {
-                let d = new Date(setupMidnight); d.setDate(d.getDate() + i);
-                labelContent += `<div style="position: absolute; left: ${xCoords[i]}%; transform: translateX(-50%);">${dayLabels[d.getDay()]}</div>`;
-                svgContent += `<line x1="${xCoords[i]}%" y1="0" x2="${xCoords[i]}%" y2="100%" stroke="rgba(255,255,255,0.05)" stroke-width="1" />`;
-
-                if (i <= window.currentDayIndex) {
-                    let targets = i === window.currentDayIndex ? window.getCurrentTargets() : (window.dailyTargetHistory[i] || {});
-                    let completions = i === window.currentDayIndex ? window.completionTimestamps : (window.dailyTimestampsHistory[i] || {});
-
-                    let totalDev = 0; let count = 0;
-                    for(let j=1; j<=window.totalTasks; j++) {
-                         if(targets[j] && completions[j]) {
-                            let [tH, tM] = targets[j].split(':').map(Number);
-                            let [cH, cM] = completions[j].split(':').map(Number);
-                            totalDev += ((tH * 60 + tM) - (cH * 60 + cM)); count++;
-                         }
-                    }
-                    if(count > 0) {
-                        let avgDev = totalDev / count; avgDev = Math.max(-120, Math.min(120, avgDev));
-                        let yPercent = 50 - (avgDev / 120 * 40);
-                        pointsArray.push(`${xCoords[i]},${yPercent}`);
-                    }
-                }
-            }
-        }
-
-        if(pointsArray.length > 0) {
-            let firstX = pointsArray[0].split(',')[0]; let lastX = pointsArray[pointsArray.length-1].split(',')[0];
-            let polyPoints = `${firstX},50 ${pointsArray.join(' ')} ${lastX},50`;
-
-            svgContent += `<polygon points="${polyPoints}" fill="url(#grad-green)" clip-path="url(#clip-above)" />`;
-            svgContent += `<polygon points="${polyPoints}" fill="url(#grad-red)" clip-path="url(#clip-below)" />`;
-            svgContent += `<polyline points="${pointsArray.join(' ')}" fill="none" stroke="white" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" />`;
-
-            pointsArray.forEach(pt => {
-                let [px, py] = pt.split(',');
-                let color = parseFloat(py) < 50 ? 'var(--accent-mint)' : '#EF4444';
-                svgContent += `<circle cx="${px}%" cy="${py}%" r="3.5" fill="${color}" stroke="#050507" stroke-width="1.5" />`;
-            });
-        } else {
-            svgContent += `<text x="50%" y="50%" fill="rgba(255,255,255,0.2)" font-size="10" font-weight="bold" text-anchor="middle" dominant-baseline="middle">AWAITING COMPLETION</text>`;
-        }
-        svg.innerHTML = svgContent; labelsContainer.innerHTML = labelContent;
-    };
 
     /* --- ONE-TIME VIRTUAL TOUR ENGINE --- */
     window.startVirtualTour = function() {
@@ -783,7 +597,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import { getFirestore, doc, getDoc, updateDoc, deleteField, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getFirestore, doc, getDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyC7GXfPKhHCU78ZW4gj_fElWAa3YuKbKzM",
@@ -826,8 +640,6 @@
         
         window.appSetupDate = data.setupDate ? data.setupDate.toDate() : new Date();
         window.completionTimestamps = data.completionTimestamps || {};
-        window.dailyTimestampsHistory = data.dailyTimestampsHistory || [];
-        window.dailyTargetHistory = data.dailyTargetHistory || [];
 
         document.getElementById('task-count-header').innerText = `${window.totalTasks} TASKS`;
         document.getElementById('tour-txt-days').innerText = `${window.taskDuration} DAYS`;
@@ -875,10 +687,8 @@
         const diffTime = currentMidnight - setupMidnight;
         const daysPassed = Math.floor(diffTime / (1000 * 60 * 60 * 24));
         window.currentDayIndex = Math.min(Math.max(daysPassed, 0), window.taskDuration - 1); 
-        window.graphViewDay = window.currentDayIndex;
 
         document.getElementById('day-badge').innerText = `DAY ${window.currentDayIndex + 1}`;
-        document.getElementById('graph-current-day-label').innerText = 'TODAY';
 
         let lastActiveDay = data.lastActiveDay || 0;
         let dailyHistory = data.dailyHistory || [];
@@ -886,6 +696,7 @@
 
         // Midnight Rollover & Harsh Reset Check
         if (window.currentDayIndex > lastActiveDay) {
+          // Strictly calculate percent based on the absolute total
           let percent = Math.round((checkedTasks.length / window.totalTasks) * 100);
           
           if (percent < 100) {
@@ -893,8 +704,6 @@
             await updateDoc(userDocRef, {
               setupDate: serverTimestamp(),
               dailyHistory: [], 
-              dailyTimestampsHistory: [],
-              dailyTargetHistory: [],
               checkedTasks: [], 
               completionTimestamps: {},
               lastActiveDay: 0
@@ -904,8 +713,6 @@
           } else {
             // SUCCESS: 100%. Archive day.
             dailyHistory[lastActiveDay] = percent; 
-            window.dailyTimestampsHistory[lastActiveDay] = window.completionTimestamps;
-            window.dailyTargetHistory[lastActiveDay] = window.getCurrentTargets();
 
             checkedTasks = []; 
             window.completionTimestamps = {};
@@ -913,8 +720,6 @@
 
             await updateDoc(userDocRef, {
               dailyHistory: dailyHistory,
-              dailyTimestampsHistory: window.dailyTimestampsHistory,
-              dailyTargetHistory: window.dailyTargetHistory,
               checkedTasks: checkedTasks,
               completionTimestamps: window.completionTimestamps,
               lastActiveDay: lastActiveDay
@@ -952,18 +757,6 @@
         window.location.href = 'lock.html';
       }
     });
-
-    window.syncCheckboxesToDatabase = async function(checkedIndexesArray, timestampsObj) {
-       const user = auth.currentUser;
-       if (user) {
-         try {
-           await updateDoc(doc(db, "users", user.uid), {
-             checkedTasks: checkedIndexesArray,
-             completionTimestamps: timestampsObj || {}
-           });
-         } catch(e) {}
-       }
-    };
   </script>
 </body>
 </html>
