@@ -11,21 +11,12 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   
   <script>
-    // DEEP LINK MEMORY
-    const urlParams = new URLSearchParams(window.location.search);
-    const incomingChallenge = urlParams.get('challenge');
-    if(incomingChallenge) {
-        localStorage.setItem('pendingChallenge', incomingChallenge);
-        window.history.replaceState({}, document.title, window.location.pathname);
-    }
-
-    // ULTRA-FAST FALLBACK: Guarantees the loader never gets stuck
+    // Ultra-Fast Fallback loader hider
     window.addEventListener('load', () => {
         setTimeout(() => {
             const loader = document.getElementById('page-loader');
             if(loader && loader.style.display !== 'none') {
                 loader.style.display = 'none';
-                console.warn("Fallback loader hider triggered.");
             }
         }, 2000); 
     });
@@ -111,6 +102,7 @@
     #page-loader {
       position: fixed; inset: 0; background-color: #050507; z-index: 99999;
       display: flex; flex-direction: column; justify-content: center; align-items: center;
+      transition: opacity 0.5s ease;
     }
 
     @keyframes shake {
@@ -383,12 +375,12 @@
           
           <div class="space-y-5 mb-8">
             <div class="bg-black/40 p-4 rounded-xl border border-white/5">
-              <h4 class="text-xs font-bold text-white mb-1 tracking-wider uppercase">1. Existing Forces Only</h4>
-              <p class="text-[10px] text-gray-400 leading-relaxed">You will fight this challenge using your exact existing matrix architecture. You cannot create new, temporary habits for a duel.</p>
+              <h4 class="text-xs font-bold text-white mb-1 tracking-wider uppercase">1. Custom Architectures</h4>
+              <p class="text-[10px] text-gray-400 leading-relaxed">You will construct a completely new, dedicated matrix strictly for this engagement. Your personal silence matrix remains untouched.</p>
             </div>
             <div class="bg-black/40 p-4 rounded-xl border border-[var(--accent-mint)]/20 shadow-[0_0_10px_rgba(0,229,155,0.05)]">
-              <h4 class="text-xs font-bold text-[var(--accent-mint)] mb-1 tracking-wider uppercase">2. Symmetrical Warfare</h4>
-              <p class="text-[10px] text-gray-400 leading-relaxed">Both challengers must possess the <span class="font-bold text-white">exact same number of tasks</span> and the <span class="font-bold text-white">exact same duration</span>. Mismatched invites are actively rejected.</p>
+              <h4 class="text-xs font-bold text-[var(--accent-mint)] mb-1 tracking-wider uppercase">2. Target Acquisition</h4>
+              <p class="text-[10px] text-gray-400 leading-relaxed">To initiate a duel, you must possess the <span class="font-bold text-white">6-digit Unique Identity Code</span> of your intended target.</p>
             </div>
             <div class="bg-red-500/10 p-4 rounded-xl border border-red-500/30">
               <h4 class="text-xs font-bold text-red-500 mb-1 tracking-wider uppercase">3. Desertion Penalty</h4>
@@ -404,22 +396,54 @@
 
       <!-- STATE 1: CONFIGURATION & INVITE UI -->
       <div id="comm-invite-state" class="hidden">
-        <div class="surface-card p-6 mt-2 text-center flex flex-col items-center">
-          <div class="w-16 h-16 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-4">
-            <span class="text-2xl">🔗</span>
-          </div>
-          <h3 class="text-lg font-bold text-white mb-2">Generate Invite</h3>
-          <p class="text-xs text-gray-400 mb-8 leading-relaxed">Invite a friend to lock into a 1-on-1 accountability duel. Send this link to them to initiate the connection.</p>
+        <div class="surface-card p-6 mt-2">
           
-          <button id="btn-generate-invite" onclick="generateInvite()" class="w-full py-4 rounded-xl font-extrabold text-black bg-[var(--accent-mint)] shadow-[0_0_20px_rgba(0,229,155,0.3)] uppercase tracking-widest text-xs hover:scale-95 transition-transform">
-            Generate Link
-          </button>
+          <h3 class="text-lg font-bold text-white mb-1 text-center">Configure Duel</h3>
+          <p class="text-[10px] text-gray-400 mb-6 tracking-widest text-center uppercase">Construct your battle matrix.</p>
+          
+          <div class="space-y-6">
+              <div>
+                  <label class="text-[9px] font-bold text-[var(--accent-mint)] tracking-widest uppercase mb-2 block">Operation Name</label>
+                  <input type="text" id="comm-challenge-name" placeholder="e.g. 75 Hard, Coding Sprint..." class="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-3 text-sm font-semibold text-white outline-none focus:border-[var(--accent-mint)]">
+              </div>
 
-          <div id="invite-link-container" class="hidden w-full mt-6 bg-black/60 border border-[var(--accent-mint)]/30 rounded-xl p-4 flex flex-col gap-3">
-             <p class="text-[10px] font-bold tracking-widest text-[var(--accent-mint)] uppercase">Link Ready</p>
-             <input type="text" id="invite-link-input" readonly class="w-full bg-transparent text-[10px] text-gray-300 outline-none text-center font-mono">
-             <button onclick="copyInviteLink()" class="px-4 py-3 bg-[var(--accent-mint)]/20 rounded-lg text-xs font-bold text-[var(--accent-mint)] hover:bg-[var(--accent-mint)]/30 transition-all border border-[var(--accent-mint)]/20 uppercase tracking-widest">Copy To Clipboard</button>
+              <div>
+                  <label class="text-[9px] font-bold text-[var(--accent-purple)] tracking-widest uppercase mb-2 block">Operational Period</label>
+                  <div class="grid grid-cols-4 gap-2">
+                      <button onclick="setCommDuration(7)" id="btn-cdur-7" class="py-2 text-[10px] font-bold rounded-lg border border-[var(--accent-purple)] bg-[var(--accent-purple)]/20 text-[var(--accent-purple)]">7D</button>
+                      <button onclick="setCommDuration(14)" id="btn-cdur-14" class="py-2 text-[10px] font-bold rounded-lg border border-white/10 bg-white/5 text-gray-400 hover:text-white">14D</button>
+                      <button onclick="setCommDuration(21)" id="btn-cdur-21" class="py-2 text-[10px] font-bold rounded-lg border border-white/10 bg-white/5 text-gray-400 hover:text-white">21D</button>
+                      <button onclick="setCommDuration(28)" id="btn-cdur-28" class="py-2 text-[10px] font-bold rounded-lg border border-white/10 bg-white/5 text-gray-400 hover:text-white">28D</button>
+                  </div>
+              </div>
+
+              <div>
+                  <label class="text-[9px] font-bold text-white tracking-widest uppercase mb-2 block">Matrix Configuration (3 Slots)</label>
+                  <div class="space-y-3">
+                      <div class="bg-black/40 border border-white/5 rounded-xl p-2 flex gap-2">
+                          <button class="w-10 h-10 rounded-lg bg-white/5 text-xl flex-shrink-0" onclick="promptEmoji(1)" id="comm-em-1">🔥</button>
+                          <input type="text" id="comm-t-1" placeholder="Task 01" class="clean-input text-sm font-semibold px-2">
+                      </div>
+                      <div class="bg-black/40 border border-white/5 rounded-xl p-2 flex gap-2">
+                          <button class="w-10 h-10 rounded-lg bg-white/5 text-xl flex-shrink-0" onclick="promptEmoji(2)" id="comm-em-2">💪</button>
+                          <input type="text" id="comm-t-2" placeholder="Task 02" class="clean-input text-sm font-semibold px-2">
+                      </div>
+                      <div class="bg-black/40 border border-white/5 rounded-xl p-2 flex gap-2">
+                          <button class="w-10 h-10 rounded-lg bg-white/5 text-xl flex-shrink-0" onclick="promptEmoji(3)" id="comm-em-3">📚</button>
+                          <input type="text" id="comm-t-3" placeholder="Task 03" class="clean-input text-sm font-semibold px-2">
+                      </div>
+                  </div>
+              </div>
+
+              <div class="border-t border-white/10 pt-6">
+                  <label class="text-[9px] font-bold text-red-400 tracking-widest uppercase mb-2 block">Target Acquisition (6-Digit ID)</label>
+                  <input type="number" id="comm-target-id" placeholder="26XXXX" class="w-full bg-black/60 border border-red-500/30 rounded-xl px-4 py-3 text-lg text-center font-mono font-bold text-white outline-none focus:border-red-500 shadow-[0_0_15px_rgba(239,68,68,0.1)]">
+              </div>
           </div>
+          
+          <button id="btn-send-invite" onclick="sendDualChallenge()" class="w-full mt-8 py-4 rounded-xl font-extrabold text-black bg-[var(--accent-mint)] shadow-[0_0_20px_rgba(0,229,155,0.3)] uppercase tracking-widest text-xs hover:scale-95 transition-transform">
+            Lock & Send Invite
+          </button>
         </div>
       </div>
 
@@ -428,25 +452,24 @@
         <div class="surface-card p-6 mt-2 relative overflow-hidden">
           
           <div class="flex items-center justify-between mb-8">
-            <h3 class="text-sm font-bold text-white">Dual Challenge</h3>
+            <div>
+               <h3 class="text-sm font-bold text-white">Dual Challenge</h3>
+               <p class="text-[10px] text-[var(--accent-purple)] font-bold tracking-widest mt-1 uppercase" id="comm-challenge-title-disp">Challenge Title</p>
+            </div>
             <span class="px-2 py-1 bg-[var(--accent-mint)]/20 border border-[var(--accent-mint)]/30 rounded text-[9px] font-black tracking-widest text-[var(--accent-mint)] uppercase flex items-center gap-1">
               <span class="w-1.5 h-1.5 rounded-full bg-[var(--accent-mint)] animate-pulse"></span> LIVE
             </span>
           </div>
 
-          <!-- SIDE BY SIDE RINGS -->
-          <div class="flex justify-between items-center gap-4 mb-10 relative z-10">
+          <!-- CLICKABLE SIDE BY SIDE RINGS -->
+          <div class="flex justify-between items-center gap-4 mb-8 relative z-10 cursor-pointer" onclick="openLegendModal()">
             <!-- YOUR RING -->
             <div class="w-1/2 flex flex-col items-center">
               <div class="relative w-full max-w-[120px] aspect-square flex items-center justify-center rounded-full mb-3">
-                <svg class="w-full h-full absolute inset-0" viewBox="0 0 100 100">
-                  <circle stroke="rgba(255,255,255,0.05)" stroke-dasharray="4 6" stroke-width="8" fill="transparent" r="40" cx="50" cy="50" />
-                  <circle id="dual-ring-you" class="progress-ring__circle text-[var(--accent-mint)] drop-shadow-[0_0_8px_rgba(0,229,155,0.6)]" stroke-width="8" stroke-linecap="round" fill="transparent" r="40" cx="50" cy="50" stroke="currentColor" />
-                </svg>
-                <span class="text-xl font-extrabold text-white absolute z-10" id="dual-percent-you">0%</span>
+                <svg id="comm-rings-you" class="w-full h-full absolute inset-0 drop-shadow-[0_0_10px_rgba(0,229,155,0.4)]" viewBox="0 0 300 300"></svg>
+                <span class="text-xl font-extrabold text-white absolute z-10" id="comm-percent-you">0%</span>
               </div>
               <span class="text-[10px] font-black tracking-widest text-white uppercase">You</span>
-              <span class="text-[8px] text-[var(--accent-mint)] font-bold mt-1 tracking-widest" id="dual-xp-you">0 XP</span>
             </div>
 
             <div class="text-xl opacity-50 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 -mt-4">⚔️</div>
@@ -454,27 +477,17 @@
             <!-- CHALLENGER'S RING -->
             <div class="w-1/2 flex flex-col items-center">
               <div class="relative w-full max-w-[120px] aspect-square flex items-center justify-center rounded-full mb-3">
-                <svg class="w-full h-full absolute inset-0" viewBox="0 0 100 100">
-                  <circle stroke="rgba(255,255,255,0.05)" stroke-dasharray="4 6" stroke-width="8" fill="transparent" r="40" cx="50" cy="50" />
-                  <circle id="dual-ring-challenger" class="progress-ring__circle text-[var(--accent-purple)] drop-shadow-[0_0_8px_rgba(157,78,221,0.6)]" stroke-width="8" stroke-linecap="round" fill="transparent" r="40" cx="50" cy="50" stroke="currentColor" />
-                </svg>
-                <span class="text-xl font-extrabold text-white absolute z-10" id="dual-percent-challenger">0%</span>
+                <svg id="comm-rings-challenger" class="w-full h-full absolute inset-0 drop-shadow-[0_0_10px_rgba(157,78,221,0.4)]" viewBox="0 0 300 300"></svg>
+                <span class="text-xl font-extrabold text-white absolute z-10" id="comm-percent-challenger">0%</span>
               </div>
               <span class="text-[10px] font-black tracking-widest text-[var(--accent-purple)] uppercase">Challenger</span>
-              <span class="text-[8px] text-[var(--accent-purple)] font-bold mt-1 tracking-widest" id="dual-xp-challenger">0 XP</span>
-            </div>
-          </div>
-
-          <!-- HABITS REMINDER -->
-          <div class="border-t border-white/10 pt-6 relative z-10">
-            <h4 class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-4">Your Matrices</h4>
-            <div id="dual-tasks-list-comm" class="space-y-2">
-              <!-- Injected by JS -->
             </div>
           </div>
           
+          <p class="text-center text-[9px] text-gray-500 font-bold uppercase tracking-widest mb-2 animate-pulse">Tap rings for data link</p>
+          
           <!-- QUIT BUTTON (DANGER ZONE) -->
-          <div class="mt-10 pt-6 border-t border-red-500/20 text-center relative z-10">
+          <div class="mt-8 pt-6 border-t border-red-500/20 text-center relative z-10">
              <button onclick="quitChallenge()" class="text-[10px] font-bold tracking-widest text-red-500 uppercase hover:text-red-400 transition-colors py-2 px-4 rounded border border-red-500/30 bg-red-500/10">
                 Quit Challenge (-500 XP)
              </button>
@@ -747,6 +760,7 @@
     }
 
     window.attachCheckboxListeners = function() {
+        // PERSONAL LISTENERS
         document.querySelectorAll('.personal-check').forEach((box) => {
           box.addEventListener('change', (e) => {
             const row = e.target.closest('.task-row');
@@ -776,6 +790,7 @@
           });
         });
 
+        // DUAL LISTENERS
         document.querySelectorAll('.dual-check').forEach((box) => {
           box.addEventListener('change', (e) => {
             const row = e.target.closest('.task-row');
@@ -985,61 +1000,133 @@
         const is = document.getElementById('comm-invite-state'); if(is) is.classList.remove('hidden');
     }
 
-    window.generateInvite = function() {
-        const linkInput = document.getElementById('invite-link-input');
-        const container = document.getElementById('invite-link-container');
-        
-        if(window.currentUserUid && linkInput && container) {
-            const baseUrl = window.location.origin + window.location.pathname.replace(/[^/]*$/, '');
-            linkInput.value = baseUrl + '?challenge=' + window.currentUserUid;
-            container.classList.remove('hidden');
-        }
-    };
+    window.setCommDuration = function(days) {
+        window.commDurationSelection = days;
+        [7, 14, 21, 28].forEach(d => {
+            const btn = document.getElementById(`btn-cdur-${d}`);
+            if(d === days) {
+                btn.className = "py-2 text-[10px] font-bold rounded-lg border border-[var(--accent-purple)] bg-[var(--accent-purple)]/20 text-[var(--accent-purple)] shadow-[0_0_10px_rgba(157,78,221,0.2)]";
+            } else {
+                btn.className = "py-2 text-[10px] font-bold rounded-lg border border-white/10 bg-white/5 text-gray-400 hover:text-white transition-colors";
+            }
+        });
+    }
 
-    window.copyInviteLink = function() {
-        const linkInput = document.getElementById('invite-link-input');
-        if(linkInput) {
-            linkInput.select();
-            document.execCommand('copy');
-            alert("Invite Link Copied!");
+    window.promptEmoji = function(slotId) {
+        const emojis = ['🔥','💪','📚','🏃','🧘','💧','🥗','💻'];
+        let rand = emojis[Math.floor(Math.random() * emojis.length)];
+        const el = document.getElementById(`comm-em-${slotId}`);
+        if(el) el.innerText = rand;
+    }
+
+    window.openLegendModal = function() {
+        const modal = document.getElementById('ring-legend-modal');
+        const content = document.getElementById('ring-legend-content');
+        const list = document.getElementById('legend-tasks-list');
+        
+        let html = '';
+        if(window.dualMatrixData && window.dualMatrixData.length > 0) {
+            window.dualMatrixData.forEach((task, i) => {
+                let color = window.ringColors[i % window.ringColors.length];
+                html += `
+                  <div class="flex items-center gap-3 bg-white/5 p-3 rounded-xl border border-white/5">
+                     <div class="w-3 h-3 rounded-full flex-shrink-0" style="background-color: ${color}; box-shadow: 0 0 8px ${color};"></div>
+                     <span class="text-xs font-bold text-white">${task.name}</span>
+                     <span class="ml-auto text-lg opacity-70">${task.emoji}</span>
+                  </div>
+                `;
+            });
+        } else {
+            html = '<p class="text-xs text-gray-500">No active matrix data found.</p>';
         }
+        if(list) list.innerHTML = html;
+
+        if(modal) {
+            modal.classList.remove('hidden');
+            setTimeout(() => { 
+                modal.classList.remove('opacity-0'); 
+                if(content) content.classList.remove('translate-y-full');
+            }, 10);
+        }
+    }
+
+    window.closeLegend = function() {
+        const modal = document.getElementById('ring-legend-modal');
+        const content = document.getElementById('ring-legend-content');
+        if(content) content.classList.add('translate-y-full');
+        if(modal) modal.classList.add('opacity-0');
+        setTimeout(() => { if(modal) modal.classList.add('hidden'); }, 300);
+    }
+
+    window.sendDualChallenge = function() {
+        const nameEl = document.getElementById('comm-challenge-name');
+        const targetIdEl = document.getElementById('comm-target-id');
+        if(!nameEl || !targetIdEl) return;
+        
+        const name = nameEl.value.trim();
+        const targetId = targetIdEl.value.trim();
+        
+        let customTasks = [];
+        for(let i=1; i<=3; i++) {
+            let tNameEl = document.getElementById(`comm-t-${i}`);
+            let tEmojiEl = document.getElementById(`comm-em-${i}`);
+            if(tNameEl && tEmojiEl) {
+                let tName = tNameEl.value.trim();
+                let tEmoji = tEmojiEl.innerText;
+                if(tName) customTasks.push({ name: tName, emoji: tEmoji });
+            }
+        }
+
+        if(!name) return alert("Operation Name is required.");
+        if(customTasks.length === 0) return alert("Configure at least 1 task for the matrix.");
+        if(targetId.length !== 6 || !targetId.startsWith('26')) return alert("Target Identity Code must be a 6-digit number starting with 26.");
+
+        const payload = {
+            challengeName: name,
+            duration: window.commDurationSelection,
+            tasks: customTasks,
+            targetCode: targetId
+        };
+
+        if(window.executeFirebaseInvite) window.executeFirebaseInvite(payload);
     };
 
     window.renderCommunityView = function() {
         const stateRules = document.getElementById('comm-rules-state');
         const stateInvite = document.getElementById('comm-invite-state');
         const stateActive = document.getElementById('comm-active-state');
-        const tasksList = document.getElementById('dual-tasks-list-comm');
 
         if(window.challengerUid) {
             if(stateRules) stateRules.classList.add('hidden');
             if(stateInvite) stateInvite.classList.add('hidden');
             if(stateActive) stateActive.classList.remove('hidden');
 
-            const checkboxes = document.querySelectorAll('.dual-check');
-            let tasksHtml = '';
-            document.querySelectorAll('#dual-tasks-list .task-row').forEach((row, i) => {
-                let nameEl = row.querySelector('h4');
-                let name = nameEl ? nameEl.innerText : '';
-                let emojiEl = row.querySelector('.text-2xl');
-                let emoji = emojiEl ? emojiEl.innerText : '';
-                let box = row.querySelector('.logic-check');
-                let isChecked = box ? box.checked : false;
+            setUI('comm-challenge-title-disp', window.challengeName || "Dual Challenge");
+            
+            const svgOpp = document.getElementById('comm-rings-challenger');
+            if(svgOpp) {
+                const tasks = window.dualMatrixData || [1,2,3];
+                const total = tasks.length || 1;
+                const maxR = 140; const minR = 60;
+                const gap = total > 1 ? (maxR - minR) / Math.max(1, total - 1) : 0;
                 
-                tasksHtml += `
-                  <div class="bg-black/40 border border-white/5 rounded-xl p-3 flex items-center gap-3">
-                     <div class="w-4 h-4 rounded-full border border-white/20 flex items-center justify-center ${isChecked ? 'bg-[var(--accent-mint)] border-[var(--accent-mint)]' : ''}">
-                         ${isChecked ? '<span class="text-[8px] text-black font-bold">✓</span>' : ''}
-                     </div>
-                     <span class="text-xs font-semibold text-white ${isChecked ? 'opacity-50 line-through' : ''}">${name}</span>
-                     <span class="ml-auto opacity-70">${emoji}</span>
-                  </div>
-                `;
-            });
-            if(tasksList) tasksList.innerHTML = tasksHtml;
+                let htmlOpp = '';
+                tasks.forEach((t, i) => {
+                    const color = window.ringColors[i % window.ringColors.length];
+                    const r = total > 1 ? maxR - (i * gap) : 100;
+                    const circ = 2 * Math.PI * r;
+                    const pathD = `M 150 ${150 - r} A ${r} ${r} 0 1 1 149.9 ${150 - r}`;
+                    
+                    htmlOpp += `
+                      <path d="${pathD}" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="8" stroke-linecap="round" />
+                      <path d="${pathD}" fill="none" stroke="${color}" stroke-width="8" stroke-linecap="round" stroke-dasharray="${circ}" stroke-dashoffset="${circ}" id="dual-opp-path-${i}" class="vis-ring-path drop-shadow-[0_0_8px_${color}80]" />
+                    `;
+                });
+                svgOpp.innerHTML = htmlOpp;
+            }
 
             if(window.fetchChallengerProgress) window.fetchChallengerProgress();
-            window.updateDualProgress();
+            window.updateDualProgress(); 
 
         } else {
             if(stateActive) stateActive.classList.add('hidden');
@@ -1053,12 +1140,69 @@
         }
     };
 
+    window.acceptIncomingChallenge = function() { if(window.firebaseAcceptChallenge) window.firebaseAcceptChallenge(); }
+    window.declineIncomingChallenge = function() {
+        const modal = document.getElementById('incoming-challenge-modal');
+        if(modal) {
+            modal.classList.add('opacity-0');
+            setTimeout(() => { modal.classList.add('hidden'); }, 500);
+        }
+        if(window.firebaseDeclineChallenge) window.firebaseDeclineChallenge();
+    }
+
     window.quitChallenge = function() {
         const confirmQuit = confirm("DANGER: Deserting an active duel will permanently deduct 500 XP from your global score. Are you absolutely sure?");
         if(confirmQuit) {
             if(window.executeQuitFirebase) window.executeQuitFirebase();
         }
     };
+
+    /* --- ONE-TIME VIRTUAL TOUR ENGINE --- */
+    window.startVirtualTour = function() {
+      window.isTourRunning = true; document.body.classList.add('tour-active');
+      const tb = document.getElementById('tour-backdrop'); if(tb) tb.style.display = 'block'; 
+      const tc = document.getElementById('tour-card'); if(tc) tc.style.display = 'block';
+      setTimeout(() => { 
+          if(tb) tb.style.opacity = '1'; 
+          if(tc) tc.style.opacity = '1'; 
+      }, 10);
+      executeTourStep(1);
+    }
+    const tourSteps = {
+      1: { elementId: "tour-speedo-card", text: "Welcome to your locked matrix. Everything here is strict. No edits or swaps allowed." },
+      2: { elementId: "tour-target-base", text: "Complete habits to earn +100XP. Missing one drops -50XP. Missed days reset your streaks." },
+      3: { elementId: "nav-btn-vis", text: "Tap Visualize to watch your fractional duration rings. Hold the center button to seal your day." },
+      4: { elementId: "nav-btn-comm", text: "Duel a friend here. Construct a matrix and lock onto their 26XXXX ID code to engage." }
+    };
+    function executeTourStep(step) {
+      document.querySelectorAll('.tour-highlight').forEach(el => { el.classList.remove('tour-highlight'); });
+      const config = tourSteps[step]; const element = document.getElementById(config.elementId);
+      if(element) {
+        element.classList.add('tour-highlight');
+        const tc = document.getElementById('tour-card');
+        if(tc) {
+            if (step === 3 || step === 4) { tc.style.bottom = 'auto'; tc.style.top = '120px'; } 
+            else { tc.style.top = 'auto'; tc.style.bottom = '90px'; }
+        }
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      setUI('tour-step-indicator', `RULE ${step} / 4`); 
+      setUI('tour-text', config.text);
+      setUI('tour-next-btn', step === 4 ? "Begin" : "Next");
+    }
+    let currentStep = 1;
+    window.nextTourStep = function() { if(currentStep < 4) { currentStep++; executeTourStep(currentStep); } else { window.endTour(); } }
+    window.endTour = function() {
+      document.querySelectorAll('.tour-highlight').forEach(el => { el.classList.remove('tour-highlight'); });
+      document.body.classList.remove('tour-active'); 
+      const tb = document.getElementById('tour-backdrop'); if(tb) tb.style.opacity = '0'; 
+      const tc = document.getElementById('tour-card'); if(tc) tc.style.opacity = '0';
+      setTimeout(() => { 
+          if(tb) tb.style.display = 'none'; 
+          if(tc) tc.style.display = 'none'; 
+      }, 400);
+      window.isTourRunning = false; window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   </script>
 
   <!-- ========================================== -->
@@ -1067,7 +1211,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import { getFirestore, doc, getDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getFirestore, doc, getDoc, updateDoc, setDoc, serverTimestamp, query, collection, where, getDocs, deleteField } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyC7GXfPKhHCU78ZW4gj_fElWAa3YuKbKzM",
@@ -1237,7 +1381,7 @@
               const dsAct = document.getElementById('dual-active-state'); if(dsAct) dsAct.style.display = 'block';
           }
           
-          if(window.attachCheckboxListeners) window.attachCheckboxListeners();
+          if(window.attachCheckboxListeners) window.attachCheckboxListeners(); 
 
           // 6. TIME MATH
           let currentISTDate = new Date();
@@ -1378,7 +1522,6 @@
       } catch (err) {
           console.error("Critical Boot Error:", err);
       } finally {
-          // THIS ENSURES THE LOADER ALWAYS DISAPPEARS
           const loaderEl = document.getElementById('page-loader');
           if (loaderEl) loaderEl.style.display = 'none';
           if (window.startLiveClocks) window.startLiveClocks();
@@ -1390,7 +1533,7 @@
        const user = auth.currentUser;
        if (user) {
          try { await updateDoc(doc(db, "users", user.uid), { checkedTasks: checkedIndexesArray, completionTimestamps: timestampsObj || {} }); } 
-         catch(e) { console.error(e); }
+         catch(e) {}
        }
     };
 
@@ -1398,7 +1541,7 @@
        const user = auth.currentUser;
        if (user) {
          try { await updateDoc(doc(db, "users", user.uid), { dualCheckedTasks: checkedIndexesArray, dualCompletionTimestamps: timestampsObj || {} }); } 
-         catch(e) { console.error(e); }
+         catch(e) {}
        }
     };
 
@@ -1409,7 +1552,99 @@
         }
     };
 
-    // --- FETCH CHALLENGER PROGRESS ---
+    // --- EXECUTE FIREBASE DUAL CHALLENGE INVITE ---
+    window.executeFirebaseInvite = async function(payload) {
+        const btn = document.getElementById('btn-send-invite');
+        if(btn) { btn.innerText = "Transmitting..."; btn.disabled = true; }
+
+        try {
+            const usersRef = collection(db, "users");
+            const q = query(usersRef, where("uid_code", "==", payload.targetCode));
+            const querySnapshot = await getDocs(q);
+
+            if(querySnapshot.empty) {
+                alert("Target Code Not Found. Ensure they have generated their 26XXXX identity code in their profile.");
+                if(btn) { btn.innerText = "Lock & Send Invite"; btn.disabled = false; }
+                return;
+            }
+
+            let targetDocRef;
+            querySnapshot.forEach((doc) => { targetDocRef = doc.ref; });
+
+            const inviteData = {
+                fromUid: window.currentUserUid,
+                fromName: document.getElementById('user-name').innerText,
+                challengeName: payload.challengeName,
+                duration: payload.duration,
+                dualMatrix: payload.tasks,
+                sentAt: serverTimestamp()
+            };
+
+            await updateDoc(targetDocRef, { pendingChallenge: inviteData });
+            alert(`Challenge Transmitted Successfully to ${payload.targetCode}! Awaiting their acceptance.`);
+            
+            const is = document.getElementById('comm-invite-state'); if(is) is.classList.add('hidden');
+            const rs = document.getElementById('comm-rules-state'); if(rs) rs.classList.remove('hidden');
+
+            if(btn) { btn.innerText = "Lock & Send Invite"; btn.disabled = false; }
+
+        } catch (e) {
+            alert("Transmission Error. Check network connection.");
+            if(btn) { btn.innerText = "Lock & Send Invite"; btn.disabled = false; }
+        }
+    };
+
+    // --- ACCEPT/DECLINE PENDING FIREBASE CHALLENGE ---
+    window.firebaseAcceptChallenge = async function() {
+        const user = auth.currentUser;
+        if(user) {
+            try {
+                const userDocRef = doc(db, "users", user.uid);
+                const snap = await getDoc(userDocRef);
+                const data = snap.data();
+                
+                if(data.pendingChallenge) {
+                    const challengeData = data.pendingChallenge;
+                    
+                    await updateDoc(userDocRef, {
+                        challengerUid: challengeData.fromUid,
+                        challengeName: challengeData.challengeName,
+                        dualMatrixData: challengeData.dualMatrix,
+                        dualDuration: challengeData.duration,
+                        dualSetupDate: serverTimestamp(),
+                        dualLastActiveDay: 0,
+                        dualCheckedTasks: [],
+                        dualTaskHistory: {},
+                        pendingChallenge: deleteField() 
+                    });
+                    
+                    try {
+                        const inviterRef = doc(db, "users", challengeData.fromUid);
+                        await updateDoc(inviterRef, {
+                            challengerUid: user.uid,
+                            challengeName: challengeData.challengeName,
+                            dualMatrixData: challengeData.dualMatrix,
+                            dualDuration: challengeData.duration,
+                            dualSetupDate: serverTimestamp(),
+                            dualLastActiveDay: 0,
+                            dualCheckedTasks: [],
+                            dualTaskHistory: {}
+                        });
+                    } catch(e) { console.warn("Could not write back to inviter."); }
+                    
+                    window.location.reload(); 
+                }
+            } catch (e) {}
+        }
+    };
+
+    window.firebaseDeclineChallenge = async function() {
+        const user = auth.currentUser;
+        if(user) {
+            try { await updateDoc(doc(db, "users", user.uid), { pendingChallenge: deleteField() }); } catch(e){}
+        }
+    };
+
     window.fetchChallengerProgress = async function() {
         if(!window.challengerUid) return;
         
@@ -1430,12 +1665,64 @@
 
                 const cTotal = cData.dualMatrixData ? cData.dualMatrixData.length : 1;
                 const cCompleted = cData.dualCheckedTasks ? cData.dualCheckedTasks.length : 0;
-                const cPercent = Math.round((cCompleted / cTotal) * 100);
                 
+                const cPercent = Math.round((cCompleted / cTotal) * 100);
                 setUI('dual-percent-challenger', cPercent + '%');
-                setUI('comm-percent-challenger', cPercent + '%');
+
+                const svgOpp = document.getElementById('comm-rings-challenger');
+                if(svgOpp) {
+                    const tasks = window.dualMatrixData || [1,2,3];
+                    const total = tasks.length || 1;
+                    const maxR = 140; const minR = 60;
+                    const gap = total > 1 ? (maxR - minR) / Math.max(1, total - 1) : 0;
+                    
+                    let htmlOpp = '';
+                    tasks.forEach((t, i) => {
+                        const color = window.ringColors[i % window.ringColors.length];
+                        const r = total > 1 ? maxR - (i * gap) : 100;
+                        const circ = 2 * Math.PI * r;
+                        
+                        // Fake mapping logic to challenger's history for the UI mockup
+                        const historyData = cData.dualTaskHistory ? cData.dualTaskHistory[i+1] || [] : [];
+                        const completedDays = historyData.filter(v => v).length + (cData.dualCheckedTasks && cData.dualCheckedTasks.includes(i) ? 1 : 0);
+                        const progressPercent = Math.min(1, completedDays / window.dualTaskDuration);
+                        const offset = circ - (progressPercent * circ); 
+
+                        const pathD = `M 150 ${150 - r} A ${r} ${r} 0 1 1 149.9 ${150 - r}`;
+                        
+                        htmlOpp += `
+                          <path d="${pathD}" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="8" stroke-linecap="round" />
+                          <path d="${pathD}" fill="none" stroke="${color}" stroke-width="8" stroke-linecap="round" stroke-dasharray="${circ}" stroke-dashoffset="${offset}" class="vis-ring-path drop-shadow-[0_0_8px_${color}80]" />
+                        `;
+                    });
+                    svgOpp.innerHTML = htmlOpp;
+                }
             }
         } catch(e) { console.warn("Could not fetch challenger."); }
+    };
+
+    window.executeQuitFirebase = async function() {
+        const user = auth.currentUser;
+        if(user) {
+            window.baseXP -= 500;
+            window.updatePersonalProgress(); 
+            
+            try {
+                await updateDoc(doc(db, "users", user.uid), { 
+                    challengerUid: null,
+                    totalXP: window.baseXP,
+                    dualMatrixData: deleteField()
+                });
+                
+                if(window.challengerUid) {
+                    await updateDoc(doc(db, "users", window.challengerUid), { challengerUid: null, dualMatrixData: deleteField() });
+                }
+                
+                window.challengerUid = null;
+                alert("Challenge Terminated. 500 XP deducted.");
+                window.location.reload();
+            } catch(e) { alert("Error quitting challenge."); }
+        }
     };
   </script>
 </body>
