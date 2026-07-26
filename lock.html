@@ -247,7 +247,7 @@
     <header class="flex flex-col items-center mb-8 md:mb-10">
       <div class="w-10 h-1 bg-white/10 rounded-full mb-4"></div>
       <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight mb-2">Configure <span class="text-[var(--accent-mint)]">Hopes</span></h1>
-      <p class="text-gray-400 text-xs md:text-sm font-medium">Establish your 7-days baseline.</p>
+      <p class="text-gray-400 text-xs md:text-sm font-medium">Establish your baseline.</p>
     </header>
 
     <!-- Center-Staged Full Width Carousel -->
@@ -258,24 +258,24 @@
           <div class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-4">
             <svg class="w-5 h-5 text-[var(--accent-purple)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
           </div>
-          <h4 class="text-lg font-bold mb-2">Start Small</h4>
-          <p class="text-xs text-gray-400 leading-relaxed font-medium">Add just <span class="font-bold"> 4 commitments</span> to enter the dashboard. Master these core habits before expanding your targets for Level 1.</p>
+          <h4 class="text-lg font-bold mb-2">Your Matrix</h4>
+          <p class="text-xs text-gray-400 leading-relaxed font-medium">You define the structure. Choose how many commitments you want. <span class="font-bold">Start small</span>, or build a massive matrix. The choice is yours.</p>
         </div>
         
         <div class="surface-card p-5 flex-shrink-0 w-full md:w-auto snap-item relative overflow-hidden carousel-card">
           <div class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-4">
             <svg class="w-5 h-5 text-[var(--accent-mint)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
           </div>
-          <h4 class="text-lg font-bold mb-2">The Anchor</h4>
-          <p class="text-xs text-gray-400 leading-relaxed font-medium">Habit 1 is your <span class="font-bold"> non-negotiable foundation for level-1 (7 days)</span>. It can't be altered during this phase anyway.</p>
+          <h4 class="text-lg font-bold mb-2">Absolute Lockdown</h4>
+          <p class="text-xs text-gray-400 leading-relaxed font-medium">Once you lodge your matrix into the system, <span class="font-bold">no edits are allowed</span>. There are no time changes and no swapping tasks.</p>
         </div>
         
         <div class="surface-card p-5 flex-shrink-0 w-full md:w-auto snap-item relative overflow-hidden carousel-card">
           <div class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-4">
             <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
           </div>
-          <h4 class="text-lg font-bold mb-2">Flexibility</h4>
-          <p class="text-xs text-gray-400 leading-relaxed font-medium">The rest habits can be edited later. <span class="font-bold">Don't make unnecessary inputs to enter into a Guilt-cycle</span>.</p>
+          <h4 class="text-lg font-bold mb-2">Zero Safety Nets</h4>
+          <p class="text-xs text-gray-400 leading-relaxed font-medium">We have completely eradicated the edit and swap features. <span class="font-bold">Don't make unnecessary inputs</span> just to enter a Guilt-cycle.</p>
         </div>
 
         <div class="surface-card p-5 flex-shrink-0 w-full md:w-auto snap-item relative overflow-hidden carousel-card">
@@ -283,7 +283,7 @@
             <span class="text-lg">🔥</span>
           </div>
           <h4 class="text-lg font-bold mb-2">Unbroken Chain</h4>
-          <p class="text-xs text-gray-400 leading-relaxed font-medium">Consistency builds momentum. <span class="font-bold">Missing a single day's habit resets your streak </span>. Lock in your time for the next 7days and commit.</p>
+          <p class="text-xs text-gray-400 leading-relaxed font-medium">Consistency builds momentum. <span class="font-bold">Missing a single habit on any day drops your streak back to zero.</span> Lock in your timeline and commit.</p>
         </div>
 
       </div>
@@ -343,12 +343,12 @@
     const totalIntroSteps = 6;
     
     const initiationRules = {
-      1: { title: "🛡️ LEVEL 1 INITIATION", text: "Welcome to <span class='font-black text-[var(--accent-mint)]'>Hopes</span>. Level 1 establishes a <span class='font-bold text-[var(--accent-purple)]'>7-day operational period</span>. It is designed to evaluate your true execution consistency." },
-      2: { title: "📊 CORE BASE ALLOCATION", text: "You are required to follow a structure of <span class='font-bold text-white'>7 habits everyday</span>. However, to eliminate doubts, you will initially log only <span class='font-bold text-[var(--accent-mint)]'>4 baseline habits</span> to clear the gate and launch into the Hopes dashboard." },
-      3: { title: "🔒 THE CONSTANT ANCHOR", text: "Your very first slot is <span class='font-bold text-[var(--accent-purple)]'>The Anchor Habit</span>. This habit stands constant and non-negotiable for the next 7 days. <span class='font-bold text-red-400 text-xs tracking-wider block mt-2'>ABSOLUTELY NO EDITS OR TIMESTAMP CHANGING ALLOWED.</span>" },
-      4: { title: "⚡ SINGLE EDIT CONSTRAINT", text: "For the remaining 3 base habits, you are granted exactly <span class='font-bold text-[var(--accent-mint)]'>1 single edit feature for combined 3.</span>. Modifying any detail of Habit 2, 3, or 4 completely spends your credits for the day, banning next edits for Day 1." },
-      5: { title: "🔥 UNBROKEN STREAK GATE", text: "Upon finishing your initial 4 habits on Day 1, you will immediately unlock the commitment section for the <span class='font-bold text-white'>remaining 3 tasks</span>. Failing to input them before the midnight, <span class='font-bold text-red-500'>resets your baseline streak back to 0</span>." },
-      6: { title: "🔄 THE SWAP SYSTEM", text: "Beginning on Day 2, all slots except the Anchor task loosen up. You can modify or swap tasks straight from your dashboard, capped securely at <span class='font-bold text-[var(--accent-mint)]'>2 modifies per day</span>." }
+      1: { title: "🛡️ LEVEL 1 INITIATION", text: "Welcome to <span class='font-black text-[var(--accent-mint)]'>Hopes</span>. Level 1 establishes your operational period. It is designed to strictly evaluate your true execution consistency without any loopholes." },
+      2: { title: "📊 DEFINE YOUR MATRIX", text: "You are no longer forced to pick exactly 7 habits. Choose the exact number of habits you want to commit to daily. Start small, or build a massive matrix. The choice is yours." },
+      3: { title: "🔒 ABSOLUTE LOCKDOWN", text: "Once you lodge this matrix, ALL tasks become your non-negotiable foundation. <span class='font-bold text-red-400 text-xs tracking-wider block mt-2'>ABSOLUTELY NO EDITS OR TIMESTAMP CHANGING ALLOWED ONCE ENTERED.</span>" },
+      4: { title: "⚔️ ZERO SAFETY NETS", text: "We have completely removed the single-edit feature. You cannot modify any detail of any habit once the system is active. Choose your timestamps wisely and commit." },
+      5: { title: "🔥 UNBROKEN STREAK GATE", text: "Consistency builds momentum. Missing a single habit on any given day drops your progress back to zero. A flawless 100% completion is the only way to advance." },
+      6: { title: "🚫 NO SWAPPING", text: "The Swap System has been eradicated. Every slot is strictly locked for your entire chosen duration. Prepare your matrix, check your times, and prepare to execute." }
     };
 
     function renderInitiationStep(step) {
@@ -368,7 +368,7 @@
       } else {
         wrapper.innerHTML = `
           <h2 class="text-base font-black tracking-wide text-[var(--accent-mint)] mb-3">🍃 RELAX.</h2>
-          <p class="text-sm text-gray-300 leading-relaxed font-medium px-4">It's not as hard as it seems to be. You do not need to memorize or track any of these rules yourself. We will guide you through every step.</p>
+          <p class="text-sm text-gray-300 leading-relaxed font-medium px-4">Take a breath. You set the rules, but you must abide by them. We will guide you through building your custom matrix.</p>
           <span class="text-[10px] text-[var(--accent-purple)] font-bold tracking-[0.2em] uppercase mt-5 block">Consistency over perfection.</span>
         `;
         nextBtn.innerText = "Continue to Commit";
@@ -554,26 +554,22 @@
   <!-- ========================================== -->
   <!-- FIREBASE BACKEND INTEGRATION (MODULE V10)  -->
   <!-- ========================================== -->
-  <!-- ========================================== -->
-  <!-- FIREBASE BACKEND INTEGRATION (MODULE V10)  -->
-  <!-- ========================================== -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    // Notice I changed updateDoc to setDoc below to make it bulletproof
     import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     // ⬇️ PASTE YOUR EXACT FIREBASE KEYS HERE ⬇️
     const firebaseConfig = {
-  apiKey: "AIzaSyC7GXfPKhHCU78ZW4gj_fElWAa3YuKbKzM",
-  authDomain: "hopes-bfeed.firebaseapp.com",
-  databaseURL: "https://hopes-bfeed-default-rtdb.firebaseio.com",
-  projectId: "hopes-bfeed",
-  storageBucket: "hopes-bfeed.firebasestorage.app",
-  messagingSenderId: "520302281633",
-  appId: "1:520302281633:web:cc64bd0bced5bc15cc01e0",
-  measurementId: "G-5VCX0F28L6"
-};
+      apiKey: "AIzaSyC7GXfPKhHCU78ZW4gj_fElWAa3YuKbKzM",
+      authDomain: "hopes-bfeed.firebaseapp.com",
+      databaseURL: "https://hopes-bfeed-default-rtdb.firebaseio.com",
+      projectId: "hopes-bfeed",
+      storageBucket: "hopes-bfeed.firebasestorage.app",
+      messagingSenderId: "520302281633",
+      appId: "1:520302281633:web:cc64bd0bced5bc15cc01e0",
+      measurementId: "G-5VCX0F28L6"
+    };
     // ⬆️ ------------------------------------ ⬆️
 
     const app = initializeApp(firebaseConfig);
