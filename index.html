@@ -76,7 +76,7 @@
     .hide-scrollbar::-webkit-scrollbar { display: none; }
     .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-    /* --- NEW: Loading Overlay so the screen stays dark while Firebase thinks --- */
+    /* Loading Overlay so the screen stays dark while Firebase thinks */
     #loading-overlay {
       position: fixed; inset: 0; z-index: 9999;
       background: var(--bg-deep);
@@ -95,7 +95,6 @@
 </head>
 <body class="relative min-h-screen"> 
 
-  <!-- Screen block while checking if user is already logged in -->
   <div id="loading-overlay">
     <div class="spinner mb-4"></div>
     <p class="text-xs font-bold tracking-widest text-[var(--accent-mint)] uppercase">Authenticating...</p>
@@ -116,7 +115,7 @@
       </div>
       
       <p class="text-gray-300 text-sm leading-relaxed font-medium mb-8">
-        Build habits that actually stick. We make tracking your daily routines simple, flexible, and guilt-free. Start small, stay consistent, and watch your life transform.
+        A pure accountability engine. Build the exact architecture of your daily routine. Once you lock it in, there are no edits, no swaps, and no excuses. Execute.
       </p>
 
       <div class="w-12 h-1.5 bg-white/20 rounded-full"></div>
@@ -127,8 +126,8 @@
 
       <!-- Feature 1: The Anchor -->
       <div class="reveal-on-scroll">
-        <h3 class="text-lg font-bold text-white mb-2">Lock in your foundation.</h3>
-        <p class="text-xs text-gray-400 font-medium mb-5 leading-relaxed">Choose one primary habit that forms your daily anchor. No excuses, no changing it—just pure consistency.</p>
+        <h3 class="text-lg font-bold text-white mb-2">Build your architecture.</h3>
+        <p class="text-xs text-gray-400 font-medium mb-5 leading-relaxed">Choose exactly how many habits you want to commit to. Start small with a core few, or build a massive timeline. Every input is an absolute foundation.</p>
         
         <div class="ui-snippet p-4 flex items-center gap-4 relative overflow-hidden">
           <div class="absolute left-0 top-0 w-1 h-full bg-[var(--accent-purple)]"></div>
@@ -137,8 +136,8 @@
           </div>
           <div class="flex-1">
             <h4 class="text-sm font-bold text-white mb-0.5">Morning Meditation</h4>
-            <p class="text-[10px] text-gray-400 font-medium flex items-center gap-1">
-              <span class="text-[var(--accent-purple)] font-bold">🔒 Anchor</span> • 07:00
+            <p class="text-[10px] text-[var(--accent-purple)] font-bold flex items-center gap-1">
+              🔒 Constant • 07:00
             </p>
           </div>
           <div class="text-2xl">🧘</div>
@@ -147,8 +146,8 @@
 
       <!-- Feature 2: Flexibility -->
       <div class="reveal-on-scroll">
-        <h3 class="text-lg font-bold text-white mb-2">Life happens. Adapt.</h3>
-        <p class="text-xs text-gray-400 font-medium mb-5 leading-relaxed">Missed your workout window? No problem. Use your daily flex edit to adjust your schedule without breaking your streak.</p>
+        <h3 class="text-lg font-bold text-white mb-2">Absolute Lockdown.</h3>
+        <p class="text-xs text-gray-400 font-medium mb-5 leading-relaxed">We removed the safety nets. There are no daily edits and no swapping tasks. Once your matrix is lodged into the system, it is immutable.</p>
         
         <div class="ui-snippet p-4">
           <div class="flex items-center gap-4 mb-3">
@@ -160,8 +159,8 @@
             <div class="text-2xl">💻</div>
           </div>
           <div class="flex justify-start pl-10">
-            <span class="text-[9px] bg-[var(--accent-mint)]/10 text-[var(--accent-mint)] border border-[var(--accent-mint)]/30 px-3 py-1.5 rounded-lg font-bold tracking-wider uppercase shadow-[0_0_10px_rgba(0,229,155,0.1)]">
-              ⚡ Single Edit Available
+            <span class="text-[9px] bg-red-500/10 text-red-400 border border-red-500/30 px-3 py-1.5 rounded-lg font-bold tracking-wider uppercase shadow-[0_0_10px_rgba(239,68,68,0.1)]">
+              🚫 Zero Edits Allowed
             </span>
           </div>
         </div>
@@ -169,8 +168,8 @@
 
       <!-- Feature 3: Progress Tracking -->
       <div class="reveal-on-scroll">
-        <h3 class="text-lg font-bold text-white mb-2">Visualize your success.</h3>
-        <p class="text-xs text-gray-400 font-medium mb-5 leading-relaxed">Watch your progress ring fill up as you crush your daily targets. Complete your 7-day challenge to level up.</p>
+        <h3 class="text-lg font-bold text-white mb-2">Visualize the streak.</h3>
+        <p class="text-xs text-gray-400 font-medium mb-5 leading-relaxed">Fill the concentric rings by crushing your tasks. But be warned: missing a single habit on any given day instantly resets your progress back to zero.</p>
         
         <div class="ui-snippet p-6 flex justify-center">
           <div class="relative w-32 h-32 flex items-center justify-center rounded-full">
@@ -179,7 +178,7 @@
               <circle class="progress-ring__circle text-[var(--accent-mint)] drop-shadow-[0_0_8px_rgba(0,229,155,0.6)]" stroke-width="8" stroke-linecap="round" fill="transparent" r="42" cx="50" cy="50" stroke="currentColor" />
             </svg>
             <div class="text-center relative z-10 flex flex-col items-center mt-1">
-              <span class="text-[10px] text-[var(--accent-purple)] font-black tracking-[0.2em] mb-0.5">DAY 4</span>
+              <span class="text-[10px] text-[var(--accent-purple)] font-black tracking-[0.2em] mb-0.5">ACTIVE</span>
               <span class="text-3xl font-extrabold text-white leading-none">75%</span>
             </div>
           </div>
@@ -245,15 +244,15 @@
 
     // ⬇️ 👉 PASTE YOUR EXACT FIREBASE KEYS IN HERE 👈 ⬇️
     const firebaseConfig = {
-  apiKey: "AIzaSyC7GXfPKhHCU78ZW4gj_fElWAa3YuKbKzM",
-  authDomain: "hopes-bfeed.firebaseapp.com",
-  databaseURL: "https://hopes-bfeed-default-rtdb.firebaseio.com",
-  projectId: "hopes-bfeed",
-  storageBucket: "hopes-bfeed.firebasestorage.app",
-  messagingSenderId: "520302281633",
-  appId: "1:520302281633:web:cc64bd0bced5bc15cc01e0",
-  measurementId: "G-5VCX0F28L6"
-};
+      apiKey: "AIzaSyC7GXfPKhHCU78ZW4gj_fElWAa3YuKbKzM",
+      authDomain: "hopes-bfeed.firebaseapp.com",
+      databaseURL: "https://hopes-bfeed-default-rtdb.firebaseio.com",
+      projectId: "hopes-bfeed",
+      storageBucket: "hopes-bfeed.firebasestorage.app",
+      messagingSenderId: "520302281633",
+      appId: "1:520302281633:web:cc64bd0bced5bc15cc01e0",
+      measurementId: "G-5VCX0F28L6"
+    };
     // ⬆️ ----------------------------------------------- ⬆️
 
     const app = initializeApp(firebaseConfig);
@@ -268,19 +267,15 @@
     // The Smart Router: Automatically checks if the user is ALREADY logged in
     onAuthStateChanged(auth, async (user) => {
       if (user) {
-        // User is logged in! Let's check if they finished the Lock.html setup
         const userDocRef = doc(db, "users", user.uid);
         const userDoc = await getDoc(userDocRef);
 
         if (userDoc.exists() && userDoc.data().hasCompletedSetup === true) {
-          // Setup finished -> Straight to Dashboard
           window.location.href = 'home.html';
         } else {
-          // Never finished setup -> Go to lock screen
           window.location.href = 'lock.html';
         }
       } else {
-        // Not logged in -> Hide loading screen and show the page
         loadingOverlay.style.opacity = '0';
         setTimeout(() => { loadingOverlay.style.display = 'none'; }, 500);
       }
@@ -292,26 +287,21 @@
       btnText.innerText = "Connecting...";
 
       try {
-        // Pop up the Google Login Box
         const result = await signInWithPopup(auth, provider);
         const user = result.user;
 
-        // Check the database for this specific user
         const userDocRef = doc(db, "users", user.uid);
         const userDoc = await getDoc(userDocRef);
 
         if (!userDoc.exists()) {
-          // If this is their VERY first time, create an invisible file for them
           await setDoc(userDocRef, {
             displayName: user.displayName,
             email: user.email,
             hasCompletedSetup: false,
             createdAt: new Date()
           });
-          // Send to Setup
           window.location.href = 'lock.html';
         } else {
-          // They have a file. Did they finish setup?
           if (userDoc.data().hasCompletedSetup === true) {
             window.location.href = 'home.html';
           } else {
