@@ -11,40 +11,50 @@
     .liquid-bg { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2; background: linear-gradient(-45deg, #050507, #1a0830, #082015, #050507); background-size: 300% 300%; animation: liquidTheme 15s ease infinite; }
     @keyframes liquidTheme { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
     .surface-card { background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%); backdrop-filter: blur(24px); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; }
-    h2 { color: #9D4EDD; font-size: 1.25rem; font-weight: 800; margin-top: 1.5rem; margin-bottom: 0.5rem; letter-spacing: 0.05em; text-transform: uppercase;}
-    p, li { color: #9ca3af; font-size: 0.875rem; line-height: 1.6; margin-bottom: 1rem; }
+    h2 { color: #9D4EDD; font-size: 1.15rem; font-weight: 800; margin-top: 2rem; margin-bottom: 0.75rem; letter-spacing: 0.05em; text-transform: uppercase;}
+    p, li { color: #9ca3af; font-size: 0.875rem; line-height: 1.7; margin-bottom: 1rem; }
     ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1rem; }
   </style>
 </head>
 <body class="relative min-h-screen pb-12">
   <div class="liquid-bg"></div>
-  <div class="max-w-2xl mx-auto pt-12 px-6 relative z-10">
+  <div class="max-w-3xl mx-auto pt-12 px-6 relative z-10">
     <div class="flex items-center gap-4 mb-8">
       <a href="index.html" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition text-white">←</a>
       <h1 class="text-3xl font-black tracking-tight text-white">Terms & Conditions</h1>
     </div>
 
-    <div class="surface-card p-6 md:p-10">
-      <p><strong>Last Updated:</strong> July 2026</p>
+    <div class="surface-card p-8 md:p-12">
+      <p class="text-xs font-bold uppercase tracking-widest text-gray-500 mb-6">Effective Date: July 2026</p>
       
-      <h2>1. Acceptance of Protocol</h2>
-      <p>By logging into Hopes, generating an Identity Code, or locking into a matrix, you agree to abide by these rules of engagement. This platform is designed for strict accountability.</p>
+      <p>Welcome to Hopes. These Terms and Conditions govern your access to and use of the Hopes web application, operated exclusively by Shubhradeep Bagh. By accessing or using the platform, you agree to be bound by these Terms.</p>
 
-      <h2>2. Rules of Engagement</h2>
+      <h2>1. Description of Service</h2>
+      <p>Hopes is a digital accountability and habit-tracking platform. It provides tools for users to set personal goals, track daily consistency, and engage in competitive "Dual Challenges" with other users globally.</p>
+
+      <h2>2. The Accountability System & Automated Penalties</h2>
+      <p>The core functionality of Hopes relies on a strict, automated point system (XP). By utilizing the app, you acknowledge and agree to the following irreversible systemic rules:</p>
       <ul>
-        <li><strong>Integrity:</strong> You agree to accurately log your tasks. Fraudulent logging defeats the purpose of the architecture.</li>
-        <li><strong>Penalties:</strong> The system automatically enforces an XP deduction (-50 XP) for missed daily tasks and a severe penalty (-500 XP) for abandoning an active Dual Challenge. These mathematical rules are final and cannot be reversed by operators.</li>
-        <li><strong>Symmetry:</strong> Dual challenges require both participants to configure identical operational durations and task counts. Mismatched engagements will be rejected by the matrix.</li>
+        <li><strong>Daily Penalties:</strong> Failure to complete designated tasks will result in an automated deduction of Experience Points (-50 XP per missed task).</li>
+        <li><strong>Desertion Penalties:</strong> Prematurely quitting or abandoning an active Dual Challenge before the designated operational period expires will trigger a permanent 500 XP deduction.</li>
+        <li><strong>Finality:</strong> All automated mathematical deductions executed by the system are final and cannot be appealed or reversed by the platform administrator.</li>
       </ul>
 
-      <h2>3. Account Termination</h2>
-      <p>We reserve the right to suspend or terminate accounts that attempt to manipulate the database, exploit the sealing mechanic, or harass other users through the Dual Challenge invite system.</p>
+      <h2>3. User Conduct</h2>
+      <p>You agree to use the platform in good faith. You shall not attempt to manipulate the database, exploit bugs to artificially inflate XP, or use the Global Arena broadcasting feature to transmit offensive, harmful, or inappropriate content. We reserve the right to ban accounts that violate these guidelines.</p>
 
-      <h2>4. Platform "As Is"</h2>
-      <p>Hopes is provided "as is." While we strive for perfect uptime, we are not liable for lost streaks or XP resulting from network outages or browser caching errors.</p>
+      <h2>4. Intellectual Property</h2>
+      <p>All original code, design elements, algorithms, and concepts pertaining to Hopes are the exclusive intellectual property of Shubhradeep Bagh. You may not duplicate, copy, or reuse any portion of the HTML/CSS/JS or visual design concepts without express written permission.</p>
 
-      <h2>5. Operating Command</h2>
-      <p>Hopes is maintained by <strong>Shubhradeep Bagh</strong> and <strong>Vansh Patel Rajput</strong>. For inquiries, contact shubhradeepbagh@gmail.com or letbrlead@gmail.com.</p>
+      <h2>5. Limitation of Liability</h2>
+      <p>The Hopes platform is provided on an "as is" and "as available" basis. We do not warrant that the service will be uninterrupted, error-free, or completely secure. We shall not be held liable for any loss of data, lost XP, or damages resulting from browser caching errors, third-party authentication failures, or server downtime.</p>
+
+      <h2>6. Modifications to Terms</h2>
+      <p>We reserve the right to modify or replace these Terms at any time. Your continued use of the platform after any changes constitutes acceptance of the new Terms.</p>
+
+      <h2>7. Contact Us</h2>
+      <p>If you have any questions regarding these Terms, please contact:</p>
+      <p class="font-bold text-white">Shubhradeep Bagh<br>Email: shubhradeepbagh@gmail.com</p>
     </div>
   </div>
 </body>
