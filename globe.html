@@ -75,7 +75,6 @@
     .clean-input { background: transparent; border: none; outline: none; color: white; width: 100%; }
     .clean-input::placeholder { color: rgba(255,255,255,0.3); }
 
-    /* The aggressive blur for the acceptance modal */
     .intense-blur {
         backdrop-filter: blur(40px) saturate(150%);
         -webkit-backdrop-filter: blur(40px) saturate(150%);
@@ -223,7 +222,7 @@
 
   </div>
 
-  <!-- Bottom Navigation Bar (Linked directly back to home.html) -->
+  <!-- Bottom Navigation Bar -->
   <nav class="nav-bar fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[420px] z-50 rounded-t-3xl">
     <div class="flex justify-around items-center px-6 py-4 max-w-[420px] mx-auto">
       <div id="nav-btn-dash" class="nav-item transition-all hover:scale-110" onclick="window.location.href='home.html'">🏠</div>
@@ -256,7 +255,7 @@
         const currentRows = container.querySelectorAll('.bc-task-row').length;
         
         if(currentRows >= 10) {
-            alert("Maximum limit reached. You can only deploy up to 10 habits in a single matrix.");
+            alert("Maximum limit reached. You can only deploy up to 10 habits.");
             return;
         }
         
@@ -268,7 +267,7 @@
         row.id = `bc-row-${id}`;
         
         row.innerHTML = `
-            <button class="w-10 h-10 rounded-lg bg-white/5 text-xl flex-shrink-0 hover:bg-white/10 transition-colors border border-white/10" onclick="openEmojiPicker(${id})" id="bc-em-${id}">✨</button>
+            <button class="w-10 h-10 rounded-lg bg-white/5 text-xl flex-shrink-0 hover:bg-white/10 transition-colors border border-white/10" onclick="openEmojiPicker(${id})" id="bc-em-${id}">🔥</button>
             <input type="text" id="bc-t-${id}" placeholder="Enter habit..." class="clean-input text-sm font-semibold px-2 flex-1">
             <button onclick="removeBcTaskRow(${id})" class="w-8 h-8 rounded-lg text-gray-500 hover:text-red-500 hover:bg-red-500/10 flex items-center justify-center font-bold flex-shrink-0 transition-colors">✕</button>
         `;
@@ -308,7 +307,6 @@
         const modal = document.getElementById('emoji-picker-modal');
         const content = document.getElementById('emoji-picker-content');
         
-        // Render emojis if empty
         const grid = document.getElementById('emoji-grid');
         if(grid.innerHTML.trim() === '') {
             let html = '';
@@ -330,7 +328,7 @@
         const content = document.getElementById('emoji-picker-content');
         content.classList.replace('scale-100', 'scale-95');
         modal.classList.add('opacity-0');
-        setTimeout(() => { modal.classList.add('hidden'); }, 300);
+        setTimeout(() => { modal.classList.add('hidden'); window.currentEmojiSlotId = null; }, 300);
     };
 
     window.selectEmoji = function(emoji) {
@@ -348,13 +346,10 @@
             return;
         }
         
-        // Reset Builder State
         document.getElementById('bc-tasks-container').innerHTML = '';
         window.bcTaskCounter = 0;
         document.getElementById('bc-challenge-name').value = '';
         window.setBcDuration(7);
-        
-        // Auto-add first row
         window.addBcTaskRow();
 
         const modal = document.getElementById('showcase-modal');
@@ -452,7 +447,6 @@
     const db = getFirestore(app);
     window.loadedChallenges = [];
 
-    // Helper to calculate Profile Rank string
     function getRankString(xp) {
         if (xp < 0) return "In Debt";
         if (xp >= 500 && xp < 2000) return "Disciplined";
@@ -557,7 +551,6 @@
                             <p class="text-[10px] font-bold tracking-widest text-gray-400 uppercase">Target Architecture</p>
                             <span class="text-[8px] font-black tracking-widest bg-white/10 px-1.5 py-0.5 rounded text-gray-300 uppercase">${c.challengeName}</span>
                         </div>
-                        <!-- Horizontal Scrollable Container -->
                         <div class="flex overflow-x-auto hide-scrollbar gap-3 pb-2 snap-x">
                             ${tasksHtml}
                         </div>
@@ -576,7 +569,11 @@
 
         } catch (e) {
             console.error("Feed Error:", e);
-            feedContainer.innerHTML = '<p class="text-center text-xs text-red-500 font-bold mt-10">Matrix Disconnected. Cannot fetch global feed.</p>';
+            if(e.code === 'permission-denied') {
+                feedContainer.innerHTML = '<p class="text-center text-xs text-red-500 font-bold mt-10">FIREBASE BLOCK: Update your Firestore Rules to view the Arena.</p>';
+            } else {
+                feedContainer.innerHTML = '<p class="text-center text-xs text-red-500 font-bold mt-10">Matrix Disconnected. Cannot fetch global feed.</p>';
+            }
         }
     }
 
@@ -600,9 +597,7 @@
                 let tName = tNameEl.value.trim();
                 let tEmoji = tEmojiEl.innerText;
                 
-                // If they wrote a name but forgot an emoji, give them a default flame instead of ✨
                 if(tName) {
-                    if(tEmoji === '✨') tEmoji = '🔥'; 
                     customTasks.push({ name: tName, emoji: tEmoji });
                 }
             }
@@ -633,7 +628,12 @@
             await fetchGlobalFeed();
 
         } catch (e) {
-            alert("Transmission Error. Check network connection.");
+            console.error("Broadcast Error: ", e);
+            if(e.code === 'permission-denied') {
+                alert("FIREBASE BLOCK: You must update your Firestore Rules to broadcast to the public feed. See the instructions!");
+            } else {
+                alert("Transmission Error. Check network connection.");
+            }
             if(btn) { btn.innerText = "Broadcast to Globe"; btn.disabled = false; }
         }
     };
@@ -659,6 +659,7 @@
                 return;
             }
 
+            // Write to MY profile
             const myRef = doc(db, "users", window.currentUserUid);
             await updateDoc(myRef, {
                 challengerUid: challenge.hostUid,
@@ -671,6 +672,7 @@
                 dualTaskHistory: {}
             });
 
+            // Write to OPPONENT'S profile
             const hostRef = doc(db, "users", challenge.hostUid);
             await updateDoc(hostRef, {
                 challengerUid: window.currentUserUid,
@@ -683,13 +685,19 @@
                 dualTaskHistory: {}
             });
 
+            // Delete from feed
             await deleteDoc(challengeRef);
 
+            // Teleport to Home to see the Duel
             window.location.href = 'home.html';
 
         } catch (e) {
             console.error("Lock-in Error:", e);
-            alert("Failed to lock in duel. Check network.");
+            if(e.code === 'permission-denied') {
+                alert("FIREBASE BLOCK: You must update your Firestore Rules to accept duels from other users.");
+            } else {
+                alert("Failed to lock in duel. Check network.");
+            }
             if(btn) { btn.innerText = "Acknowledge & Lock In"; btn.disabled = false; }
         }
     };
