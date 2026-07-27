@@ -139,7 +139,7 @@
   <div class="liquid-bg"></div>
   <div class="ambient-glow"></div>
 
-  <!-- INCOMING CHALLENGE MODAL -->
+  <!-- INCOMING CHALLENGE MODAL (Kept so you can receive duals) -->
   <div id="incoming-challenge-modal" class="fixed inset-0 z-[99999] flex items-center justify-center bg-black/90 backdrop-blur-sm hidden opacity-0 transition-opacity duration-500 p-4">
       <div class="surface-card p-6 w-full max-w-sm text-center transform scale-95 transition-transform duration-500" id="incoming-modal-content">
           <div class="w-16 h-16 rounded-full bg-[var(--accent-purple)]/20 border border-[var(--accent-purple)] flex items-center justify-center mx-auto mb-4 shadow-[0_0_20px_rgba(157,78,221,0.5)]">
@@ -150,17 +150,6 @@
           <div class="flex gap-3">
               <button onclick="acceptIncomingChallenge()" class="flex-1 py-3 rounded-xl font-bold text-black bg-[var(--accent-mint)] shadow-[0_0_15px_rgba(0,229,155,0.4)] uppercase text-xs tracking-widest hover:scale-95 transition-transform">Accept</button>
               <button onclick="declineIncomingChallenge()" class="flex-1 py-3 rounded-xl font-bold text-white bg-white/5 border border-white/10 uppercase text-xs tracking-widest hover:bg-red-500/20 hover:text-red-400 hover:border-red-500/50 transition-colors">Decline</button>
-          </div>
-      </div>
-  </div>
-
-  <!-- LEGEND MODAL FOR DUAL RINGS -->
-  <div id="ring-legend-modal" class="fixed inset-0 z-[99990] flex flex-col justify-end bg-black/80 backdrop-blur-md hidden opacity-0 transition-opacity duration-300" onclick="closeLegend()">
-      <div class="bg-[#0a0a0f] border-t border-white/10 w-full rounded-t-3xl p-6 transform translate-y-full transition-transform duration-500" id="ring-legend-content" onclick="event.stopPropagation()">
-          <div class="w-12 h-1.5 bg-white/20 rounded-full mx-auto mb-6"></div>
-          <h3 class="text-xs font-black tracking-widest text-gray-400 uppercase mb-4">Matrix Data Link</h3>
-          <div id="legend-tasks-list" class="space-y-3">
-              <!-- Dynamically mapped colors to tasks injected here -->
           </div>
       </div>
   </div>
@@ -257,9 +246,10 @@
             <div id="dual-empty-state" class="surface-card p-8 flex flex-col items-center text-center mt-4 border border-[var(--accent-purple)]/30">
                 <span class="text-4xl drop-shadow-[0_0_15px_rgba(157,78,221,0.5)] mb-4">🌍</span>
                 <h3 class="text-lg font-black text-white uppercase tracking-wider mb-2">Engage The World</h3>
-                <p class="text-[11px] text-gray-400 font-medium leading-relaxed mb-6">No dual challenge active. Configure your rules of engagement and invite a friend from the globe tab.</p>
-                <button onclick="switchTab('comm')" class="w-full py-3.5 rounded-xl font-extrabold text-black bg-[var(--accent-purple)] shadow-[0_0_20px_rgba(157,78,221,0.4)] uppercase tracking-widest text-xs hover:scale-95 transition-transform flex items-center justify-center gap-2">
-                    Initialize Setup <span class="text-sm">→</span>
+                <p class="text-[11px] text-gray-400 font-medium leading-relaxed mb-6">No dual challenge active. Enter the Global Arena to accept a bounty or broadcast your own matrix.</p>
+                <!-- Redirects directly to the new globe.html file -->
+                <button onclick="window.location.href='globe.html'" class="w-full py-3.5 rounded-xl font-extrabold text-black bg-[var(--accent-purple)] shadow-[0_0_20px_rgba(157,78,221,0.4)] uppercase tracking-widest text-xs hover:scale-95 transition-transform flex items-center justify-center gap-2">
+                    Enter Globe <span class="text-sm">→</span>
                 </button>
             </div>
 
@@ -294,6 +284,13 @@
                     <!-- JS Injects Dual Tasks Here -->
                   </div>
                 </section>
+                
+                <!-- QUIT BUTTON (DANGER ZONE) -->
+                <div class="mt-8 pt-6 border-t border-red-500/20 text-center relative z-10">
+                   <button onclick="quitChallenge()" class="text-[10px] font-bold tracking-widest text-red-500 uppercase hover:text-red-400 transition-colors py-2 px-4 rounded border border-red-500/30 bg-red-500/10">
+                      Quit Challenge (-500 XP)
+                   </button>
+                </div>
             </div>
         </div>
 
@@ -363,142 +360,6 @@
       </div>
     </div>
 
-    <!-- 🌍 COMMUNITY VIEW WRAPPER -->
-    <div id="community-view" class="hidden w-full pb-10">
-      
-      <!-- STATE 0: RULES OF ENGAGEMENT -->
-      <div id="comm-rules-state" class="block">
-        <div class="surface-card p-6 mt-2 border border-[var(--accent-purple)]/30">
-          <div class="flex items-center justify-center mb-6">
-            <span class="text-3xl drop-shadow-[0_0_15px_rgba(157,78,221,0.5)]">⚔️</span>
-          </div>
-          <h3 class="text-lg font-black text-white text-center tracking-wide uppercase mb-1">Rules of Engagement</h3>
-          <p class="text-[10px] text-[var(--accent-purple)] font-bold text-center tracking-widest uppercase mb-6">Dual Challenge Protocol</p>
-          
-          <div class="space-y-5 mb-8">
-            <div class="bg-black/40 p-4 rounded-xl border border-white/5">
-              <h4 class="text-xs font-bold text-white mb-1 tracking-wider uppercase">1. Custom Architectures</h4>
-              <p class="text-[10px] text-gray-400 leading-relaxed">You will construct a completely new, dedicated matrix strictly for this engagement. Your personal silence matrix remains untouched.</p>
-            </div>
-            <div class="bg-black/40 p-4 rounded-xl border border-[var(--accent-mint)]/20 shadow-[0_0_10px_rgba(0,229,155,0.05)]">
-              <h4 class="text-xs font-bold text-[var(--accent-mint)] mb-1 tracking-wider uppercase">2. Target Acquisition</h4>
-              <p class="text-[10px] text-gray-400 leading-relaxed">To initiate a duel, you must possess the <span class="font-bold text-white">6-digit Unique Identity Code</span> of your intended target.</p>
-            </div>
-            <div class="bg-red-500/10 p-4 rounded-xl border border-red-500/30">
-              <h4 class="text-xs font-bold text-red-500 mb-1 tracking-wider uppercase">3. Desertion Penalty</h4>
-              <p class="text-[10px] text-gray-400 leading-relaxed">If a challenge is accepted, exiting or quitting the duel before the operational period ends incurs a permanent <span class="font-bold text-red-500">-500 XP penalty</span>.</p>
-            </div>
-          </div>
-          
-          <button onclick="acceptCommRules()" class="w-full py-4 rounded-xl font-extrabold text-black bg-[var(--accent-purple)] shadow-[0_0_20px_rgba(157,78,221,0.4)] uppercase tracking-widest text-xs hover:scale-95 transition-transform">
-            Acknowledge & Proceed
-          </button>
-        </div>
-      </div>
-
-      <!-- STATE 1: CONFIGURATION & INVITE UI -->
-      <div id="comm-invite-state" class="hidden">
-        <div class="surface-card p-6 mt-2">
-          
-          <h3 class="text-lg font-bold text-white mb-1 text-center">Configure Duel</h3>
-          <p class="text-[10px] text-gray-400 mb-6 tracking-widest text-center uppercase">Construct your battle matrix.</p>
-          
-          <div class="space-y-6">
-              <div>
-                  <label class="text-[9px] font-bold text-[var(--accent-mint)] tracking-widest uppercase mb-2 block">Operation Name</label>
-                  <input type="text" id="comm-challenge-name" placeholder="e.g. 75 Hard, Coding Sprint..." class="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-3 text-sm font-semibold text-white outline-none focus:border-[var(--accent-mint)]">
-              </div>
-
-              <div>
-                  <label class="text-[9px] font-bold text-[var(--accent-purple)] tracking-widest uppercase mb-2 block">Operational Period</label>
-                  <div class="grid grid-cols-4 gap-2">
-                      <button onclick="setCommDuration(7)" id="btn-cdur-7" class="py-2 text-[10px] font-bold rounded-lg border border-[var(--accent-purple)] bg-[var(--accent-purple)]/20 text-[var(--accent-purple)]">7D</button>
-                      <button onclick="setCommDuration(14)" id="btn-cdur-14" class="py-2 text-[10px] font-bold rounded-lg border border-white/10 bg-white/5 text-gray-400 hover:text-white">14D</button>
-                      <button onclick="setCommDuration(21)" id="btn-cdur-21" class="py-2 text-[10px] font-bold rounded-lg border border-white/10 bg-white/5 text-gray-400 hover:text-white">21D</button>
-                      <button onclick="setCommDuration(28)" id="btn-cdur-28" class="py-2 text-[10px] font-bold rounded-lg border border-white/10 bg-white/5 text-gray-400 hover:text-white">28D</button>
-                  </div>
-              </div>
-
-              <div>
-                  <label class="text-[9px] font-bold text-white tracking-widest uppercase mb-2 block">Matrix Configuration (3 Slots)</label>
-                  <div class="space-y-3">
-                      <div class="bg-black/40 border border-white/5 rounded-xl p-2 flex gap-2">
-                          <button class="w-10 h-10 rounded-lg bg-white/5 text-xl flex-shrink-0" onclick="promptEmoji(1)" id="comm-em-1">🔥</button>
-                          <input type="text" id="comm-t-1" placeholder="Task 01" class="clean-input text-sm font-semibold px-2">
-                      </div>
-                      <div class="bg-black/40 border border-white/5 rounded-xl p-2 flex gap-2">
-                          <button class="w-10 h-10 rounded-lg bg-white/5 text-xl flex-shrink-0" onclick="promptEmoji(2)" id="comm-em-2">💪</button>
-                          <input type="text" id="comm-t-2" placeholder="Task 02" class="clean-input text-sm font-semibold px-2">
-                      </div>
-                      <div class="bg-black/40 border border-white/5 rounded-xl p-2 flex gap-2">
-                          <button class="w-10 h-10 rounded-lg bg-white/5 text-xl flex-shrink-0" onclick="promptEmoji(3)" id="comm-em-3">📚</button>
-                          <input type="text" id="comm-t-3" placeholder="Task 03" class="clean-input text-sm font-semibold px-2">
-                      </div>
-                  </div>
-              </div>
-
-              <div class="border-t border-white/10 pt-6">
-                  <label class="text-[9px] font-bold text-red-400 tracking-widest uppercase mb-2 block">Target Acquisition (6-Digit ID)</label>
-                  <input type="number" id="comm-target-id" placeholder="26XXXX" class="w-full bg-black/60 border border-red-500/30 rounded-xl px-4 py-3 text-lg text-center font-mono font-bold text-white outline-none focus:border-red-500 shadow-[0_0_15px_rgba(239,68,68,0.1)]">
-              </div>
-          </div>
-          
-          <button id="btn-send-invite" onclick="sendDualChallenge()" class="w-full mt-8 py-4 rounded-xl font-extrabold text-black bg-[var(--accent-mint)] shadow-[0_0_20px_rgba(0,229,155,0.3)] uppercase tracking-widest text-xs hover:scale-95 transition-transform">
-            Lock & Send Invite
-          </button>
-        </div>
-      </div>
-
-      <!-- STATE 2: ACTIVE DUAL CHALLENGE UI -->
-      <div id="comm-active-state" class="hidden">
-        <div class="surface-card p-6 mt-2 relative overflow-hidden">
-          
-          <div class="flex items-center justify-between mb-8">
-            <div>
-               <h3 class="text-sm font-bold text-white">Dual Challenge</h3>
-               <p class="text-[10px] text-[var(--accent-purple)] font-bold tracking-widest mt-1 uppercase" id="comm-challenge-title-disp">Challenge Title</p>
-            </div>
-            <span class="px-2 py-1 bg-[var(--accent-mint)]/20 border border-[var(--accent-mint)]/30 rounded text-[9px] font-black tracking-widest text-[var(--accent-mint)] uppercase flex items-center gap-1">
-              <span class="w-1.5 h-1.5 rounded-full bg-[var(--accent-mint)] animate-pulse"></span> LIVE
-            </span>
-          </div>
-
-          <!-- CLICKABLE SIDE BY SIDE RINGS -->
-          <div class="flex justify-between items-center gap-4 mb-8 relative z-10 cursor-pointer" onclick="openLegendModal()">
-            <!-- YOUR RING -->
-            <div class="w-1/2 flex flex-col items-center">
-              <div class="relative w-full max-w-[120px] aspect-square flex items-center justify-center rounded-full mb-3">
-                <svg id="comm-rings-you" class="w-full h-full absolute inset-0 drop-shadow-[0_0_10px_rgba(0,229,155,0.4)]" viewBox="0 0 300 300"></svg>
-                <span class="text-xl font-extrabold text-white absolute z-10" id="comm-percent-you">0%</span>
-              </div>
-              <span class="text-[10px] font-black tracking-widest text-white uppercase">You</span>
-            </div>
-
-            <div class="text-xl opacity-50 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 -mt-4">⚔️</div>
-
-            <!-- CHALLENGER'S RING -->
-            <div class="w-1/2 flex flex-col items-center">
-              <div class="relative w-full max-w-[120px] aspect-square flex items-center justify-center rounded-full mb-3">
-                <svg id="comm-rings-challenger" class="w-full h-full absolute inset-0 drop-shadow-[0_0_10px_rgba(157,78,221,0.4)]" viewBox="0 0 300 300"></svg>
-                <span class="text-xl font-extrabold text-white absolute z-10" id="comm-percent-challenger">0%</span>
-              </div>
-              <span class="text-[10px] font-black tracking-widest text-[var(--accent-purple)] uppercase">Challenger</span>
-            </div>
-          </div>
-          
-          <p class="text-center text-[9px] text-gray-500 font-bold uppercase tracking-widest mb-2 animate-pulse">Tap rings for data link</p>
-          
-          <!-- QUIT BUTTON (DANGER ZONE) -->
-          <div class="mt-8 pt-6 border-t border-red-500/20 text-center relative z-10">
-             <button onclick="quitChallenge()" class="text-[10px] font-bold tracking-widest text-red-500 uppercase hover:text-red-400 transition-colors py-2 px-4 rounded border border-red-500/30 bg-red-500/10">
-                Quit Challenge (-500 XP)
-             </button>
-          </div>
-
-        </div>
-      </div>
-    </div>
-
   </div>
 
   <!-- Bottom Navigation Bar -->
@@ -507,7 +368,8 @@
       <div id="nav-btn-dash" class="nav-item text-[var(--accent-mint)] scale-110 drop-shadow-[0_0_10px_rgba(0,229,155,0.5)] transition-all bg-white/10 p-3 rounded-full border border-white/5 shadow-inner" onclick="switchTab('dash')">🏠</div>
       <div id="nav-btn-vis" class="nav-item transition-all" onclick="switchTab('vis')">🌀</div>
       <div id="nav-btn-prof" class="nav-item transition-all" onclick="switchTab('prof')">👤</div>
-      <div id="nav-btn-comm" class="nav-item transition-all" onclick="switchTab('comm')">🌍</div>
+      <!-- Links directly to globe.html -->
+      <div id="nav-btn-comm" class="nav-item transition-all" onclick="window.location.href='globe.html'">🌍</div>
     </div>
   </nav>
 
@@ -532,9 +394,7 @@
 
     // Dual Challenge State
     window.challengerUid = null; 
-    window.commRulesAccepted = false;
     window.currentDashboardMode = 'personal'; 
-    window.commDurationSelection = 7;
     
     window.dualMatrixData = [];
     window.dualTaskDuration = 7;
@@ -546,8 +406,6 @@
     // Fixed UI Constants
     const SVG_RADIUS_MAIN = 42;
     const SVG_CIRC_MAIN = SVG_RADIUS_MAIN * 2 * Math.PI;
-    const SVG_RADIUS_DUAL = 40;
-    const SVG_CIRC_DUAL = SVG_RADIUS_DUAL * 2 * Math.PI;
     window.ringColors = ['#00E59B', '#9D4EDD', '#3B82F6', '#EAB308', '#F43F5E', '#A855F7', '#14B8A6'];
 
     /* --- WEEK TRACKER LOGIC --- */
@@ -754,18 +612,6 @@
         setUI('global-xp-display', `${liveXP} XP`);
         setUI('profile-xp', liveXP);
         if(window.updateProfileRank) window.updateProfileRank(liveXP);
-
-        if (window.challengerUid) {
-            const dualYouCircle = document.getElementById('comm-rings-you');
-            if (dualYouCircle) {
-                const offset = SVG_CIRC_DUAL - (percent / 100) * SVG_CIRC_DUAL;
-                dualYouCircle.innerHTML = `
-                  <path d="M 150 ${150 - SVG_RADIUS_DUAL} A ${SVG_RADIUS_DUAL} ${SVG_RADIUS_DUAL} 0 1 1 149.9 ${150 - SVG_RADIUS_DUAL}" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="8" stroke-linecap="round" />
-                  <path d="M 150 ${150 - SVG_RADIUS_DUAL} A ${SVG_RADIUS_DUAL} ${SVG_RADIUS_DUAL} 0 1 1 149.9 ${150 - SVG_RADIUS_DUAL}" fill="none" stroke="var(--accent-mint)" stroke-width="8" stroke-linecap="round" stroke-dasharray="${SVG_CIRC_DUAL}" stroke-dashoffset="${offset}" class="vis-ring-path drop-shadow-[0_0_8px_rgba(0,229,155,0.8)]" />
-                `;
-                setUI('comm-percent-you', percent + '%');
-            }
-        }
     }
 
     window.attachCheckboxListeners = function() {
@@ -835,15 +681,13 @@
         const btnDash = document.getElementById('nav-btn-dash');
         const btnVis = document.getElementById('nav-btn-vis');
         const btnProf = document.getElementById('nav-btn-prof');
-        const btnComm = document.getElementById('nav-btn-comm');
         
         const viewDash = document.getElementById('dashboard-view');
         const viewVis = document.getElementById('visualize-view');
         const viewProf = document.getElementById('profile-view');
-        const viewComm = document.getElementById('community-view');
 
-        [btnDash, btnVis, btnProf, btnComm].forEach(btn => { if(btn) btn.className = "nav-item transition-all"; });
-        [viewDash, viewVis, viewProf, viewComm].forEach(view => { if(view) view.classList.add('hidden'); });
+        [btnDash, btnVis, btnProf].forEach(btn => { if(btn) btn.className = "nav-item transition-all"; });
+        [viewDash, viewVis, viewProf].forEach(view => { if(view) view.classList.add('hidden'); });
         
         const activeClass = "nav-item text-[var(--accent-mint)] scale-110 drop-shadow-[0_0_10px_rgba(0,229,155,0.5)] transition-all bg-white/10 p-3 rounded-full border border-white/5 shadow-inner";
 
@@ -857,11 +701,7 @@
         } else if (tabName === 'prof') {
             if(btnProf) btnProf.className = activeClass;
             if(viewProf) viewProf.classList.remove('hidden');
-        } else if (tabName === 'comm') {
-            if(btnComm) btnComm.className = activeClass;
-            if(viewComm) viewComm.classList.remove('hidden');
-            if(window.renderCommunityView) window.renderCommunityView();
-        }
+        } 
     };
 
     /* --- 🌀 FRACTIONAL SVG VISUALIZE ENGINE (PERSONAL) --- */
@@ -1002,170 +842,6 @@
         window.addEventListener('touchend', stopHold);
     }
 
-    /* --- 🌍 COMMUNITY / DUAL CHALLENGE ENGINE --- */
-    window.acceptCommRules = function() {
-        window.commRulesAccepted = true;
-        const rs = document.getElementById('comm-rules-state'); if(rs) rs.classList.add('hidden');
-        const is = document.getElementById('comm-invite-state'); if(is) is.classList.remove('hidden');
-    }
-
-    window.setCommDuration = function(days) {
-        window.commDurationSelection = days;
-        [7, 14, 21, 28].forEach(d => {
-            const btn = document.getElementById(`btn-cdur-${d}`);
-            if(d === days) {
-                btn.className = "py-2 text-[10px] font-bold rounded-lg border border-[var(--accent-purple)] bg-[var(--accent-purple)]/20 text-[var(--accent-purple)] shadow-[0_0_10px_rgba(157,78,221,0.2)]";
-            } else {
-                btn.className = "py-2 text-[10px] font-bold rounded-lg border border-white/10 bg-white/5 text-gray-400 hover:text-white transition-colors";
-            }
-        });
-    }
-
-    window.promptEmoji = function(slotId) {
-        const emojis = ['🔥','💪','📚','🏃','🧘','💧','🥗','💻'];
-        let rand = emojis[Math.floor(Math.random() * emojis.length)];
-        const el = document.getElementById(`comm-em-${slotId}`);
-        if(el) el.innerText = rand;
-    }
-
-    window.openLegendModal = function() {
-        const modal = document.getElementById('ring-legend-modal');
-        const content = document.getElementById('ring-legend-content');
-        const list = document.getElementById('legend-tasks-list');
-        
-        let html = '';
-        if(window.dualMatrixData && window.dualMatrixData.length > 0) {
-            window.dualMatrixData.forEach((task, i) => {
-                let color = window.ringColors[i % window.ringColors.length];
-                html += `
-                  <div class="flex items-center gap-3 bg-white/5 p-3 rounded-xl border border-white/5">
-                     <div class="w-3 h-3 rounded-full flex-shrink-0" style="background-color: ${color}; box-shadow: 0 0 8px ${color};"></div>
-                     <span class="text-xs font-bold text-white">${task.name}</span>
-                     <span class="ml-auto text-lg opacity-70">${task.emoji}</span>
-                  </div>
-                `;
-            });
-        } else {
-            html = '<p class="text-xs text-gray-500">No active matrix data found.</p>';
-        }
-        if(list) list.innerHTML = html;
-
-        if(modal) {
-            modal.classList.remove('hidden');
-            setTimeout(() => { 
-                modal.classList.remove('opacity-0'); 
-                if(content) content.classList.remove('translate-y-full');
-            }, 10);
-        }
-    }
-
-    window.closeLegend = function() {
-        const modal = document.getElementById('ring-legend-modal');
-        const content = document.getElementById('ring-legend-content');
-        if(content) content.classList.add('translate-y-full');
-        if(modal) modal.classList.add('opacity-0');
-        setTimeout(() => { if(modal) modal.classList.add('hidden'); }, 300);
-    }
-
-    window.sendDualChallenge = function() {
-        const nameEl = document.getElementById('comm-challenge-name');
-        const targetIdEl = document.getElementById('comm-target-id');
-        if(!nameEl || !targetIdEl) return;
-        
-        const name = nameEl.value.trim();
-        const targetId = targetIdEl.value.trim();
-        
-        let customTasks = [];
-        for(let i=1; i<=3; i++) {
-            let tNameEl = document.getElementById(`comm-t-${i}`);
-            let tEmojiEl = document.getElementById(`comm-em-${i}`);
-            if(tNameEl && tEmojiEl) {
-                let tName = tNameEl.value.trim();
-                let tEmoji = tEmojiEl.innerText;
-                if(tName) customTasks.push({ name: tName, emoji: tEmoji });
-            }
-        }
-
-        if(!name) return alert("Operation Name is required.");
-        if(customTasks.length === 0) return alert("Configure at least 1 task for the matrix.");
-        if(targetId.length !== 6 || !targetId.startsWith('26')) return alert("Target Identity Code must be a 6-digit number starting with 26.");
-
-        const payload = {
-            challengeName: name,
-            duration: window.commDurationSelection,
-            tasks: customTasks,
-            targetCode: targetId
-        };
-
-        if(window.executeFirebaseInvite) window.executeFirebaseInvite(payload);
-    };
-
-    window.renderCommunityView = function() {
-        const stateRules = document.getElementById('comm-rules-state');
-        const stateInvite = document.getElementById('comm-invite-state');
-        const stateActive = document.getElementById('comm-active-state');
-
-        if(window.challengerUid) {
-            if(stateRules) stateRules.classList.add('hidden');
-            if(stateInvite) stateInvite.classList.add('hidden');
-            if(stateActive) stateActive.classList.remove('hidden');
-
-            setUI('comm-challenge-title-disp', window.challengeName || "Dual Challenge");
-            
-            const svgOpp = document.getElementById('comm-rings-challenger');
-            if(svgOpp) {
-                const tasks = window.dualMatrixData || [1,2,3];
-                const total = tasks.length || 1;
-                const maxR = 140; const minR = 60;
-                const gap = total > 1 ? (maxR - minR) / Math.max(1, total - 1) : 0;
-                
-                let htmlOpp = '';
-                tasks.forEach((t, i) => {
-                    const color = window.ringColors[i % window.ringColors.length];
-                    const r = total > 1 ? maxR - (i * gap) : 100;
-                    const circ = 2 * Math.PI * r;
-                    const pathD = `M 150 ${150 - r} A ${r} ${r} 0 1 1 149.9 ${150 - r}`;
-                    
-                    htmlOpp += `
-                      <path d="${pathD}" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="8" stroke-linecap="round" />
-                      <path d="${pathD}" fill="none" stroke="${color}" stroke-width="8" stroke-linecap="round" stroke-dasharray="${circ}" stroke-dashoffset="${circ}" id="dual-opp-path-${i}" class="vis-ring-path drop-shadow-[0_0_8px_${color}80]" />
-                    `;
-                });
-                svgOpp.innerHTML = htmlOpp;
-            }
-
-            if(window.fetchChallengerProgress) window.fetchChallengerProgress();
-            window.updateDualProgress(); 
-
-        } else {
-            if(stateActive) stateActive.classList.add('hidden');
-            if (window.commRulesAccepted) {
-                if(stateRules) stateRules.classList.add('hidden');
-                if(stateInvite) stateInvite.classList.remove('hidden');
-            } else {
-                if(stateRules) stateRules.classList.remove('hidden');
-                if(stateInvite) stateInvite.classList.add('hidden');
-            }
-        }
-    };
-
-    window.acceptIncomingChallenge = function() { if(window.firebaseAcceptChallenge) window.firebaseAcceptChallenge(); }
-    window.declineIncomingChallenge = function() {
-        const modal = document.getElementById('incoming-challenge-modal');
-        if(modal) {
-            modal.classList.add('opacity-0');
-            setTimeout(() => { modal.classList.add('hidden'); }, 500);
-        }
-        if(window.firebaseDeclineChallenge) window.firebaseDeclineChallenge();
-    }
-
-    window.quitChallenge = function() {
-        const confirmQuit = confirm("DANGER: Deserting an active duel will permanently deduct 500 XP from your global score. Are you absolutely sure?");
-        if(confirmQuit) {
-            if(window.executeQuitFirebase) window.executeQuitFirebase();
-        }
-    };
-
     /* --- ONE-TIME VIRTUAL TOUR ENGINE --- */
     window.startVirtualTour = function() {
       window.isTourRunning = true; document.body.classList.add('tour-active');
@@ -1181,7 +857,7 @@
       1: { elementId: "tour-speedo-card", text: "Welcome to your locked matrix. Everything here is strict. No edits or swaps allowed." },
       2: { elementId: "tour-target-base", text: "Complete habits to earn +100XP. Missing one drops -50XP. Missed days reset your streaks." },
       3: { elementId: "nav-btn-vis", text: "Tap Visualize to watch your fractional duration rings. Hold the center button to seal your day." },
-      4: { elementId: "nav-btn-comm", text: "Duel a friend here. Construct a matrix and lock onto their 26XXXX ID code to engage." }
+      4: { elementId: "nav-btn-comm", text: "Duel a friend here. Enter the Globe to find challengers." }
     };
     function executeTourStep(step) {
       document.querySelectorAll('.tour-highlight').forEach(el => { el.classList.remove('tour-highlight'); });
@@ -1561,48 +1237,6 @@
         }
     };
 
-    // --- EXECUTE FIREBASE DUAL CHALLENGE INVITE ---
-    window.executeFirebaseInvite = async function(payload) {
-        const btn = document.getElementById('btn-send-invite');
-        if(btn) { btn.innerText = "Transmitting..."; btn.disabled = true; }
-
-        try {
-            const usersRef = collection(db, "users");
-            const q = query(usersRef, where("uid_code", "==", payload.targetCode));
-            const querySnapshot = await getDocs(q);
-
-            if(querySnapshot.empty) {
-                alert("Target Code Not Found. Ensure they have generated their 26XXXX identity code in their profile.");
-                if(btn) { btn.innerText = "Lock & Send Invite"; btn.disabled = false; }
-                return;
-            }
-
-            let targetDocRef;
-            querySnapshot.forEach((doc) => { targetDocRef = doc.ref; });
-
-            const inviteData = {
-                fromUid: window.currentUserUid,
-                fromName: document.getElementById('user-name').innerText,
-                challengeName: payload.challengeName,
-                duration: payload.duration,
-                dualMatrix: payload.tasks,
-                sentAt: serverTimestamp()
-            };
-
-            await updateDoc(targetDocRef, { pendingChallenge: inviteData });
-            alert(`Challenge Transmitted Successfully to ${payload.targetCode}! Awaiting their acceptance.`);
-            
-            const is = document.getElementById('comm-invite-state'); if(is) is.classList.add('hidden');
-            const rs = document.getElementById('comm-rules-state'); if(rs) rs.classList.remove('hidden');
-
-            if(btn) { btn.innerText = "Lock & Send Invite"; btn.disabled = false; }
-
-        } catch (e) {
-            alert("Transmission Error. Check network connection.");
-            if(btn) { btn.innerText = "Lock & Send Invite"; btn.disabled = false; }
-        }
-    };
-
     // --- ACCEPT/DECLINE PENDING FIREBASE CHALLENGE ---
     window.firebaseAcceptChallenge = async function() {
         const user = auth.currentUser;
@@ -1652,62 +1286,6 @@
         if(user) {
             try { await updateDoc(doc(db, "users", user.uid), { pendingChallenge: deleteField() }); } catch(e){}
         }
-    };
-
-    window.fetchChallengerProgress = async function() {
-        if(!window.challengerUid) return;
-        
-        try {
-            const cRef = doc(db, "users", window.challengerUid);
-            const cSnap = await getDoc(cRef);
-            
-            if(cSnap.exists()) {
-                const cData = cSnap.data();
-
-                if(cData.challengerUid !== window.currentUserUid) {
-                    window.challengerUid = null;
-                    await updateDoc(doc(db, "users", window.currentUserUid), { challengerUid: null });
-                    alert("Your challenger has deserted the duel.");
-                    window.renderCommunityView();
-                    return;
-                }
-
-                const cTotal = cData.dualMatrixData ? cData.dualMatrixData.length : 1;
-                const cCompleted = cData.dualCheckedTasks ? cData.dualCheckedTasks.length : 0;
-                
-                const cPercent = Math.round((cCompleted / cTotal) * 100);
-                setUI('dual-percent-challenger', cPercent + '%');
-
-                const svgOpp = document.getElementById('comm-rings-challenger');
-                if(svgOpp) {
-                    const tasks = window.dualMatrixData || [1,2,3];
-                    const total = tasks.length || 1;
-                    const maxR = 140; const minR = 60;
-                    const gap = total > 1 ? (maxR - minR) / Math.max(1, total - 1) : 0;
-                    
-                    let htmlOpp = '';
-                    tasks.forEach((t, i) => {
-                        const color = window.ringColors[i % window.ringColors.length];
-                        const r = total > 1 ? maxR - (i * gap) : 100;
-                        const circ = 2 * Math.PI * r;
-                        
-                        // Fake mapping logic to challenger's history for the UI mockup
-                        const historyData = cData.dualTaskHistory ? cData.dualTaskHistory[i+1] || [] : [];
-                        const completedDays = historyData.filter(v => v).length + (cData.dualCheckedTasks && cData.dualCheckedTasks.includes(i) ? 1 : 0);
-                        const progressPercent = Math.min(1, completedDays / window.dualTaskDuration);
-                        const offset = circ - (progressPercent * circ); 
-
-                        const pathD = `M 150 ${150 - r} A ${r} ${r} 0 1 1 149.9 ${150 - r}`;
-                        
-                        htmlOpp += `
-                          <path d="${pathD}" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="8" stroke-linecap="round" />
-                          <path d="${pathD}" fill="none" stroke="${color}" stroke-width="8" stroke-linecap="round" stroke-dasharray="${circ}" stroke-dashoffset="${offset}" class="vis-ring-path drop-shadow-[0_0_8px_${color}80]" />
-                        `;
-                    });
-                    svgOpp.innerHTML = htmlOpp;
-                }
-            }
-        } catch(e) { console.warn("Could not fetch challenger."); }
     };
 
     window.executeQuitFirebase = async function() {
