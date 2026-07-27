@@ -178,12 +178,6 @@
       </div>
     </div>
 
-    <!-- MAIN DASHBOARD TOGGLE -->
-    <div class="flex bg-black/50 rounded-xl p-1 border border-white/10 mb-6 w-full max-w-sm mx-auto shadow-[0_0_20px_rgba(0,0,0,0.5)] relative z-20">
-        <button id="toggle-personal" onclick="setDashboardMode('personal')" class="flex-1 py-2.5 text-[10px] font-extrabold uppercase tracking-widest rounded-lg toggle-btn-active">Personal Silence</button>
-        <button id="toggle-dual" onclick="setDashboardMode('dual')" class="flex-1 py-2.5 text-[10px] font-extrabold uppercase tracking-widest rounded-lg toggle-btn-inactive">Dual Challenge</button>
-    </div>
-
     <!-- DATE TRACKER -->
     <div id="week-tracker" class="flex justify-between items-center mb-6 w-full px-1"></div>
 
@@ -206,6 +200,12 @@
     <!-- 🏠 DASHBOARD VIEW WRAPPER -->
     <div id="dashboard-view" class="block w-full">
         
+        <!-- MAIN DASHBOARD TOGGLE (Moved inside Dashboard Wrapper) -->
+        <div class="flex bg-black/50 rounded-xl p-1 border border-white/10 mb-6 w-full max-w-sm mx-auto shadow-[0_0_20px_rgba(0,0,0,0.5)] relative z-20">
+            <button id="toggle-personal" onclick="setDashboardMode('personal')" class="flex-1 py-2.5 text-[10px] font-extrabold uppercase tracking-widest rounded-lg toggle-btn-active">Personal Silence</button>
+            <button id="toggle-dual" onclick="setDashboardMode('dual')" class="flex-1 py-2.5 text-[10px] font-extrabold uppercase tracking-widest rounded-lg toggle-btn-inactive">Dual Challenge</button>
+        </div>
+
         <!-- ================= PERSONAL SECTION ================= -->
         <div id="personal-dashboard-section" class="block transition-all duration-300">
             <section class="surface-card p-6 mb-8 flex items-center justify-between rounded-2xl">
@@ -247,7 +247,6 @@
                 <span class="text-4xl drop-shadow-[0_0_15px_rgba(157,78,221,0.5)] mb-4">🌍</span>
                 <h3 class="text-lg font-black text-white uppercase tracking-wider mb-2">Engage The World</h3>
                 <p class="text-[11px] text-gray-400 font-medium leading-relaxed mb-6">No dual challenge active. Enter the Global Arena to accept a bounty or broadcast your own matrix.</p>
-                <!-- Redirects directly to the new globe.html file -->
                 <button onclick="window.location.href='globe.html'" class="w-full py-3.5 rounded-xl font-extrabold text-black bg-[var(--accent-purple)] shadow-[0_0_20px_rgba(157,78,221,0.4)] uppercase tracking-widest text-xs hover:scale-95 transition-transform flex items-center justify-center gap-2">
                     Enter Globe <span class="text-sm">→</span>
                 </button>
@@ -259,12 +258,20 @@
                   <div>
                     <h2 class="text-lg font-bold text-white mb-1 px-1 -ml-1">Versus Matrix</h2>
                     <p class="text-xs text-[var(--accent-purple)] font-bold mb-3 px-1 -ml-1 uppercase tracking-wider" id="dual-challenge-title-disp">Challenge Title</p>
+                    
+                    <!-- DUAL RING TOGGLE (You vs Opponent) -->
+                    <div class="flex bg-black/50 rounded-lg p-1 border border-white/10 mb-3 w-[150px]">
+                        <button id="toggle-dual-you" onclick="switchDualRing('you')" class="flex-1 py-1.5 text-[9px] font-extrabold uppercase tracking-widest rounded bg-[var(--accent-purple)] text-black shadow-[0_0_10px_rgba(157,78,221,0.3)] transition-all">You</button>
+                        <button id="toggle-dual-opp" onclick="switchDualRing('opp')" class="flex-1 py-1.5 text-[9px] font-extrabold uppercase tracking-widest rounded bg-transparent text-gray-500 hover:text-white transition-all">Target</button>
+                    </div>
+
                     <div class="flex">
                       <span id="dual-days-disp" class="px-2.5 py-1 bg-[var(--accent-mint)]/10 border border-[var(--accent-mint)]/30 rounded text-[10px] font-bold tracking-widest text-[var(--accent-mint)] uppercase">-- DAYS</span>
                     </div>
                   </div>
 
-                  <div class="relative w-24 h-24 flex items-center justify-center rounded-full">
+                  <!-- YOU RING -->
+                  <div id="dual-ring-you" class="relative w-24 h-24 flex items-center justify-center rounded-full flex-shrink-0">
                     <svg class="w-full h-full absolute inset-0" viewBox="0 0 100 100">
                       <circle stroke="rgba(255,255,255,0.05)" stroke-dasharray="4 6" stroke-width="8" fill="transparent" r="42" cx="50" cy="50" />
                       <circle id="speedometer-dual" class="progress-ring__circle text-[var(--accent-purple)]" stroke-width="8" stroke-linecap="round" fill="transparent" r="42" cx="50" cy="50" stroke="currentColor" />
@@ -272,6 +279,18 @@
                     <div class="text-center relative z-10 flex flex-col items-center mt-1">
                       <span class="text-[9px] text-[var(--accent-mint)] font-black tracking-[0.2em] mb-0.5" id="dual-day-badge">DAY --</span>
                       <span class="text-xl font-extrabold text-white leading-none" id="dual-task-percent">0%</span>
+                    </div>
+                  </div>
+
+                  <!-- TARGET (OPPONENT) RING -->
+                  <div id="dual-ring-opp" class="relative w-24 h-24 items-center justify-center rounded-full flex-shrink-0 hidden">
+                    <svg class="w-full h-full absolute inset-0" viewBox="0 0 100 100">
+                      <circle stroke="rgba(255,255,255,0.05)" stroke-dasharray="4 6" stroke-width="8" fill="transparent" r="42" cx="50" cy="50" />
+                      <circle id="speedometer-dual-opp" class="progress-ring__circle text-red-500" stroke-width="8" stroke-linecap="round" fill="transparent" r="42" cx="50" cy="50" stroke="currentColor" />
+                    </svg>
+                    <div class="text-center relative z-10 flex flex-col items-center mt-1">
+                      <span class="text-[9px] text-red-500 font-black tracking-[0.2em] mb-0.5" id="dual-day-badge-opp">DAY --</span>
+                      <span class="text-xl font-extrabold text-white leading-none" id="dual-task-percent-opp">0%</span>
                     </div>
                   </div>
                 </section>
@@ -336,7 +355,7 @@
             <div class="flex items-center gap-2 bg-black/50 border border-white/10 px-4 py-2 rounded-lg shadow-inner">
                 <span class="text-sm font-mono tracking-widest font-bold text-white" id="profile-uid-code">260000</span>
                 <button onclick="copyMyUidCode()" class="text-[var(--accent-mint)] hover:text-white transition-colors active:scale-90 p-1">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 002 2z"></path></svg>
                 </button>
             </div>
         </div>
@@ -368,12 +387,39 @@
       <div id="nav-btn-dash" class="nav-item text-[var(--accent-mint)] scale-110 drop-shadow-[0_0_10px_rgba(0,229,155,0.5)] transition-all bg-white/10 p-3 rounded-full border border-white/5 shadow-inner" onclick="switchTab('dash')">🏠</div>
       <div id="nav-btn-vis" class="nav-item transition-all" onclick="switchTab('vis')">🌀</div>
       <div id="nav-btn-prof" class="nav-item transition-all" onclick="switchTab('prof')">👤</div>
-      <!-- Links directly to globe.html -->
       <div id="nav-btn-comm" class="nav-item transition-all" onclick="window.location.href='globe.html'">🌍</div>
     </div>
   </nav>
 
   <script>
+    /* --- FRONTEND BUTTON CONNECTIONS --- */
+    window.quitChallenge = function() {
+        const confirmQuit = confirm("DANGER: Deserting an active duel will permanently deduct 500 XP from your global score. Are you absolutely sure?");
+        if(confirmQuit) {
+            if(window.executeQuitFirebase) window.executeQuitFirebase();
+        }
+    };
+
+    window.switchDualRing = function(target) {
+        const btnYou = document.getElementById('toggle-dual-you');
+        const btnOpp = document.getElementById('toggle-dual-opp');
+        const ringYou = document.getElementById('dual-ring-you');
+        const ringOpp = document.getElementById('dual-ring-opp');
+        
+        if(target === 'you') {
+            btnYou.className = "flex-1 py-1.5 text-[9px] font-extrabold uppercase tracking-widest rounded bg-[var(--accent-purple)] text-black shadow-[0_0_10px_rgba(157,78,221,0.3)] transition-all";
+            btnOpp.className = "flex-1 py-1.5 text-[9px] font-extrabold uppercase tracking-widest rounded bg-transparent text-gray-500 hover:text-white transition-all";
+            ringYou.classList.replace('hidden', 'flex');
+            ringOpp.classList.replace('flex', 'hidden');
+        } else {
+            btnOpp.className = "flex-1 py-1.5 text-[9px] font-extrabold uppercase tracking-widest rounded bg-red-500 text-black shadow-[0_0_10px_rgba(239,68,68,0.3)] transition-all";
+            btnYou.className = "flex-1 py-1.5 text-[9px] font-extrabold uppercase tracking-widest rounded bg-transparent text-gray-500 hover:text-white transition-all";
+            ringOpp.classList.replace('hidden', 'flex');
+            ringYou.classList.replace('flex', 'hidden');
+            if(window.fetchOpponentDualData) window.fetchOpponentDualData(); 
+        }
+    };
+
     /* --- BULLETPROOF UI UPDATER --- */
     function setUI(id, val, isHTML = false) {
         const el = document.getElementById(id);
@@ -1208,6 +1254,11 @@
           if(window.challengerUid && window.updateDualProgress) window.updateDualProgress();
           if(window.isSealedToday && window.renderSealStateUI) window.renderSealStateUI();
 
+          // INITIALIZE OPPONENT DATA FETCH
+          if(window.challengerUid && window.fetchOpponentDualData) {
+              window.fetchOpponentDualData();
+          }
+
       } catch (err) {
           console.error("Critical Boot Error:", err);
       } finally {
@@ -1216,6 +1267,37 @@
           if (window.startLiveClocks) window.startLiveClocks();
       }
     });
+
+    // --- OPPONENT DATA ENGINE ---
+    window.fetchOpponentDualData = async function() {
+        if(!window.challengerUid) return;
+        try {
+            const oppRef = doc(db, "users", window.challengerUid);
+            const oppSnap = await getDoc(oppRef);
+            if(oppSnap.exists()) {
+                const oData = oppSnap.data();
+                const dTotal = window.dualMatrixData ? window.dualMatrixData.length : 1;
+                const dCompleted = oData.dualCheckedTasks ? oData.dualCheckedTasks.length : 0;
+                const oPercent = Math.round((dCompleted / dTotal) * 100);
+                
+                const oppCircle = document.getElementById('speedometer-dual-opp');
+                if(oppCircle) {
+                    const offset = window.SVG_CIRC_MAIN - (oPercent / 100) * window.SVG_CIRC_MAIN;
+                    oppCircle.style.strokeDashoffset = offset;
+                    setUI('dual-task-percent-opp', oPercent + '%');
+                }
+                
+                if(oData.dualSetupDate) {
+                    const currentMidnight = new Date(); currentMidnight.setHours(0,0,0,0);
+                    const dSetupMidnight = new Date(oData.dualSetupDate.toDate()); dSetupMidnight.setHours(0,0,0,0);
+                    const dDiff = currentMidnight - dSetupMidnight;
+                    const oppDaysPassed = Math.floor(dDiff / (1000 * 60 * 60 * 24));
+                    const oppDayIndex = Math.min(Math.max(oppDaysPassed, 0), window.dualTaskDuration - 1);
+                    setUI('dual-day-badge-opp', `DAY ${oppDayIndex + 1}`);
+                }
+            }
+        } catch(e) { console.warn("Failed to fetch opponent data"); }
+    };
 
     // --- SYNC ENGINE ---
     window.syncPersonalCheckboxes = async function(checkedIndexesArray, timestampsObj) {
