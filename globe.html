@@ -260,7 +260,7 @@
         }
         
         window.bcTaskCounter++;
-        const id = window.bcTaskCounter;
+        const id = window.bcTaskCounter; // Generates unique mathematical ID
         
         const row = document.createElement('div');
         row.className = "bg-black/40 border border-white/5 rounded-xl p-2 flex gap-2 items-center bc-task-row transition-all shadow-inner";
@@ -513,10 +513,11 @@
                 let tasksHtml = '';
                 if(c.tasks && c.tasks.length > 0) {
                     c.tasks.forEach((t) => {
+                        // UPGRADED UI: Sleek Aesthetic Pills instead of Massive Squares
                         tasksHtml += `
-                            <div class="flex-shrink-0 bg-black/50 border border-white/10 rounded-xl p-3 w-32 flex flex-col items-center justify-center text-center shadow-inner">
-                                <span class="text-2xl mb-2 drop-shadow-md">${t.emoji}</span>
-                                <span class="text-[9px] font-bold text-white uppercase tracking-wider truncate w-full px-1">${t.name}</span>
+                            <div class="flex items-center gap-1.5 bg-black/40 border border-white/10 rounded-full px-3 py-1.5 flex-shrink-0 shadow-inner">
+                                <span class="text-sm">${t.emoji}</span>
+                                <span class="text-[9px] font-bold text-white uppercase tracking-wider whitespace-nowrap">${t.name}</span>
                             </div>
                         `;
                     });
@@ -551,7 +552,7 @@
                             <p class="text-[10px] font-bold tracking-widest text-gray-400 uppercase">Target Architecture</p>
                             <span class="text-[8px] font-black tracking-widest bg-white/10 px-1.5 py-0.5 rounded text-gray-300 uppercase">${c.challengeName}</span>
                         </div>
-                        <div class="flex overflow-x-auto hide-scrollbar gap-3 pb-2 snap-x">
+                        <div class="flex overflow-x-auto hide-scrollbar gap-2 pb-2 snap-x">
                             ${tasksHtml}
                         </div>
                     </div>
@@ -587,21 +588,21 @@
         const name = nameEl.value.trim();
         
         let customTasks = [];
-        const rows = document.querySelectorAll('.bc-task-row');
         
-        rows.forEach(row => {
-            const tNameEl = row.querySelector('input[type="text"]');
-            const tEmojiEl = row.querySelector('button[id^="bc-em-"]');
+        // UPGRADE: Foolproof Extraction using mathematical exact IDs
+        for(let i = 1; i <= window.bcTaskCounter; i++) {
+            const tNameEl = document.getElementById(`bc-t-${i}`);
+            const tEmojiEl = document.getElementById(`bc-em-${i}`);
             
-            if(tNameEl && tEmojiEl) {
-                let tName = tNameEl.value.trim();
-                let tEmoji = tEmojiEl.innerText;
+            if (tNameEl && tEmojiEl) {
+                const tName = tNameEl.value.trim();
+                const tEmoji = tEmojiEl.innerText.trim();
                 
-                if(tName) {
-                    customTasks.push({ name: tName, emoji: tEmoji });
+                if (tName) {
+                    customTasks.push({ name: tName, emoji: tEmoji || '🔥' });
                 }
             }
-        });
+        }
 
         if(!name) { alert("Operation Name is required."); btn.innerText = "Broadcast to Globe"; btn.disabled = false; return; }
         if(customTasks.length === 0) { alert("You must configure at least 1 habit to broadcast."); btn.innerText = "Broadcast to Globe"; btn.disabled = false; return; }
