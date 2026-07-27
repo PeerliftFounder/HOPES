@@ -889,7 +889,6 @@
       window.isTourRunning = false; window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   </script>
-
   <!-- ========================================== -->
   <!-- FIREBASE BACKEND INTEGRATION (MODULE V10)  -->
   <!-- ========================================== -->
@@ -941,6 +940,13 @@
           }
 
           const data = userDoc.data();
+
+          // --- THE RESCUE NOTIFICATION ---
+          // Alerts the user if their opponent quit, then deletes the flag
+          if (data.opponentFled) {
+              alert("🚨 TARGET DESERTED: Your opponent fled the duel! You have been freed from the matrix without penalty. You can now return to the Globe to find a new challenger.");
+              await updateDoc(userDocRef, { opponentFled: deleteField() });
+          }
           
           // 1. UNIQUE ID GENERATOR
           let myCode = data.uid_code;
@@ -986,7 +992,7 @@
               }
           }
 
-          // UI HEADERS (Safely)
+          // UI HEADERS
           setUI('task-count-header', `${window.totalTasks} TASKS`);
           setUI('personal-days-disp', `${window.taskDuration} DAYS`);
           setUI('global-xp-display', `${window.baseXP} XP`);
@@ -1021,8 +1027,6 @@
                            <span class="text-red-500">-50XP</span>
                          </p>
                       </div>
-
-                      <p class="text-[10px] text-red-500 font-bold mt-0.5 tracking-wider hidden" id="task-countdown-${i}"></p>
                     </div>
                     <div class="text-2xl opacity-70">${task.emoji}</div>
                   </div>`;
@@ -1237,7 +1241,6 @@
         }
     };
 
-    // --- ACCEPT/DECLINE PENDING FIREBASE CHALLENGE ---
     window.firebaseAcceptChallenge = async function() {
         const user = auth.currentUser;
         if(user) {
@@ -1273,8 +1276,7 @@
                             dualCheckedTasks: [],
                             dualTaskHistory: {}
                         });
-                    } catch(e) { console.warn("Could not write back to inviter."); }
-                    
+                    } catch(e) {}
                     window.location.reload(); 
                 }
             } catch (e) {}
@@ -1288,27 +1290,47 @@
         }
     };
 
+    // --- UPGRADED QUIT ENGINE ---
     window.executeQuitFirebase = async function() {
         const user = auth.currentUser;
         if(user) {
             window.baseXP -= 500;
-            window.updatePersonalProgress(); 
             
             try {
+                // 1. Wipe Your Data & Apply Penalty
                 await updateDoc(doc(db, "users", user.uid), { 
                     challengerUid: null,
                     totalXP: window.baseXP,
-                    dualMatrixData: deleteField()
+                    challengeName: deleteField(),
+                    dualMatrixData: deleteField(),
+                    dualDuration: deleteField(),
+                    dualSetupDate: deleteField(),
+                    dualLastActiveDay: deleteField(),
+                    dualCheckedTasks: deleteField(),
+                    dualTaskHistory: deleteField()
                 });
                 
+                // 2. Wipe Opponent's Data & Leave Rescue Flag
                 if(window.challengerUid) {
-                    await updateDoc(doc(db, "users", window.challengerUid), { challengerUid: null, dualMatrixData: deleteField() });
+                    await updateDoc(doc(db, "users", window.challengerUid), { 
+                        challengerUid: null, 
+                        challengeName: deleteField(),
+                        dualMatrixData: deleteField(),
+                        dualDuration: deleteField(),
+                        dualSetupDate: deleteField(),
+                        dualLastActiveDay: deleteField(),
+                        dualCheckedTasks: deleteField(),
+                        dualTaskHistory: deleteField(),
+                        opponentFled: true
+                    });
                 }
                 
                 window.challengerUid = null;
-                alert("Challenge Terminated. 500 XP deducted.");
+                alert("Challenge Terminated. 500 XP deducted. Both operators have been freed from the duel.");
                 window.location.reload();
-            } catch(e) { alert("Error quitting challenge."); }
+            } catch(e) { 
+                alert("Error quitting challenge. Check network connection."); 
+            }
         }
     };
   </script>
