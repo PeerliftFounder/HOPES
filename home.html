@@ -13,7 +13,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   
   <script>
-    // Ultra-Fast Fallback loader hider
     window.addEventListener('load', () => {
         setTimeout(() => {
             const loader = document.getElementById('page-loader');
@@ -124,9 +123,6 @@
         background-color: transparent;
         color: #6b7280;
     }
-
-    .clean-input { background: transparent; border: none; outline: none; color: white; width: 100%; }
-    .clean-input::placeholder { color: rgba(255,255,255,0.3); }
   </style>
 </head>
 <body class="relative pb-24"> 
@@ -200,7 +196,7 @@
     <!-- 🏠 DASHBOARD VIEW WRAPPER -->
     <div id="dashboard-view" class="block w-full">
         
-        <!-- MAIN DASHBOARD TOGGLE (Moved inside Dashboard Wrapper) -->
+        <!-- MAIN DASHBOARD TOGGLE -->
         <div class="flex bg-black/50 rounded-xl p-1 border border-white/10 mb-6 w-full max-w-sm mx-auto shadow-[0_0_20px_rgba(0,0,0,0.5)] relative z-20">
             <button id="toggle-personal" onclick="setDashboardMode('personal')" class="flex-1 py-2.5 text-[10px] font-extrabold uppercase tracking-widest rounded-lg toggle-btn-active">Personal Silence</button>
             <button id="toggle-dual" onclick="setDashboardMode('dual')" class="flex-1 py-2.5 text-[10px] font-extrabold uppercase tracking-widest rounded-lg toggle-btn-inactive">Dual Challenge</button>
@@ -259,7 +255,7 @@
                     <h2 class="text-lg font-bold text-white mb-1 px-1 -ml-1">Versus Matrix</h2>
                     <p class="text-xs text-[var(--accent-purple)] font-bold mb-3 px-1 -ml-1 uppercase tracking-wider" id="dual-challenge-title-disp">Challenge Title</p>
                     
-                    <!-- DUAL RING TOGGLE (You vs Opponent) -->
+                    <!-- PERFECTED DUAL RING TOGGLE -->
                     <div class="flex bg-black/50 rounded-lg p-1 border border-white/10 mb-3 w-[150px]">
                         <button id="toggle-dual-you" onclick="switchDualRing('you')" class="flex-1 py-1.5 text-[9px] font-extrabold uppercase tracking-widest rounded bg-[var(--accent-purple)] text-black shadow-[0_0_10px_rgba(157,78,221,0.3)] transition-all">You</button>
                         <button id="toggle-dual-opp" onclick="switchDualRing('opp')" class="flex-1 py-1.5 text-[9px] font-extrabold uppercase tracking-widest rounded bg-transparent text-gray-500 hover:text-white transition-all">Target</button>
@@ -271,7 +267,7 @@
                   </div>
 
                   <!-- YOU RING -->
-                  <div id="dual-ring-you" class="relative w-24 h-24 flex items-center justify-center rounded-full flex-shrink-0">
+                  <div id="dual-ring-you" class="relative w-24 h-24 items-center justify-center rounded-full flex-shrink-0" style="display: flex;">
                     <svg class="w-full h-full absolute inset-0" viewBox="0 0 100 100">
                       <circle stroke="rgba(255,255,255,0.05)" stroke-dasharray="4 6" stroke-width="8" fill="transparent" r="42" cx="50" cy="50" />
                       <circle id="speedometer-dual" class="progress-ring__circle text-[var(--accent-purple)]" stroke-width="8" stroke-linecap="round" fill="transparent" r="42" cx="50" cy="50" stroke="currentColor" />
@@ -283,7 +279,7 @@
                   </div>
 
                   <!-- TARGET (OPPONENT) RING -->
-                  <div id="dual-ring-opp" class="relative w-24 h-24 items-center justify-center rounded-full flex-shrink-0 hidden">
+                  <div id="dual-ring-opp" class="relative w-24 h-24 items-center justify-center rounded-full flex-shrink-0" style="display: none;">
                     <svg class="w-full h-full absolute inset-0" viewBox="0 0 100 100">
                       <circle stroke="rgba(255,255,255,0.05)" stroke-dasharray="4 6" stroke-width="8" fill="transparent" r="42" cx="50" cy="50" />
                       <circle id="speedometer-dual-opp" class="progress-ring__circle text-red-500" stroke-width="8" stroke-linecap="round" fill="transparent" r="42" cx="50" cy="50" stroke="currentColor" />
@@ -306,7 +302,7 @@
                 
                 <!-- QUIT BUTTON (DANGER ZONE) -->
                 <div class="mt-8 pt-6 border-t border-red-500/20 text-center relative z-10">
-                   <button onclick="quitChallenge()" class="text-[10px] font-bold tracking-widest text-red-500 uppercase hover:text-red-400 transition-colors py-2 px-4 rounded border border-red-500/30 bg-red-500/10">
+                   <button id="btn-quit-challenge" onclick="quitChallenge()" class="text-[10px] font-bold tracking-widest text-red-500 uppercase hover:text-red-400 transition-colors py-2 px-4 rounded border border-red-500/30 bg-red-500/10">
                       Quit Challenge (-500 XP)
                    </button>
                 </div>
@@ -355,7 +351,7 @@
             <div class="flex items-center gap-2 bg-black/50 border border-white/10 px-4 py-2 rounded-lg shadow-inner">
                 <span class="text-sm font-mono tracking-widest font-bold text-white" id="profile-uid-code">260000</span>
                 <button onclick="copyMyUidCode()" class="text-[var(--accent-mint)] hover:text-white transition-colors active:scale-90 p-1">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 002 2z"></path></svg>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
                 </button>
             </div>
         </div>
@@ -392,11 +388,19 @@
   </nav>
 
   <script>
+    /* --- CRITICAL SVG MATH (FIXES TARGET RING VISIBILITY) --- */
+    window.SVG_RADIUS_MAIN = 42;
+    window.SVG_CIRC_MAIN = window.SVG_RADIUS_MAIN * 2 * Math.PI;
+
     /* --- FRONTEND BUTTON CONNECTIONS --- */
     window.quitChallenge = function() {
         const confirmQuit = confirm("DANGER: Deserting an active duel will permanently deduct 500 XP from your global score. Are you absolutely sure?");
         if(confirmQuit) {
-            if(window.executeQuitFirebase) window.executeQuitFirebase();
+            if(window.executeQuitFirebase) {
+                window.executeQuitFirebase();
+            } else {
+                alert("System is still syncing with server. Please wait a moment and try again.");
+            }
         }
     };
 
@@ -409,13 +413,13 @@
         if(target === 'you') {
             btnYou.className = "flex-1 py-1.5 text-[9px] font-extrabold uppercase tracking-widest rounded bg-[var(--accent-purple)] text-black shadow-[0_0_10px_rgba(157,78,221,0.3)] transition-all";
             btnOpp.className = "flex-1 py-1.5 text-[9px] font-extrabold uppercase tracking-widest rounded bg-transparent text-gray-500 hover:text-white transition-all";
-            ringYou.classList.replace('hidden', 'flex');
-            ringOpp.classList.replace('flex', 'hidden');
+            if(ringYou) ringYou.style.display = 'flex';
+            if(ringOpp) ringOpp.style.display = 'none';
         } else {
             btnOpp.className = "flex-1 py-1.5 text-[9px] font-extrabold uppercase tracking-widest rounded bg-red-500 text-black shadow-[0_0_10px_rgba(239,68,68,0.3)] transition-all";
             btnYou.className = "flex-1 py-1.5 text-[9px] font-extrabold uppercase tracking-widest rounded bg-transparent text-gray-500 hover:text-white transition-all";
-            ringOpp.classList.replace('hidden', 'flex');
-            ringYou.classList.replace('flex', 'hidden');
+            if(ringYou) ringYou.style.display = 'none';
+            if(ringOpp) ringOpp.style.display = 'flex';
             if(window.fetchOpponentDualData) window.fetchOpponentDualData(); 
         }
     };
@@ -450,8 +454,6 @@
     window.currentDualDayIndex = 0;
 
     // Fixed UI Constants
-    const SVG_RADIUS_MAIN = 42;
-    const SVG_CIRC_MAIN = SVG_RADIUS_MAIN * 2 * Math.PI;
     window.ringColors = ['#00E59B', '#9D4EDD', '#3B82F6', '#EAB308', '#F43F5E', '#A855F7', '#14B8A6'];
 
     /* --- WEEK TRACKER LOGIC --- */
@@ -488,7 +490,6 @@
         else if (hour < 18) greeting = "Good afternoon";
         setUI('greeting-text', greeting);
       } catch (error) { 
-        // FALLBACK: Use device local time if API fails
         const hour = new Date().getHours();
         let greeting = "Good evening";
         if (hour < 12) greeting = "Good morning";
@@ -576,7 +577,7 @@
       const dualCompletedCount = document.querySelectorAll('.dual-check:checked').length;
       
       const percent = Math.round((completedCount / total) * 100); 
-      const offset = SVG_CIRC_MAIN - (percent / 100) * SVG_CIRC_MAIN;
+      const offset = window.SVG_CIRC_MAIN - (percent / 100) * window.SVG_CIRC_MAIN;
       
       const liveXP = window.baseXP + (completedCount * 100) + (dualCompletedCount * 100);
       
@@ -633,7 +634,7 @@
 
         const dualCircle = document.getElementById('speedometer-dual');
         if(dualCircle) {
-            const offset = SVG_CIRC_MAIN - (percent / 100) * SVG_CIRC_MAIN;
+            const offset = window.SVG_CIRC_MAIN - (percent / 100) * window.SVG_CIRC_MAIN;
             dualCircle.style.strokeDashoffset = offset;
             setUI('dual-task-percent', percent + '%');
         }
@@ -988,7 +989,6 @@
           const data = userDoc.data();
 
           // --- THE RESCUE NOTIFICATION ---
-          // Alerts the user if their opponent quit, then deletes the flag
           if (data.opponentFled) {
               alert("🚨 TARGET DESERTED: Your opponent fled the duel! You have been freed from the matrix without penalty. You can now return to the Globe to find a new challenger.");
               await updateDoc(userDocRef, { opponentFled: deleteField() });
@@ -1323,63 +1323,16 @@
         }
     };
 
-    window.firebaseAcceptChallenge = async function() {
-        const user = auth.currentUser;
-        if(user) {
-            try {
-                const userDocRef = doc(db, "users", user.uid);
-                const snap = await getDoc(userDocRef);
-                const data = snap.data();
-                
-                if(data.pendingChallenge) {
-                    const challengeData = data.pendingChallenge;
-                    
-                    await updateDoc(userDocRef, {
-                        challengerUid: challengeData.fromUid,
-                        challengeName: challengeData.challengeName,
-                        dualMatrixData: challengeData.dualMatrix,
-                        dualDuration: challengeData.duration,
-                        dualSetupDate: serverTimestamp(),
-                        dualLastActiveDay: 0,
-                        dualCheckedTasks: [],
-                        dualTaskHistory: {},
-                        pendingChallenge: deleteField() 
-                    });
-                    
-                    try {
-                        const inviterRef = doc(db, "users", challengeData.fromUid);
-                        await updateDoc(inviterRef, {
-                            challengerUid: user.uid,
-                            challengeName: challengeData.challengeName,
-                            dualMatrixData: challengeData.dualMatrix,
-                            dualDuration: challengeData.duration,
-                            dualSetupDate: serverTimestamp(),
-                            dualLastActiveDay: 0,
-                            dualCheckedTasks: [],
-                            dualTaskHistory: {}
-                        });
-                    } catch(e) {}
-                    window.location.reload(); 
-                }
-            } catch (e) {}
-        }
-    };
-
-    window.firebaseDeclineChallenge = async function() {
-        const user = auth.currentUser;
-        if(user) {
-            try { await updateDoc(doc(db, "users", user.uid), { pendingChallenge: deleteField() }); } catch(e){}
-        }
-    };
-
     // --- UPGRADED QUIT ENGINE ---
     window.executeQuitFirebase = async function() {
         const user = auth.currentUser;
         if(user) {
             window.baseXP -= 500;
+            const btn = document.getElementById('btn-quit-challenge');
+            if(btn) { btn.innerText = "Terminating..."; btn.disabled = true; }
             
             try {
-                // 1. Wipe Your Data & Apply Penalty
+                // Wipe Your Data
                 await updateDoc(doc(db, "users", user.uid), { 
                     challengerUid: null,
                     totalXP: window.baseXP,
@@ -1392,7 +1345,7 @@
                     dualTaskHistory: deleteField()
                 });
                 
-                // 2. Wipe Opponent's Data & Leave Rescue Flag
+                // Wipe Opponent's Data
                 if(window.challengerUid) {
                     await updateDoc(doc(db, "users", window.challengerUid), { 
                         challengerUid: null, 
@@ -1412,6 +1365,7 @@
                 window.location.reload();
             } catch(e) { 
                 alert("Error quitting challenge. Check network connection."); 
+                if(btn) { btn.innerText = "Quit Challenge (-500 XP)"; btn.disabled = false; }
             }
         }
     };
