@@ -93,55 +93,68 @@
   <div class="ambient-glow"></div>
 
   <!-- ========================================== -->
+  <!-- EMOJI PICKER MODAL                         -->
+  <!-- ========================================== -->
+  <div id="emoji-picker-modal" class="fixed inset-0 z-[99999] flex items-center justify-center bg-black/80 intense-blur hidden opacity-0 transition-opacity duration-300 p-4">
+      <div class="surface-card p-5 w-full max-w-xs transform scale-95 transition-transform duration-300" id="emoji-picker-content">
+          <h4 class="text-xs font-black text-white mb-4 text-center uppercase tracking-widest border-b border-white/10 pb-3">Select Aesthetic</h4>
+          <div class="grid grid-cols-5 gap-3 h-48 overflow-y-auto hide-scrollbar px-1" id="emoji-grid">
+              <!-- JS Injects Emojis Here -->
+          </div>
+          <button onclick="closeEmojiPicker()" class="w-full mt-5 py-3 rounded-xl bg-white/10 text-[10px] font-extrabold text-white uppercase tracking-widest border border-white/5 hover:bg-white/20 transition-colors">Cancel</button>
+      </div>
+  </div>
+
+  <!-- ========================================== -->
   <!-- MODAL: SHOWCASE YOUR OWN CHALLENGE         -->
   <!-- ========================================== -->
   <div id="showcase-modal" class="fixed inset-0 z-[99990] flex flex-col justify-end bg-black/80 intense-blur hidden opacity-0 transition-opacity duration-300">
-      <div class="bg-[#0a0a0f] border-t border-white/10 w-full rounded-t-3xl p-6 transform translate-y-full transition-transform duration-500 h-[85vh] overflow-y-auto" id="showcase-content">
-          <div class="flex justify-between items-center mb-6">
+      <div class="bg-[#0a0a0f] border-t border-white/10 w-full rounded-t-3xl p-6 transform translate-y-full transition-transform duration-500 h-[85vh] flex flex-col" id="showcase-content">
+          <div class="flex justify-between items-center mb-6 flex-shrink-0">
               <h3 class="text-lg font-black tracking-wide text-white uppercase">Showcase Matrix</h3>
               <button onclick="closeShowcaseModal()" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white font-bold hover:bg-white/20">✕</button>
           </div>
           
-          <p class="text-[10px] text-gray-400 mb-6 tracking-widest uppercase">Draft your architecture. It will be broadcasted to the global feed instantly.</p>
-          
-          <div class="space-y-6">
+          <div class="flex-1 overflow-y-auto hide-scrollbar pb-6 space-y-6 pr-1">
+              <p class="text-[10px] text-gray-400 tracking-widest uppercase">Draft your architecture. It will be broadcasted to the global feed instantly.</p>
+              
               <div>
                   <label class="text-[9px] font-bold text-[var(--accent-mint)] tracking-widest uppercase mb-2 block">Operation Name</label>
-                  <input type="text" id="bc-challenge-name" placeholder="e.g. 75 Hard, Code Red..." class="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-3 text-sm font-semibold text-white outline-none focus:border-[var(--accent-mint)]">
+                  <input type="text" id="bc-challenge-name" placeholder="e.g. 75 Hard, Code Red..." class="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-3 text-sm font-semibold text-white outline-none focus:border-[var(--accent-mint)] transition-colors shadow-inner">
               </div>
 
               <div>
                   <label class="text-[9px] font-bold text-[var(--accent-purple)] tracking-widest uppercase mb-2 block">Operational Period</label>
                   <div class="grid grid-cols-4 gap-2">
-                      <button onclick="setBcDuration(7)" id="btn-bdur-7" class="py-2 text-[10px] font-bold rounded-lg border border-[var(--accent-purple)] bg-[var(--accent-purple)]/20 text-[var(--accent-purple)]">7D</button>
-                      <button onclick="setBcDuration(14)" id="btn-bdur-14" class="py-2 text-[10px] font-bold rounded-lg border border-white/10 bg-white/5 text-gray-400 hover:text-white">14D</button>
-                      <button onclick="setBcDuration(21)" id="btn-bdur-21" class="py-2 text-[10px] font-bold rounded-lg border border-white/10 bg-white/5 text-gray-400 hover:text-white">21D</button>
-                      <button onclick="setBcDuration(28)" id="btn-bdur-28" class="py-2 text-[10px] font-bold rounded-lg border border-white/10 bg-white/5 text-gray-400 hover:text-white">28D</button>
+                      <button onclick="setBcDuration(7)" id="btn-bdur-7" class="py-2 text-[10px] font-bold rounded-lg border border-[var(--accent-purple)] bg-[var(--accent-purple)]/20 text-[var(--accent-purple)] shadow-[0_0_10px_rgba(157,78,221,0.2)] transition-all">7D</button>
+                      <button onclick="setBcDuration(14)" id="btn-bdur-14" class="py-2 text-[10px] font-bold rounded-lg border border-white/10 bg-white/5 text-gray-400 hover:text-white transition-all">14D</button>
+                      <button onclick="setBcDuration(21)" id="btn-bdur-21" class="py-2 text-[10px] font-bold rounded-lg border border-white/10 bg-white/5 text-gray-400 hover:text-white transition-all">21D</button>
+                      <button onclick="setBcDuration(28)" id="btn-bdur-28" class="py-2 text-[10px] font-bold rounded-lg border border-white/10 bg-white/5 text-gray-400 hover:text-white transition-all">28D</button>
                   </div>
               </div>
 
               <div>
-                  <label class="text-[9px] font-bold text-white tracking-widest uppercase mb-2 block">Matrix Configuration (Max 3 Slots)</label>
-                  <div class="space-y-3">
-                      <div class="bg-black/40 border border-white/5 rounded-xl p-2 flex gap-2">
-                          <button class="w-10 h-10 rounded-lg bg-white/5 text-xl flex-shrink-0" onclick="promptBcEmoji(1)" id="bc-em-1">🔥</button>
-                          <input type="text" id="bc-t-1" placeholder="Task 01" class="clean-input text-sm font-semibold px-2">
-                      </div>
-                      <div class="bg-black/40 border border-white/5 rounded-xl p-2 flex gap-2">
-                          <button class="w-10 h-10 rounded-lg bg-white/5 text-xl flex-shrink-0" onclick="promptBcEmoji(2)" id="bc-em-2">💪</button>
-                          <input type="text" id="bc-t-2" placeholder="Task 02" class="clean-input text-sm font-semibold px-2">
-                      </div>
-                      <div class="bg-black/40 border border-white/5 rounded-xl p-2 flex gap-2">
-                          <button class="w-10 h-10 rounded-lg bg-white/5 text-xl flex-shrink-0" onclick="promptBcEmoji(3)" id="bc-em-3">📚</button>
-                          <input type="text" id="bc-t-3" placeholder="Task 03" class="clean-input text-sm font-semibold px-2">
-                      </div>
+                  <div class="flex justify-between items-center mb-2">
+                      <label class="text-[9px] font-bold text-white tracking-widest uppercase">Matrix Configuration</label>
+                      <span class="text-[8px] text-gray-500 font-bold uppercase tracking-widest" id="bc-task-counter-ui">0/10 Slots</span>
                   </div>
+                  
+                  <!-- DYNAMIC HABIT CONTAINER -->
+                  <div id="bc-tasks-container" class="space-y-3 mb-3">
+                      <!-- JS Injects Rows Here -->
+                  </div>
+
+                  <button onclick="addBcTaskRow()" id="btn-add-bc-task" class="w-full py-3 rounded-xl border border-dashed border-[var(--accent-mint)]/50 text-[var(--accent-mint)] text-[10px] font-extrabold uppercase tracking-widest hover:bg-[var(--accent-mint)]/10 transition-colors">
+                      + Add Habit
+                  </button>
               </div>
           </div>
           
-          <button id="btn-broadcast" onclick="broadcastChallenge()" class="w-full mt-8 py-4 rounded-xl font-extrabold text-black bg-[var(--accent-purple)] shadow-[0_0_20px_rgba(157,78,221,0.3)] uppercase tracking-widest text-xs hover:scale-95 transition-transform mb-10">
-            Broadcast to Globe
-          </button>
+          <div class="pt-4 border-t border-white/10 flex-shrink-0 mb-6">
+              <button id="btn-broadcast" onclick="broadcastChallenge()" class="w-full py-4 rounded-xl font-extrabold text-black bg-[var(--accent-purple)] shadow-[0_0_20px_rgba(157,78,221,0.3)] uppercase tracking-widest text-xs hover:scale-95 transition-transform">
+                Broadcast to Globe
+              </button>
+          </div>
       </div>
   </div>
 
@@ -213,7 +226,7 @@
   <!-- Bottom Navigation Bar (Linked directly back to home.html) -->
   <nav class="nav-bar fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[420px] z-50 rounded-t-3xl">
     <div class="flex justify-around items-center px-6 py-4 max-w-[420px] mx-auto">
-      <div id="nav-btn-dash" class="nav-item transition-all" onclick="window.location.href='home.html'">🏠</div>
+      <div id="nav-btn-dash" class="nav-item transition-all hover:scale-110" onclick="window.location.href='home.html'">🏠</div>
       <div id="nav-btn-comm" class="nav-item text-[var(--accent-purple)] scale-110 drop-shadow-[0_0_10px_rgba(157,78,221,0.5)] transition-all bg-white/10 p-3 rounded-full border border-white/5 shadow-inner">🌍</div>
     </div>
   </nav>
@@ -231,12 +244,119 @@
     window.selectedChallengeId = null;
     window.selectedChallengeData = null;
 
+    // Dynamic Builder State
+    window.bcTaskCounter = 0;
+    window.currentEmojiSlotId = null;
+
+    const PREMIUM_EMOJIS = ['🔥','💧','🏃','🏋️','🧘','🛌','🥗','💻','📚','🚀','🧠','⚡','🎯','🎨','🎵','💰','📈','☀️','✍️','🛠️','🛡️','✨','🏆','⏳','📝'];
+
+    /* --- DYNAMIC MATRIX BUILDER LOGIC --- */
+    window.addBcTaskRow = function() {
+        const container = document.getElementById('bc-tasks-container');
+        const currentRows = container.querySelectorAll('.bc-task-row').length;
+        
+        if(currentRows >= 10) {
+            alert("Maximum limit reached. You can only deploy up to 10 habits in a single matrix.");
+            return;
+        }
+        
+        window.bcTaskCounter++;
+        const id = window.bcTaskCounter;
+        
+        const row = document.createElement('div');
+        row.className = "bg-black/40 border border-white/5 rounded-xl p-2 flex gap-2 items-center bc-task-row transition-all shadow-inner";
+        row.id = `bc-row-${id}`;
+        
+        row.innerHTML = `
+            <button class="w-10 h-10 rounded-lg bg-white/5 text-xl flex-shrink-0 hover:bg-white/10 transition-colors border border-white/10" onclick="openEmojiPicker(${id})" id="bc-em-${id}">✨</button>
+            <input type="text" id="bc-t-${id}" placeholder="Enter habit..." class="clean-input text-sm font-semibold px-2 flex-1">
+            <button onclick="removeBcTaskRow(${id})" class="w-8 h-8 rounded-lg text-gray-500 hover:text-red-500 hover:bg-red-500/10 flex items-center justify-center font-bold flex-shrink-0 transition-colors">✕</button>
+        `;
+        
+        container.appendChild(row);
+        updateBcCounterUI();
+    };
+
+    window.removeBcTaskRow = function(id) {
+        const row = document.getElementById(`bc-row-${id}`);
+        if(row) {
+            row.style.opacity = '0';
+            row.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                row.remove();
+                updateBcCounterUI();
+            }, 200);
+        }
+    };
+
+    function updateBcCounterUI() {
+        const currentRows = document.querySelectorAll('.bc-task-row').length;
+        const ui = document.getElementById('bc-task-counter-ui');
+        const btn = document.getElementById('btn-add-bc-task');
+        if(ui) ui.innerText = `${currentRows}/10 Slots`;
+        
+        if(currentRows >= 10) {
+            if(btn) btn.style.display = 'none';
+        } else {
+            if(btn) btn.style.display = 'block';
+        }
+    }
+
+    /* --- EMOJI PICKER MODAL LOGIC --- */
+    window.openEmojiPicker = function(slotId) {
+        window.currentEmojiSlotId = slotId;
+        const modal = document.getElementById('emoji-picker-modal');
+        const content = document.getElementById('emoji-picker-content');
+        
+        // Render emojis if empty
+        const grid = document.getElementById('emoji-grid');
+        if(grid.innerHTML.trim() === '') {
+            let html = '';
+            PREMIUM_EMOJIS.forEach(em => {
+                html += `<button onclick="selectEmoji('${em}')" class="text-2xl hover:scale-125 transition-transform active:scale-90 p-2 bg-white/5 rounded-lg border border-white/5">${em}</button>`;
+            });
+            grid.innerHTML = html;
+        }
+
+        modal.classList.remove('hidden');
+        setTimeout(() => { 
+            modal.classList.remove('opacity-0'); 
+            content.classList.replace('scale-95', 'scale-100');
+        }, 10);
+    };
+
+    window.closeEmojiPicker = function() {
+        const modal = document.getElementById('emoji-picker-modal');
+        const content = document.getElementById('emoji-picker-content');
+        content.classList.replace('scale-100', 'scale-95');
+        modal.classList.add('opacity-0');
+        setTimeout(() => { modal.classList.add('hidden'); }, 300);
+    };
+
+    window.selectEmoji = function(emoji) {
+        if(window.currentEmojiSlotId !== null) {
+            const btn = document.getElementById(`bc-em-${window.currentEmojiSlotId}`);
+            if(btn) btn.innerText = emoji;
+        }
+        window.closeEmojiPicker();
+    };
+
     /* --- SHOWCASE UI LOGIC --- */
     window.openShowcaseModal = function() {
         if(window.hasActiveDuel) {
             alert("You are already locked into an active duel. You cannot broadcast a new one until it is finished.");
             return;
         }
+        
+        // Reset Builder State
+        document.getElementById('bc-tasks-container').innerHTML = '';
+        window.bcTaskCounter = 0;
+        document.getElementById('bc-challenge-name').value = '';
+        window.setBcDuration(7);
+        
+        // Auto-add first row
+        window.addBcTaskRow();
+
         const modal = document.getElementById('showcase-modal');
         const content = document.getElementById('showcase-content');
         modal.classList.remove('hidden');
@@ -251,7 +371,7 @@
         const content = document.getElementById('showcase-content');
         content.classList.add('translate-y-full');
         modal.classList.add('opacity-0');
-        setTimeout(() => { modal.classList.add('hidden'); }, 300);
+        setTimeout(() => { modal.classList.add('hidden'); }, 500);
     };
 
     window.setBcDuration = function(days) {
@@ -260,19 +380,12 @@
             const btn = document.getElementById(`btn-bdur-${d}`);
             if(btn) {
                 if(d === days) {
-                    btn.className = "py-2 text-[10px] font-bold rounded-lg border border-[var(--accent-purple)] bg-[var(--accent-purple)]/20 text-[var(--accent-purple)] shadow-[0_0_10px_rgba(157,78,221,0.2)]";
+                    btn.className = "py-2 text-[10px] font-bold rounded-lg border border-[var(--accent-purple)] bg-[var(--accent-purple)]/20 text-[var(--accent-purple)] shadow-[0_0_10px_rgba(157,78,221,0.2)] transition-all";
                 } else {
-                    btn.className = "py-2 text-[10px] font-bold rounded-lg border border-white/10 bg-white/5 text-gray-400 hover:text-white transition-colors";
+                    btn.className = "py-2 text-[10px] font-bold rounded-lg border border-white/10 bg-white/5 text-gray-400 hover:text-white transition-all";
                 }
             }
         });
-    };
-
-    window.promptBcEmoji = function(slotId) {
-        const emojis = ['🔥','💪','📚','🏃','🧘','💧','🥗','💻', '🚀', '🧠'];
-        let rand = emojis[Math.floor(Math.random() * emojis.length)];
-        const el = document.getElementById(`bc-em-${slotId}`);
-        if(el) el.innerText = rand;
     };
 
     /* --- ACCEPT MODAL LOGIC --- */
@@ -282,7 +395,6 @@
             return;
         }
         
-        // Find the challenge data from our loaded array (populated by Firebase later)
         const challenge = window.loadedChallenges.find(c => c.id === docId);
         if(!challenge) return;
         
@@ -354,7 +466,6 @@
         try {
             window.currentUserUid = user.uid;
             
-            // 1. Fetch Current User's Profile (Needed for broadcasting & validation)
             const userDocRef = doc(db, "users", user.uid);
             const userDoc = await getDoc(userDocRef);
             if(userDoc.exists()) {
@@ -362,7 +473,6 @@
                 window.currentUserName = user.displayName ? user.displayName.split(' ')[0] : 'Operator';
                 window.currentUserXP = data.totalXP || 0;
                 
-                // Calculate display streak based on personal matrix history
                 let setup = data.setupDate ? data.setupDate.toDate() : new Date();
                 let diff = new Date().setHours(0,0,0,0) - new Date(setup).setHours(0,0,0,0);
                 window.currentUserStreak = Math.min(Math.floor(diff / 86400000) + 1, data.duration || 7);
@@ -370,7 +480,6 @@
                 if(data.challengerUid) window.hasActiveDuel = true;
             }
 
-            // 2. Fetch the Public Challenges Feed
             await fetchGlobalFeed();
 
         } catch (e) { console.error("Boot Error:", e); }
@@ -384,21 +493,20 @@
         const feedContainer = document.getElementById('global-feed');
         if(!feedContainer) return;
         
-        feedContainer.innerHTML = '<p class="text-center text-xs text-gray-500 font-bold uppercase tracking-widest mt-10">Scanning Matrix...</p>';
+        feedContainer.innerHTML = '<div class="flex justify-center mt-10"><div class="w-8 h-8 border-4 border-white/10 border-t-[var(--accent-purple)] rounded-full animate-spin"></div></div>';
         window.loadedChallenges = [];
 
         try {
             const challengesRef = collection(db, "public_challenges");
-            // Simple query, pulling all open challenges
             const querySnapshot = await getDocs(challengesRef);
             
             let html = '';
             if(querySnapshot.empty) {
                 feedContainer.innerHTML = `
-                    <div class="text-center mt-12 p-6 border border-white/5 rounded-2xl bg-white/5">
-                        <span class="text-3xl mb-3 block opacity-50">🏜️</span>
-                        <h4 class="text-sm font-bold text-white uppercase tracking-widest mb-1">The Arena is Empty</h4>
-                        <p class="text-[10px] text-gray-400">No active bounties found. Be the first to showcase your matrix.</p>
+                    <div class="text-center mt-10 p-8 border border-[var(--accent-purple)]/20 rounded-2xl bg-[var(--accent-purple)]/5 shadow-[0_0_20px_rgba(157,78,221,0.1)]">
+                        <span class="text-4xl mb-4 block opacity-80">🏜️</span>
+                        <h4 class="text-sm font-extrabold text-white uppercase tracking-widest mb-1">The Arena is Empty</h4>
+                        <p class="text-[10px] text-gray-400 font-semibold leading-relaxed">No active bounties found. Be the first to showcase your matrix and challenge the globe.</p>
                     </div>`;
                 return;
             }
@@ -408,7 +516,6 @@
                 c.id = doc.id;
                 window.loadedChallenges.push(c);
 
-                // Build Carousel HTML for the habits
                 let tasksHtml = '';
                 if(c.tasks && c.tasks.length > 0) {
                     c.tasks.forEach((t) => {
@@ -423,15 +530,16 @@
 
                 const rankName = getRankString(c.hostXP);
 
-                // Build the Player Card HTML
                 html += `
-                <div class="surface-card p-5 border border-white/10 relative overflow-hidden group">
+                <div class="surface-card p-5 border border-[var(--accent-purple)]/20 relative overflow-hidden group hover:border-[var(--accent-mint)]/40 transition-colors">
                     <div class="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-[var(--accent-mint)] to-[var(--accent-purple)] opacity-50"></div>
                     
                     <div class="flex justify-between items-start mb-5 pl-2">
                         <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white font-black text-lg border border-white/20">
-                                ${c.hostName ? c.hostName.charAt(0).toUpperCase() : 'O'}
+                            <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-[var(--accent-purple)] to-[var(--accent-mint)] p-[1px] shadow-[0_0_10px_rgba(157,78,221,0.3)]">
+                                <div class="w-full h-full bg-black rounded-full flex items-center justify-center text-white font-black text-sm">
+                                    ${c.hostName ? c.hostName.charAt(0).toUpperCase() : 'O'}
+                                </div>
                             </div>
                             <div>
                                 <h4 class="text-sm font-extrabold text-white tracking-wide">${c.hostName || 'Operator'}</h4>
@@ -445,7 +553,10 @@
                     </div>
 
                     <div class="pl-2 mb-2">
-                        <p class="text-[10px] font-bold tracking-widest text-gray-400 uppercase mb-2">Target Architecture</p>
+                        <div class="flex items-center justify-between mb-2">
+                            <p class="text-[10px] font-bold tracking-widest text-gray-400 uppercase">Target Architecture</p>
+                            <span class="text-[8px] font-black tracking-widest bg-white/10 px-1.5 py-0.5 rounded text-gray-300 uppercase">${c.challengeName}</span>
+                        </div>
                         <!-- Horizontal Scrollable Container -->
                         <div class="flex overflow-x-auto hide-scrollbar gap-3 pb-2 snap-x">
                             ${tasksHtml}
@@ -453,7 +564,7 @@
                     </div>
 
                     <div class="mt-4 pt-4 border-t border-white/10 pl-2">
-                        <button onclick="openAcceptModal('${c.id}')" class="w-full py-3 rounded-xl font-bold text-black bg-white shadow-[0_0_15px_rgba(255,255,255,0.2)] uppercase tracking-widest text-[10px] hover:scale-[0.98] transition-transform flex items-center justify-center gap-2">
+                        <button onclick="openAcceptModal('${c.id}')" class="w-full py-3.5 rounded-xl font-bold text-black bg-[var(--accent-mint)] shadow-[0_0_15px_rgba(0,229,155,0.3)] uppercase tracking-widest text-[10px] hover:scale-95 transition-transform flex items-center justify-center gap-2">
                             Accept Duel <span class="text-sm">⚔️</span>
                         </button>
                     </div>
@@ -465,7 +576,7 @@
 
         } catch (e) {
             console.error("Feed Error:", e);
-            feedContainer.innerHTML = '<p class="text-center text-xs text-red-500 font-bold">Error connecting to the Arena.</p>';
+            feedContainer.innerHTML = '<p class="text-center text-xs text-red-500 font-bold mt-10">Matrix Disconnected. Cannot fetch global feed.</p>';
         }
     }
 
@@ -479,18 +590,26 @@
         const name = nameEl.value.trim();
         
         let customTasks = [];
-        for(let i=1; i<=3; i++) {
-            let tNameEl = document.getElementById(`bc-t-${i}`);
-            let tEmojiEl = document.getElementById(`bc-em-${i}`);
+        const rows = document.querySelectorAll('.bc-task-row');
+        
+        rows.forEach(row => {
+            const tNameEl = row.querySelector('input[type="text"]');
+            const tEmojiEl = row.querySelector('button[id^="bc-em-"]');
+            
             if(tNameEl && tEmojiEl) {
                 let tName = tNameEl.value.trim();
                 let tEmoji = tEmojiEl.innerText;
-                if(tName) customTasks.push({ name: tName, emoji: tEmoji });
+                
+                // If they wrote a name but forgot an emoji, give them a default flame instead of ✨
+                if(tName) {
+                    if(tEmoji === '✨') tEmoji = '🔥'; 
+                    customTasks.push({ name: tName, emoji: tEmoji });
+                }
             }
-        }
+        });
 
         if(!name) { alert("Operation Name is required."); btn.innerText = "Broadcast to Globe"; btn.disabled = false; return; }
-        if(customTasks.length === 0) { alert("Configure at least 1 task."); btn.innerText = "Broadcast to Globe"; btn.disabled = false; return; }
+        if(customTasks.length === 0) { alert("You must configure at least 1 habit to broadcast."); btn.innerText = "Broadcast to Globe"; btn.disabled = false; return; }
 
         const payload = {
             hostUid: window.currentUserUid,
@@ -504,7 +623,6 @@
         };
 
         try {
-            // Using a timestamp + UID as the document ID so users can only have 1 active broadcast easily, or random is fine.
             const newDocRef = doc(collection(db, "public_challenges")); 
             await setDoc(newDocRef, payload);
             
@@ -512,7 +630,6 @@
             window.closeShowcaseModal();
             if(btn) { btn.innerText = "Broadcast to Globe"; btn.disabled = false; }
             
-            // Refresh feed
             await fetchGlobalFeed();
 
         } catch (e) {
@@ -532,7 +649,6 @@
             const challengeId = window.selectedChallengeId;
             const challenge = window.selectedChallengeData;
             
-            // 1. Double check it still exists (someone else might have clicked it a second before)
             const challengeRef = doc(db, "public_challenges", challengeId);
             const challengeSnap = await getDoc(challengeRef);
             
@@ -543,7 +659,6 @@
                 return;
             }
 
-            // 2. Update CURRENT USER profile in Firebase
             const myRef = doc(db, "users", window.currentUserUid);
             await updateDoc(myRef, {
                 challengerUid: challenge.hostUid,
@@ -556,7 +671,6 @@
                 dualTaskHistory: {}
             });
 
-            // 3. Update HOST USER profile in Firebase
             const hostRef = doc(db, "users", challenge.hostUid);
             await updateDoc(hostRef, {
                 challengerUid: window.currentUserUid,
@@ -569,10 +683,8 @@
                 dualTaskHistory: {}
             });
 
-            // 4. Delete the Challenge from the Public Feed (Bounty Claimed!)
             await deleteDoc(challengeRef);
 
-            // 5. Teleport to Dashboard
             window.location.href = 'home.html';
 
         } catch (e) {
