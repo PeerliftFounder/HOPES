@@ -135,7 +135,7 @@
   <div class="liquid-bg"></div>
   <div class="ambient-glow"></div>
 
-  <!-- INCOMING CHALLENGE MODAL (Kept so you can receive duals) -->
+  <!-- INCOMING CHALLENGE MODAL -->
   <div id="incoming-challenge-modal" class="fixed inset-0 z-[99999] flex items-center justify-center bg-black/90 backdrop-blur-sm hidden opacity-0 transition-opacity duration-500 p-4">
       <div class="surface-card p-6 w-full max-w-sm text-center transform scale-95 transition-transform duration-500" id="incoming-modal-content">
           <div class="w-16 h-16 rounded-full bg-[var(--accent-purple)]/20 border border-[var(--accent-purple)] flex items-center justify-center mx-auto mb-4 shadow-[0_0_20px_rgba(157,78,221,0.5)]">
@@ -293,10 +293,17 @@
 
                 <section class="mb-6 rounded-2xl p-2 -mx-2">
                   <div class="flex items-center justify-between mb-4 pl-1">
-                    <h3 class="text-xs font-bold uppercase tracking-widest text-gray-300">Challenge Commitments</h3>
+                    <h3 class="text-xs font-bold uppercase tracking-widest text-gray-300" id="dual-tasks-header">Your Commitments</h3>
                   </div>
-                  <div class="space-y-3" id="dual-tasks-list">
+                  
+                  <!-- YOUR INTERACTIVE TASK LIST -->
+                  <div class="space-y-3" id="dual-tasks-list-you">
                     <!-- JS Injects Dual Tasks Here -->
+                  </div>
+
+                  <!-- TARGET'S READ-ONLY TASK LIST -->
+                  <div class="space-y-3 hidden" id="dual-tasks-list-opp">
+                    <!-- JS Injects Opponent's Crossed-off Tasks Here -->
                   </div>
                 </section>
                 
@@ -351,7 +358,7 @@
             <div class="flex items-center gap-2 bg-black/50 border border-white/10 px-4 py-2 rounded-lg shadow-inner">
                 <span class="text-sm font-mono tracking-widest font-bold text-white" id="profile-uid-code">260000</span>
                 <button onclick="copyMyUidCode()" class="text-[var(--accent-mint)] hover:text-white transition-colors active:scale-90 p-1">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 002 2z"></path></svg>
                 </button>
             </div>
         </div>
@@ -388,7 +395,7 @@
   </nav>
 
   <script>
-    /* --- CRITICAL SVG MATH (FIXES TARGET RING VISIBILITY) --- */
+    /* --- CRITICAL SVG MATH --- */
     window.SVG_RADIUS_MAIN = 42;
     window.SVG_CIRC_MAIN = window.SVG_RADIUS_MAIN * 2 * Math.PI;
 
@@ -404,22 +411,41 @@
         }
     };
 
+    /* --- SYNCHRONIZED TARGET TOGGLE --- */
     window.switchDualRing = function(target) {
         const btnYou = document.getElementById('toggle-dual-you');
         const btnOpp = document.getElementById('toggle-dual-opp');
         const ringYou = document.getElementById('dual-ring-you');
         const ringOpp = document.getElementById('dual-ring-opp');
         
+        // The dual lists
+        const listYou = document.getElementById('dual-tasks-list-you');
+        const listOpp = document.getElementById('dual-tasks-list-opp');
+        const header = document.getElementById('dual-tasks-header');
+        
         if(target === 'you') {
             btnYou.className = "flex-1 py-1.5 text-[9px] font-extrabold uppercase tracking-widest rounded bg-[var(--accent-purple)] text-black shadow-[0_0_10px_rgba(157,78,221,0.3)] transition-all";
             btnOpp.className = "flex-1 py-1.5 text-[9px] font-extrabold uppercase tracking-widest rounded bg-transparent text-gray-500 hover:text-white transition-all";
+            
             if(ringYou) ringYou.style.display = 'flex';
             if(ringOpp) ringOpp.style.display = 'none';
+            
+            if(listYou) listYou.classList.remove('hidden');
+            if(listOpp) listOpp.classList.add('hidden');
+            if(header) header.innerText = "Your Commitments";
+
         } else {
             btnOpp.className = "flex-1 py-1.5 text-[9px] font-extrabold uppercase tracking-widest rounded bg-red-500 text-black shadow-[0_0_10px_rgba(239,68,68,0.3)] transition-all";
             btnYou.className = "flex-1 py-1.5 text-[9px] font-extrabold uppercase tracking-widest rounded bg-transparent text-gray-500 hover:text-white transition-all";
+            
             if(ringYou) ringYou.style.display = 'none';
             if(ringOpp) ringOpp.style.display = 'flex';
+            
+            if(listYou) listYou.classList.add('hidden');
+            if(listOpp) listOpp.classList.remove('hidden');
+            if(header) header.innerText = "Target's Commitments";
+
+            // Refresh the opponent data every time you look at them
             if(window.fetchOpponentDualData) window.fetchOpponentDualData(); 
         }
     };
@@ -433,7 +459,6 @@
     /* --- SYSTEM STATE VARIABLES --- */
     window.currentDayIndex = 0;
     
-    // Personal State
     window.totalTasks = 4; 
     window.taskDuration = 7;
     window.appSetupDate = null;
@@ -442,7 +467,6 @@
     window.baseXP = 0; 
     window.isSealedToday = false; 
 
-    // Dual Challenge State
     window.challengerUid = null; 
     window.currentDashboardMode = 'personal'; 
     
@@ -453,7 +477,6 @@
     window.dualTaskHistory = {};
     window.currentDualDayIndex = 0;
 
-    // Fixed UI Constants
     window.ringColors = ['#00E59B', '#9D4EDD', '#3B82F6', '#EAB308', '#F43F5E', '#A855F7', '#14B8A6'];
 
     /* --- WEEK TRACKER LOGIC --- */
@@ -557,11 +580,9 @@
     window.getTaskStreakInfo = function(taskId, isCheckedToday, historyDict) {
         let history = historyDict[taskId] || [];
         let historicalStreak = 0;
-        
         for (let i = history.length - 1; i >= 0; i--) {
             if (history[i] === true) historicalStreak++; else break;
         }
-        
         let displayStreak = historicalStreak + (isCheckedToday ? 1 : 0);
         let isRed = (historicalStreak === 0 && !isCheckedToday);
         if (history.length === 0 && !isCheckedToday) isRed = false; 
@@ -888,53 +909,6 @@
         window.addEventListener('mouseup', stopHold);
         window.addEventListener('touchend', stopHold);
     }
-
-    /* --- ONE-TIME VIRTUAL TOUR ENGINE --- */
-    window.startVirtualTour = function() {
-      window.isTourRunning = true; document.body.classList.add('tour-active');
-      const tb = document.getElementById('tour-backdrop'); if(tb) tb.style.display = 'block'; 
-      const tc = document.getElementById('tour-card'); if(tc) tc.style.display = 'block';
-      setTimeout(() => { 
-          if(tb) tb.style.opacity = '1'; 
-          if(tc) tc.style.opacity = '1'; 
-      }, 10);
-      executeTourStep(1);
-    }
-    const tourSteps = {
-      1: { elementId: "tour-speedo-card", text: "Welcome to your locked matrix. Everything here is strict. No edits or swaps allowed." },
-      2: { elementId: "tour-target-base", text: "Complete habits to earn +100XP. Missing one drops -50XP. Missed days reset your streaks." },
-      3: { elementId: "nav-btn-vis", text: "Tap Visualize to watch your fractional duration rings. Hold the center button to seal your day." },
-      4: { elementId: "nav-btn-comm", text: "Duel a friend here. Enter the Globe to find challengers." }
-    };
-    function executeTourStep(step) {
-      document.querySelectorAll('.tour-highlight').forEach(el => { el.classList.remove('tour-highlight'); });
-      const config = tourSteps[step]; const element = document.getElementById(config.elementId);
-      if(element) {
-        element.classList.add('tour-highlight');
-        const tc = document.getElementById('tour-card');
-        if(tc) {
-            if (step === 3 || step === 4) { tc.style.bottom = 'auto'; tc.style.top = '120px'; } 
-            else { tc.style.top = 'auto'; tc.style.bottom = '90px'; }
-        }
-        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
-      setUI('tour-step-indicator', `RULE ${step} / 4`); 
-      setUI('tour-text', config.text);
-      setUI('tour-next-btn', step === 4 ? "Begin" : "Next");
-    }
-    let currentStep = 1;
-    window.nextTourStep = function() { if(currentStep < 4) { currentStep++; executeTourStep(currentStep); } else { window.endTour(); } }
-    window.endTour = function() {
-      document.querySelectorAll('.tour-highlight').forEach(el => { el.classList.remove('tour-highlight'); });
-      document.body.classList.remove('tour-active'); 
-      const tb = document.getElementById('tour-backdrop'); if(tb) tb.style.opacity = '0'; 
-      const tc = document.getElementById('tour-card'); if(tc) tc.style.opacity = '0';
-      setTimeout(() => { 
-          if(tb) tb.style.display = 'none'; 
-          if(tc) tc.style.display = 'none'; 
-      }, 400);
-      window.isTourRunning = false; window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
   </script>
   <!-- ========================================== -->
   <!-- FIREBASE BACKEND INTEGRATION (MODULE V10)  -->
@@ -1080,7 +1054,7 @@
               setUI('personal-tasks-list', taskHtml, true);
           }
 
-          // 5. RENDER DUAL TASKS
+          // 5. RENDER DUAL TASKS (YOUR LIST)
           if (window.challengerUid && window.dualMatrixData.length > 0) {
               setUI('dual-challenge-title-disp', window.challengeName);
               setUI('dual-days-disp', `${window.dualTaskDuration} DAYS`);
@@ -1110,7 +1084,7 @@
                     <div class="text-2xl opacity-70">${task.emoji}</div>
                   </div>`;
               });
-              setUI('dual-tasks-list', dualHtml, true);
+              setUI('dual-tasks-list-you', dualHtml, true);
               
               const dsEmpty = document.getElementById('dual-empty-state'); if(dsEmpty) dsEmpty.style.display = 'none';
               const dsAct = document.getElementById('dual-active-state'); if(dsAct) dsAct.style.display = 'block';
@@ -1268,7 +1242,7 @@
       }
     });
 
-    // --- OPPONENT DATA ENGINE ---
+    // --- SYNCHRONIZED OPPONENT DATA ENGINE ---
     window.fetchOpponentDualData = async function() {
         if(!window.challengerUid) return;
         try {
@@ -1277,9 +1251,11 @@
             if(oppSnap.exists()) {
                 const oData = oppSnap.data();
                 const dTotal = window.dualMatrixData ? window.dualMatrixData.length : 1;
-                const dCompleted = oData.dualCheckedTasks ? oData.dualCheckedTasks.length : 0;
+                const oChecked = oData.dualCheckedTasks || [];
+                const dCompleted = oChecked.length;
                 const oPercent = Math.round((dCompleted / dTotal) * 100);
                 
+                // 1. Update Opponent Ring
                 const oppCircle = document.getElementById('speedometer-dual-opp');
                 if(oppCircle) {
                     const offset = window.SVG_CIRC_MAIN - (oPercent / 100) * window.SVG_CIRC_MAIN;
@@ -1287,6 +1263,7 @@
                     setUI('dual-task-percent-opp', oPercent + '%');
                 }
                 
+                // 2. Update Opponent Day Badge
                 if(oData.dualSetupDate) {
                     const currentMidnight = new Date(); currentMidnight.setHours(0,0,0,0);
                     const dSetupMidnight = new Date(oData.dualSetupDate.toDate()); dSetupMidnight.setHours(0,0,0,0);
@@ -1295,6 +1272,35 @@
                     const oppDayIndex = Math.min(Math.max(oppDaysPassed, 0), window.dualTaskDuration - 1);
                     setUI('dual-day-badge-opp', `DAY ${oppDayIndex + 1}`);
                 }
+
+                // 3. GENERATE TARGET'S READ-ONLY TASK LIST
+                let oppTasksHtml = '';
+                if(window.dualMatrixData) {
+                    window.dualMatrixData.forEach((task, index) => {
+                        let isChecked = oChecked.includes(index);
+                        let checkedClass = isChecked ? 'opacity-50 border-red-500/30' : 'border-red-500/20';
+                        let strikeClass = isChecked ? 'line-through text-gray-400' : 'text-white';
+                        let checkBg = isChecked ? 'bg-red-500 border-red-500 shadow-[0_0_15px_rgba(239,68,68,0.4)]' : 'border-red-500/50';
+                        let checkMark = isChecked ? '✓' : '';
+                        
+                        oppTasksHtml += `
+                        <div class="bg-black/40 border rounded-2xl p-4 flex items-center gap-4 transition-all duration-300 task-row ${checkedClass}">
+                          <div class="task-check-wrapper cursor-default">
+                            <div class="absolute inset-0 border-2 flex items-center justify-center transition-all ${checkBg}" style="border-radius: 50%;">
+                              <span class="text-black text-sm font-extrabold">${checkMark}</span>
+                            </div>
+                          </div>
+                          <div class="flex-1">
+                            <h4 class="text-sm font-bold mb-0.5 ${strikeClass}">${task.name}</h4>
+                            <div class="flex items-center gap-3 mt-1">
+                               <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span> Read Only (Target's Log)</p>
+                            </div>
+                          </div>
+                          <div class="text-2xl opacity-70">${task.emoji}</div>
+                        </div>`;
+                    });
+                }
+                setUI('dual-tasks-list-opp', oppTasksHtml, true);
             }
         } catch(e) { console.warn("Failed to fetch opponent data"); }
     };
@@ -1323,6 +1329,55 @@
         }
     };
 
+    window.firebaseAcceptChallenge = async function() {
+        const user = auth.currentUser;
+        if(user) {
+            try {
+                const userDocRef = doc(db, "users", user.uid);
+                const snap = await getDoc(userDocRef);
+                const data = snap.data();
+                
+                if(data.pendingChallenge) {
+                    const challengeData = data.pendingChallenge;
+                    
+                    await updateDoc(userDocRef, {
+                        challengerUid: challengeData.fromUid,
+                        challengeName: challengeData.challengeName,
+                        dualMatrixData: challengeData.dualMatrix,
+                        dualDuration: challengeData.duration,
+                        dualSetupDate: serverTimestamp(),
+                        dualLastActiveDay: 0,
+                        dualCheckedTasks: [],
+                        dualTaskHistory: {},
+                        pendingChallenge: deleteField() 
+                    });
+                    
+                    try {
+                        const inviterRef = doc(db, "users", challengeData.fromUid);
+                        await updateDoc(inviterRef, {
+                            challengerUid: user.uid,
+                            challengeName: challengeData.challengeName,
+                            dualMatrixData: challengeData.dualMatrix,
+                            dualDuration: challengeData.duration,
+                            dualSetupDate: serverTimestamp(),
+                            dualLastActiveDay: 0,
+                            dualCheckedTasks: [],
+                            dualTaskHistory: {}
+                        });
+                    } catch(e) {}
+                    window.location.reload(); 
+                }
+            } catch (e) {}
+        }
+    };
+
+    window.firebaseDeclineChallenge = async function() {
+        const user = auth.currentUser;
+        if(user) {
+            try { await updateDoc(doc(db, "users", user.uid), { pendingChallenge: deleteField() }); } catch(e){}
+        }
+    };
+
     // --- UPGRADED QUIT ENGINE ---
     window.executeQuitFirebase = async function() {
         const user = auth.currentUser;
@@ -1332,7 +1387,6 @@
             if(btn) { btn.innerText = "Terminating..."; btn.disabled = true; }
             
             try {
-                // Wipe Your Data
                 await updateDoc(doc(db, "users", user.uid), { 
                     challengerUid: null,
                     totalXP: window.baseXP,
@@ -1345,7 +1399,6 @@
                     dualTaskHistory: deleteField()
                 });
                 
-                // Wipe Opponent's Data
                 if(window.challengerUid) {
                     await updateDoc(doc(db, "users", window.challengerUid), { 
                         challengerUid: null, 
