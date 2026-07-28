@@ -88,15 +88,6 @@
     .nav-item { font-size: 1.5rem; transition: transform 0.2s, opacity 0.3s; cursor: pointer; position: relative; user-select: none; display: flex; justify-content: center; align-items: center; }
     .nav-item:active { transform: scale(0.85); }
 
-    #tour-backdrop { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); z-index: 99990; transition: opacity 0.4s ease; }
-    body.tour-active .surface-card { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
-    .tour-highlight {
-      position: relative !important; z-index: 99995 !important;
-      box-shadow: 0 0 0 4px var(--accent-mint), 0 10px 40px rgba(0,229,155,0.4) !important;
-      background-color: #050507 !important; border-radius: 8px; transition: all 0.4s ease;
-      scroll-margin-top: 150px; scroll-margin-bottom: 150px;
-    }
-    
     .hide-scrollbar::-webkit-scrollbar { display: none; }
     .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
@@ -104,6 +95,14 @@
       position: fixed; inset: 0; background-color: #050507; z-index: 99999;
       display: flex; flex-direction: column; justify-content: center; align-items: center;
       transition: opacity 0.5s ease;
+    }
+
+    .clean-input { background: transparent; border: none; outline: none; color: white; width: 100%; }
+    .clean-input::placeholder { color: rgba(255,255,255,0.3); }
+
+    .intense-blur {
+        backdrop-filter: blur(40px) saturate(150%);
+        -webkit-backdrop-filter: blur(40px) saturate(150%);
     }
 
     @keyframes shake {
@@ -114,15 +113,14 @@
     }
     .animate-shake { animation: shake 0.4s ease-in-out; }
 
-    .toggle-btn-active {
-        background-color: var(--accent-mint);
-        color: black;
-        box-shadow: 0 0 15px rgba(0,229,155,0.3);
+    @keyframes bounce-chest {
+        0%, 100% { transform: translateY(0) scale(1); }
+        50% { transform: translateY(-20px) scale(1.05); }
     }
-    .toggle-btn-inactive {
-        background-color: transparent;
-        color: #6b7280;
-    }
+    .animate-bounce-chest { animation: bounce-chest 1.5s infinite ease-in-out; }
+
+    .toggle-btn-active { background-color: var(--accent-mint); color: black; box-shadow: 0 0 15px rgba(0,229,155,0.3); }
+    .toggle-btn-inactive { background-color: transparent; color: #6b7280; }
   </style>
 </head>
 <body class="relative pb-24"> 
@@ -135,8 +133,74 @@
   <div class="liquid-bg"></div>
   <div class="ambient-glow"></div>
 
+  <!-- ========================================== -->
+  <!-- LEVEL UP / NEXT PHASE ENGINE MODAL         -->
+  <!-- ========================================== -->
+  <div id="level-up-overlay" class="fixed inset-0 z-[99999] bg-black/95 intense-blur hidden flex-col items-center justify-center p-6 transition-opacity duration-500 opacity-0">
+      
+      <!-- STATE 1: The Chest & Reward -->
+      <div id="lu-state-1" class="text-center w-full max-w-sm transform transition-all duration-500 scale-95 opacity-0">
+          <div id="lu-chest-icon" class="text-8xl mb-6 animate-bounce-chest cursor-pointer drop-shadow-[0_0_30px_rgba(157,78,221,0.6)] select-none" onclick="triggerChestOpen()">🎁</div>
+          <h2 id="lu-title-1" class="text-3xl font-black text-white uppercase tracking-tight mb-2">Phase Complete</h2>
+          <p id="lu-desc-1" class="text-xs text-[var(--accent-mint)] font-bold uppercase tracking-widest mb-8">Tap the chest to claim your reward</p>
+          <button id="lu-btn-1" onclick="triggerChestOpen()" class="w-full py-4 rounded-xl font-extrabold text-black bg-[var(--accent-purple)] shadow-[0_0_20px_rgba(157,78,221,0.4)] uppercase tracking-widest text-xs hover:scale-95 transition-transform">Claim Reward</button>
+      </div>
+
+      <!-- STATE 2: The Next Phase Builder -->
+      <div id="lu-state-2" class="hidden w-full max-w-sm bg-[#0a0a0f] border border-[var(--accent-mint)]/30 rounded-3xl p-6 shadow-[0_0_40px_rgba(0,229,155,0.2)] max-h-[85vh] flex flex-col transform transition-all duration-500 scale-95 opacity-0">
+          <div class="flex justify-between items-center mb-6 flex-shrink-0">
+              <div>
+                  <h3 class="text-lg font-black tracking-wide text-white uppercase" id="lu-builder-title">Architect Phase 2</h3>
+                  <p class="text-[9px] text-[var(--accent-mint)] font-bold uppercase tracking-widest">+100 Gems Locked In</p>
+              </div>
+          </div>
+          
+          <div class="flex-1 overflow-y-auto hide-scrollbar pb-6 space-y-6 pr-1">
+              <div>
+                  <label class="text-[9px] font-bold text-[var(--accent-purple)] tracking-widest uppercase mb-2 block">Next Operational Period</label>
+                  <div class="grid grid-cols-4 gap-2">
+                      <button onclick="setLuDuration(7)" id="btn-ldur-7" class="py-2 text-[10px] font-bold rounded-lg border border-white/10 bg-white/5 text-gray-400 hover:text-white transition-all">7D</button>
+                      <button onclick="setLuDuration(14)" id="btn-ldur-14" class="py-2 text-[10px] font-bold rounded-lg border border-[var(--accent-purple)] bg-[var(--accent-purple)]/20 text-[var(--accent-purple)] shadow-[0_0_10px_rgba(157,78,221,0.2)] transition-all">14D</button>
+                      <button onclick="setLuDuration(21)" id="btn-ldur-21" class="py-2 text-[10px] font-bold rounded-lg border border-white/10 bg-white/5 text-gray-400 hover:text-white transition-all">21D</button>
+                      <button onclick="setLuDuration(28)" id="btn-ldur-28" class="py-2 text-[10px] font-bold rounded-lg border border-white/10 bg-white/5 text-gray-400 hover:text-white transition-all">28D</button>
+                  </div>
+              </div>
+
+              <div>
+                  <div class="flex justify-between items-center mb-2">
+                      <label class="text-[9px] font-bold text-white tracking-widest uppercase">Matrix Configuration</label>
+                      <span class="text-[8px] text-gray-500 font-bold uppercase tracking-widest" id="lu-task-counter-ui">0/10 Slots</span>
+                  </div>
+                  
+                  <div id="lu-tasks-container" class="space-y-3 mb-3">
+                      <!-- JS Injects Pre-filled Rows Here -->
+                  </div>
+
+                  <button onclick="addLuTaskRow()" id="btn-add-lu-task" class="w-full py-3 rounded-xl border border-dashed border-[var(--accent-mint)]/50 text-[var(--accent-mint)] text-[10px] font-extrabold uppercase tracking-widest hover:bg-[var(--accent-mint)]/10 transition-colors">
+                      + Add Habit
+                  </button>
+              </div>
+          </div>
+          
+          <div class="pt-4 border-t border-white/10 flex-shrink-0">
+              <button id="btn-lock-next-phase" onclick="confirmNextLevel()" class="w-full py-4 rounded-xl font-extrabold text-black bg-[var(--accent-mint)] shadow-[0_0_20px_rgba(0,229,155,0.4)] uppercase tracking-widest text-xs hover:scale-95 transition-transform">
+                Lock In Next Phase
+              </button>
+          </div>
+      </div>
+  </div>
+
+  <!-- LEVEL UP EMOJI PICKER MODAL -->
+  <div id="lu-emoji-picker-modal" class="fixed inset-0 z-[999999] flex items-center justify-center bg-black/80 intense-blur hidden opacity-0 transition-opacity duration-300 p-4">
+      <div class="surface-card p-5 w-full max-w-xs transform scale-95 transition-transform duration-300" id="lu-emoji-picker-content">
+          <h4 class="text-xs font-black text-white mb-4 text-center uppercase tracking-widest border-b border-white/10 pb-3">Select Aesthetic</h4>
+          <div class="grid grid-cols-5 gap-3 h-48 overflow-y-auto hide-scrollbar px-1" id="lu-emoji-grid"></div>
+          <button onclick="closeLuEmojiPicker()" class="w-full mt-5 py-3 rounded-xl bg-white/10 text-[10px] font-extrabold text-white uppercase tracking-widest border border-white/5 hover:bg-white/20 transition-colors">Cancel</button>
+      </div>
+  </div>
+
   <!-- INCOMING CHALLENGE MODAL -->
-  <div id="incoming-challenge-modal" class="fixed inset-0 z-[99999] flex items-center justify-center bg-black/90 backdrop-blur-sm hidden opacity-0 transition-opacity duration-500 p-4">
+  <div id="incoming-challenge-modal" class="fixed inset-0 z-[99990] flex items-center justify-center bg-black/90 backdrop-blur-sm hidden opacity-0 transition-opacity duration-500 p-4">
       <div class="surface-card p-6 w-full max-w-sm text-center transform scale-95 transition-transform duration-500" id="incoming-modal-content">
           <div class="w-16 h-16 rounded-full bg-[var(--accent-purple)]/20 border border-[var(--accent-purple)] flex items-center justify-center mx-auto mb-4 shadow-[0_0_20px_rgba(157,78,221,0.5)]">
               <span class="text-2xl">⚔️</span>
@@ -148,18 +212,6 @@
               <button onclick="declineIncomingChallenge()" class="flex-1 py-3 rounded-xl font-bold text-white bg-white/5 border border-white/10 uppercase text-xs tracking-widest hover:bg-red-500/20 hover:text-red-400 hover:border-red-500/50 transition-colors">Decline</button>
           </div>
       </div>
-  </div>
-
-  <!-- THE MEMORY TOUR BACKDROP -->
-  <div id="tour-backdrop" style="display: none; opacity: 0;"></div>
-  <div id="tour-card" class="fixed left-1/2 -translate-x-1/2 w-[90%] max-w-[380px] bg-black border border-[var(--accent-mint)]/50 rounded-2xl p-5 shadow-[0_20px_50px_rgba(0,0,0,0.9)] z-[99999] transition-all duration-500 ease-in-out" style="display: none; bottom: 48px;">
-    <div class="flex justify-between items-center mb-3">
-      <span class="text-[10px] font-extrabold tracking-[0.2em] text-[var(--accent-mint)] uppercase" id="tour-step-indicator">RULE 1 / 4</span>
-    </div>
-    <p class="text-sm text-gray-200 leading-relaxed font-medium mb-5" id="tour-text">Welcome to your dashboard.</p>
-    <div class="flex justify-end pointer-events-auto">
-      <button onclick="nextTourStep()" id="tour-next-btn" class="bg-white text-black px-5 py-2 rounded-lg text-xs font-extrabold uppercase tracking-wider hover:scale-95 transition-transform">Next</button>
-    </div>
   </div>
 
   <!-- APPLICATION CONTAINER -->
@@ -207,7 +259,7 @@
             <section class="surface-card p-6 mb-8 flex items-center justify-between rounded-2xl">
               <div>
                 <h2 class="text-lg font-bold text-white mb-1 px-1 -ml-1">Live Matrix</h2>
-                <p class="text-xs text-gray-400 mb-3 px-1 -ml-1">Execute your architecture.</p>
+                <p class="text-xs text-[var(--accent-mint)] font-bold mb-3 px-1 -ml-1 uppercase tracking-widest" id="dash-level-display">Phase 1</p>
                 <div class="flex">
                   <span id="personal-days-disp" class="px-2.5 py-1 bg-[var(--accent-purple)]/20 border border-[var(--accent-purple)]/30 rounded text-[10px] font-bold tracking-widest text-[var(--accent-purple)] uppercase">-- DAYS</span>
                 </div>
@@ -262,7 +314,7 @@
                   </div>
                  </section>
 
-                 <!-- YOUR INTERACTIVE TASK LIST (MOVED TO TOP) -->
+                 <!-- YOUR INTERACTIVE TASK LIST -->
                  <section class="mb-6 rounded-2xl p-2 -mx-2">
                   <div class="flex items-center justify-between mb-4 pl-1">
                     <h3 class="text-xs font-bold uppercase tracking-widest text-gray-300">Your Commitments</h3>
@@ -272,7 +324,7 @@
                   </div>
                  </section>
 
-                 <!-- THE ORBITAL RACE RING (MOVED BELOW TASKS) -->
+                 <!-- THE ORBITAL RACE RING -->
                  <section class="surface-card p-6 mb-6 flex flex-col items-center justify-center rounded-2xl border border-[var(--accent-purple)]/30 relative overflow-hidden">
                     <h3 class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-6 text-center">Orbital Race</h3>
                     
@@ -349,11 +401,13 @@
     <!-- 👤 PROFILE VIEW WRAPPER -->
     <div id="profile-view" class="hidden w-full pb-10">
       <div class="surface-card p-6 mt-2 relative overflow-hidden flex flex-col items-center text-center">
-        <div class="w-20 h-20 rounded-full bg-gradient-to-tr from-[var(--accent-purple)] to-[var(--accent-mint)] p-1 shadow-[0_0_20px_rgba(0,229,155,0.3)] mb-4">
+        <div class="w-20 h-20 rounded-full bg-gradient-to-tr from-[var(--accent-purple)] to-[var(--accent-mint)] p-1 shadow-[0_0_20px_rgba(0,229,155,0.3)] mb-4 relative">
           <div class="w-full h-full rounded-full bg-black flex items-center justify-center text-3xl font-black text-white" id="profile-avatar">👤</div>
+          <!-- LEVEL BADGE -->
+          <div class="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-white text-black px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest whitespace-nowrap shadow-[0_0_10px_rgba(255,255,255,0.5)]" id="profile-level-badge">LVL 1</div>
         </div>
         
-        <h2 class="text-xl font-black text-white tracking-wide" id="profile-name-full">User</h2>
+        <h2 class="text-xl font-black text-white tracking-wide mt-2" id="profile-name-full">User</h2>
         <p class="text-[10px] font-bold tracking-widest uppercase mb-1 transition-colors duration-300" id="profile-rank" style="color: var(--accent-purple);">Initiate</p>
         
         <!-- UNIQUE ID SECTION -->
@@ -367,16 +421,22 @@
             </div>
         </div>
         
-        <div class="w-full grid grid-cols-2 gap-4 mb-8">
-          <div class="bg-black/40 border border-white/5 rounded-xl p-4 flex flex-col items-center justify-center">
-             <span class="text-2xl mb-1">🏆</span>
-             <span class="text-base font-extrabold text-[var(--accent-mint)]" id="profile-xp">0</span>
-             <span class="text-[9px] text-gray-500 font-bold uppercase tracking-widest mt-1">Total XP</span>
+        <!-- UPGRADED 3-COLUMN STATS GRID -->
+        <div class="w-full grid grid-cols-3 gap-3 mb-8">
+          <div class="bg-black/40 border border-white/5 rounded-xl p-3 flex flex-col items-center justify-center">
+             <span class="text-xl mb-1">💎</span>
+             <span class="text-sm font-extrabold text-[#38BDF8]" id="profile-gems">0</span>
+             <span class="text-[8px] text-gray-500 font-bold uppercase tracking-widest mt-1">Gems</span>
           </div>
-          <div class="bg-black/40 border border-white/5 rounded-xl p-4 flex flex-col items-center justify-center">
-             <span class="text-2xl mb-1">🔥</span>
-             <span class="text-base font-extrabold text-white" id="profile-streak">Day 0/7</span>
-             <span class="text-[9px] text-gray-500 font-bold uppercase tracking-widest mt-1">Matrix Streak</span>
+          <div class="bg-black/40 border border-white/5 rounded-xl p-3 flex flex-col items-center justify-center">
+             <span class="text-xl mb-1">🏆</span>
+             <span class="text-sm font-extrabold text-[var(--accent-mint)]" id="profile-xp">0</span>
+             <span class="text-[8px] text-gray-500 font-bold uppercase tracking-widest mt-1">Total XP</span>
+          </div>
+          <div class="bg-black/40 border border-white/5 rounded-xl p-3 flex flex-col items-center justify-center">
+             <span class="text-xl mb-1">🔥</span>
+             <span class="text-sm font-extrabold text-white" id="profile-streak">Day 0/7</span>
+             <span class="text-[8px] text-gray-500 font-bold uppercase tracking-widest mt-1">Streak</span>
           </div>
         </div>
 
@@ -402,33 +462,13 @@
     /* --- CRITICAL SVG MATH --- */
     window.SVG_RADIUS_MAIN = 42;
     window.SVG_CIRC_MAIN = window.SVG_RADIUS_MAIN * 2 * Math.PI;
-    
-    // Outer Ring (Radius 42) Circumference = 263.89
     window.SVG_CIRC_DUAL_OUTER = 263.89;
-    // Inner Ring (Radius 32) Circumference = 201.06
     window.SVG_CIRC_DUAL_INNER = 201.06;
-
-    /* --- FRONTEND BUTTON CONNECTIONS --- */
-    window.quitChallenge = function() {
-        const confirmQuit = confirm("DANGER: Deserting an active duel will permanently deduct 500 XP from your global score. Are you absolutely sure?");
-        if(confirmQuit) {
-            if(window.executeQuitFirebase) {
-                window.executeQuitFirebase();
-            } else {
-                alert("System is still syncing with server. Please wait a moment and try again.");
-            }
-        }
-    };
-
-    /* --- BULLETPROOF UI UPDATER --- */
-    function setUI(id, val, isHTML = false) {
-        const el = document.getElementById(id);
-        if(el) { if(isHTML) el.innerHTML = val; else el.innerText = val; }
-    }
 
     /* --- SYSTEM STATE VARIABLES --- */
     window.currentDayIndex = 0;
     
+    // Personal State
     window.totalTasks = 4; 
     window.taskDuration = 7;
     window.appSetupDate = null;
@@ -436,10 +476,15 @@
     window.taskHistory = {}; 
     window.baseXP = 0; 
     window.isSealedToday = false; 
+    
+    // New Progression State
+    window.userLevel = 1;
+    window.userGems = 0;
+    window.personalMatrixData = []; // Stores habits for pre-filling
 
+    // Dual Challenge State
     window.challengerUid = null; 
     window.currentDashboardMode = 'personal'; 
-    
     window.dualMatrixData = [];
     window.dualTaskDuration = 7;
     window.dualSetupDate = null;
@@ -448,6 +493,174 @@
     window.currentDualDayIndex = 0;
 
     window.ringColors = ['#00E59B', '#9D4EDD', '#3B82F6', '#EAB308', '#F43F5E', '#A855F7', '#14B8A6'];
+    const PREMIUM_EMOJIS = ['🔥','💧','🏃','🏋️','🧘','🛌','🥗','💻','📚','🚀','🧠','⚡','🎯','🎨','🎵','💰','📈','☀️','✍️','🛠️','🛡️','✨','🏆','⏳','📝'];
+
+    /* --- LEVEL UP ENGINE UI LOGIC --- */
+    window.triggerLevelUpFlow = function() {
+        const overlay = document.getElementById('level-up-overlay');
+        const state1 = document.getElementById('lu-state-1');
+        document.getElementById('dashboard-view').style.pointerEvents = 'none'; // Lock app
+        
+        overlay.classList.remove('hidden');
+        overlay.classList.add('flex');
+        setTimeout(() => {
+            overlay.classList.remove('opacity-0');
+            state1.classList.replace('scale-95', 'scale-100');
+            state1.classList.remove('opacity-0');
+        }, 50);
+    };
+
+    window.triggerChestOpen = function() {
+        const icon = document.getElementById('lu-chest-icon');
+        const title = document.getElementById('lu-title-1');
+        const desc = document.getElementById('lu-desc-1');
+        const btn = document.getElementById('lu-btn-1');
+
+        icon.classList.remove('animate-bounce-chest');
+        icon.innerText = "💎";
+        icon.classList.replace('drop-shadow-[0_0_30px_rgba(157,78,221,0.6)]', 'drop-shadow-[0_0_40px_rgba(56,189,248,0.8)]');
+        
+        title.innerText = `LEVEL ${window.userLevel + 1} UNLOCKED`;
+        desc.innerText = "+100 GEMS SECURED";
+        desc.classList.replace('text-[var(--accent-mint)]', 'text-[#38BDF8]');
+        
+        btn.innerText = "Commit to Next Phase";
+        btn.onclick = window.showLuBuilder;
+    };
+
+    window.showLuBuilder = function() {
+        const state1 = document.getElementById('lu-state-1');
+        const state2 = document.getElementById('lu-state-2');
+        
+        state1.classList.replace('scale-100', 'scale-95');
+        state1.classList.add('opacity-0');
+        
+        setTimeout(() => {
+            state1.classList.add('hidden');
+            state2.classList.remove('hidden');
+            
+            // Set Titles
+            document.getElementById('lu-builder-title').innerText = `Architect Phase ${window.userLevel + 1}`;
+            
+            // Default next duration to 14 days
+            window.setLuDuration(14);
+
+            // Pre-fill habits
+            document.getElementById('lu-tasks-container').innerHTML = '';
+            window.luTaskCounter = 0;
+            if(window.personalMatrixData && window.personalMatrixData.length > 0) {
+                window.personalMatrixData.forEach(t => window.addLuTaskRow(t.name, t.emoji));
+            } else {
+                window.addLuTaskRow('', '🔥');
+            }
+
+            setTimeout(() => {
+                state2.classList.replace('scale-95', 'scale-100');
+                state2.classList.remove('opacity-0');
+            }, 50);
+        }, 500);
+    };
+
+    /* --- LEVEL UP BUILDER FUNCTIONS --- */
+    window.luTaskCounter = 0;
+    window.currentLuEmojiSlotId = null;
+    window.luDurationSelection = 14;
+
+    window.addLuTaskRow = function(name = "", emoji = "🔥") {
+        const container = document.getElementById('lu-tasks-container');
+        if(container.querySelectorAll('.lu-task-row').length >= 10) { alert("Maximum 10 habits allowed."); return; }
+        
+        window.luTaskCounter++;
+        const id = window.luTaskCounter;
+        
+        const row = document.createElement('div');
+        row.className = "bg-black/40 border border-white/5 rounded-xl p-2 flex gap-2 items-center lu-task-row transition-all shadow-inner";
+        row.id = `lu-row-${id}`;
+        
+        row.innerHTML = `
+            <button class="w-10 h-10 rounded-lg bg-white/5 text-xl flex-shrink-0 hover:bg-white/10 transition-colors border border-white/10" onclick="openLuEmojiPicker(${id})" id="lu-em-${id}">${emoji}</button>
+            <input type="text" id="lu-t-${id}" value="${name}" placeholder="Enter habit..." class="clean-input text-sm font-semibold px-2 flex-1">
+            <button onclick="removeLuTaskRow(${id})" class="w-8 h-8 rounded-lg text-gray-500 hover:text-red-500 hover:bg-red-500/10 flex items-center justify-center font-bold flex-shrink-0 transition-colors">✕</button>
+        `;
+        container.appendChild(row);
+        updateLuCounterUI();
+    };
+
+    window.removeLuTaskRow = function(id) {
+        const row = document.getElementById(`lu-row-${id}`);
+        if(row) { row.remove(); updateLuCounterUI(); }
+    };
+
+    function updateLuCounterUI() {
+        const currentRows = document.querySelectorAll('.lu-task-row').length;
+        const ui = document.getElementById('lu-task-counter-ui');
+        const btn = document.getElementById('btn-add-lu-task');
+        if(ui) ui.innerText = `${currentRows}/10 Slots`;
+        if(btn) btn.style.display = currentRows >= 10 ? 'none' : 'block';
+    }
+
+    window.setLuDuration = function(days) {
+        window.luDurationSelection = days;
+        [7, 14, 21, 28].forEach(d => {
+            const btn = document.getElementById(`btn-ldur-${d}`);
+            if(btn) {
+                if(d === days) {
+                    btn.className = "py-2 text-[10px] font-bold rounded-lg border border-[var(--accent-purple)] bg-[var(--accent-purple)]/20 text-[var(--accent-purple)] shadow-[0_0_10px_rgba(157,78,221,0.2)] transition-all";
+                } else {
+                    btn.className = "py-2 text-[10px] font-bold rounded-lg border border-white/10 bg-white/5 text-gray-400 hover:text-white transition-all";
+                }
+            }
+        });
+    };
+
+    window.openLuEmojiPicker = function(slotId) {
+        window.currentLuEmojiSlotId = slotId;
+        const modal = document.getElementById('lu-emoji-picker-modal');
+        const grid = document.getElementById('lu-emoji-grid');
+        
+        if(grid.children.length === 0) {
+            let html = '';
+            PREMIUM_EMOJIS.forEach(em => {
+                html += `<button onclick="selectLuEmoji('${em}')" class="text-2xl hover:scale-125 transition-transform active:scale-90 p-2 bg-white/5 rounded-lg border border-white/5 shadow-inner">${em}</button>`;
+            });
+            grid.innerHTML = html;
+        }
+
+        modal.classList.remove('hidden');
+        setTimeout(() => { 
+            modal.classList.remove('opacity-0'); 
+            document.getElementById('lu-emoji-picker-content').classList.replace('scale-95', 'scale-100');
+        }, 10);
+    };
+
+    window.closeLuEmojiPicker = function() {
+        const modal = document.getElementById('lu-emoji-picker-modal');
+        document.getElementById('lu-emoji-picker-content').classList.replace('scale-100', 'scale-95');
+        modal.classList.add('opacity-0');
+        setTimeout(() => { modal.classList.add('hidden'); window.currentLuEmojiSlotId = null; }, 300);
+    };
+
+    window.selectLuEmoji = function(emoji) {
+        if(window.currentLuEmojiSlotId !== null) {
+            const btn = document.getElementById(`lu-em-${window.currentLuEmojiSlotId}`);
+            if(btn) btn.innerText = emoji;
+        }
+        window.closeLuEmojiPicker();
+    };
+
+    /* --- FRONTEND BUTTON CONNECTIONS --- */
+    window.quitChallenge = function() {
+        const confirmQuit = confirm("DANGER: Deserting an active duel will permanently deduct 500 XP from your global score. Are you absolutely sure?");
+        if(confirmQuit) {
+            if(window.executeQuitFirebase) window.executeQuitFirebase();
+        }
+    };
+
+    /* --- BULLETPROOF UI UPDATER --- */
+    function setUI(id, val, isHTML = false) {
+        const el = document.getElementById(id);
+        if(el) { if(isHTML) el.innerHTML = val; else el.innerText = val; }
+    }
 
     /* --- WEEK TRACKER LOGIC --- */
     function initWeekTracker() {
@@ -623,7 +836,6 @@
         const completedCount = document.querySelectorAll('.dual-check:checked').length;
         const percent = Math.round((completedCount / total) * 100); 
 
-        // Apply to the INNER ring (You)
         const dualCircleYou = document.getElementById('speedometer-dual-you');
         if(dualCircleYou) {
             const offset = window.SVG_CIRC_DUAL_INNER - (percent / 100) * window.SVG_CIRC_DUAL_INNER;
@@ -654,7 +866,6 @@
     }
 
     window.attachCheckboxListeners = function() {
-        // PERSONAL LISTENERS
         document.querySelectorAll('.personal-check').forEach((box) => {
           box.addEventListener('change', (e) => {
             const row = e.target.closest('.task-row');
@@ -684,7 +895,6 @@
           });
         });
 
-        // DUAL LISTENERS
         document.querySelectorAll('.dual-check').forEach((box) => {
           box.addEventListener('change', (e) => {
             const row = e.target.closest('.task-row');
@@ -880,54 +1090,8 @@
         window.addEventListener('mouseup', stopHold);
         window.addEventListener('touchend', stopHold);
     }
-
-    /* --- ONE-TIME VIRTUAL TOUR ENGINE --- */
-    window.startVirtualTour = function() {
-      window.isTourRunning = true; document.body.classList.add('tour-active');
-      const tb = document.getElementById('tour-backdrop'); if(tb) tb.style.display = 'block'; 
-      const tc = document.getElementById('tour-card'); if(tc) tc.style.display = 'block';
-      setTimeout(() => { 
-          if(tb) tb.style.opacity = '1'; 
-          if(tc) tc.style.opacity = '1'; 
-      }, 10);
-      executeTourStep(1);
-    }
-    const tourSteps = {
-      1: { elementId: "tour-speedo-card", text: "Welcome to your locked matrix. Everything here is strict. No edits or swaps allowed." },
-      2: { elementId: "tour-target-base", text: "Complete habits to earn +100XP. Missing one drops -50XP. Missed days reset your streaks." },
-      3: { elementId: "nav-btn-vis", text: "Tap Visualize to watch your fractional duration rings. Hold the center button to seal your day." },
-      4: { elementId: "nav-btn-comm", text: "Duel a friend here. Enter the Globe to find challengers." }
-    };
-    function executeTourStep(step) {
-      document.querySelectorAll('.tour-highlight').forEach(el => { el.classList.remove('tour-highlight'); });
-      const config = tourSteps[step]; const element = document.getElementById(config.elementId);
-      if(element) {
-        element.classList.add('tour-highlight');
-        const tc = document.getElementById('tour-card');
-        if(tc) {
-            if (step === 3 || step === 4) { tc.style.bottom = 'auto'; tc.style.top = '120px'; } 
-            else { tc.style.top = 'auto'; tc.style.bottom = '90px'; }
-        }
-        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
-      setUI('tour-step-indicator', `RULE ${step} / 4`); 
-      setUI('tour-text', config.text);
-      setUI('tour-next-btn', step === 4 ? "Begin" : "Next");
-    }
-    let currentStep = 1;
-    window.nextTourStep = function() { if(currentStep < 4) { currentStep++; executeTourStep(currentStep); } else { window.endTour(); } }
-    window.endTour = function() {
-      document.querySelectorAll('.tour-highlight').forEach(el => { el.classList.remove('tour-highlight'); });
-      document.body.classList.remove('tour-active'); 
-      const tb = document.getElementById('tour-backdrop'); if(tb) tb.style.opacity = '0'; 
-      const tc = document.getElementById('tour-card'); if(tc) tc.style.opacity = '0';
-      setTimeout(() => { 
-          if(tb) tb.style.display = 'none'; 
-          if(tc) tc.style.display = 'none'; 
-      }, 400);
-      window.isTourRunning = false; window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
   </script>
+
   <!-- ========================================== -->
   <!-- FIREBASE BACKEND INTEGRATION (MODULE V10)  -->
   <!-- ========================================== -->
@@ -957,6 +1121,59 @@
           try { await signOut(auth); } catch (error) { console.error("Logout failed", error); }
         });
     }
+
+    // Attach Next Level Action to Global Window for UI Button
+    window.confirmNextLevel = async function() {
+        const btn = document.getElementById('btn-lock-next-phase');
+        if(btn) { btn.innerText = "Securing Matrix..."; btn.disabled = true; }
+
+        let customTasks = [];
+        const rows = document.querySelectorAll('.lu-task-row');
+        
+        rows.forEach(row => {
+            const tNameEl = row.querySelector('input[type="text"]');
+            const tEmojiEl = row.querySelector('button[id^="lu-em-"]');
+            if (tNameEl && tEmojiEl) {
+                const tName = tNameEl.value.trim();
+                const tEmoji = tEmojiEl.innerText.trim();
+                if (tName) customTasks.push({ name: tName, emoji: tEmoji || '🔥', time: "Anytime" });
+            }
+        });
+
+        if(customTasks.length === 0) {
+            alert("You must configure at least 1 habit.");
+            if(btn) { btn.innerText = "Lock In Next Phase"; btn.disabled = false; }
+            return;
+        }
+
+        try {
+            const user = auth.currentUser;
+            if(!user) return;
+            const userDocRef = doc(db, "users", user.uid);
+            
+            // Increment Level & Add 100 Gems. Reset History.
+            await updateDoc(userDocRef, {
+                baseMatrix: customTasks,
+                duration: window.luDurationSelection,
+                setupDate: serverTimestamp(),
+                level: window.userLevel + 1,
+                gems: window.userGems + 100,
+                checkedTasks: [],
+                taskHistory: {},
+                lastActiveDay: 0,
+                isSealedToday: false,
+                completionTimestamps: {}
+            });
+
+            alert(`Phase ${window.userLevel + 1} Locked In. 100 Gems Added. Consistency over perfection.`);
+            window.location.reload();
+
+        } catch (e) {
+            alert("Network Error. Could not secure next phase.");
+            if(btn) { btn.innerText = "Lock In Next Phase"; btn.disabled = false; }
+        }
+    };
+
 
     onAuthStateChanged(auth, async (user) => {
       try {
@@ -994,7 +1211,11 @@
           }
           setUI('profile-uid-code', myCode);
 
-          // 2. LOAD CORE PERSONAL STATE
+          // 2. LOAD CORE PERSONAL STATE & PROGRESSION
+          window.userLevel = data.level || 1;
+          window.userGems = data.gems || 0;
+          window.personalMatrixData = data.baseMatrix || [];
+
           window.totalTasks = data.baseMatrix ? data.baseMatrix.length : (data.totalHabits || 4);
           window.taskDuration = data.duration || 7;
           window.appSetupDate = data.setupDate ? data.setupDate.toDate() : new Date();
@@ -1031,6 +1252,10 @@
           }
 
           // UI HEADERS
+          setUI('dash-level-display', `Phase ${window.userLevel}`);
+          setUI('profile-level-badge', `LVL ${window.userLevel}`);
+          setUI('profile-gems', window.userGems);
+
           setUI('task-count-header', `${window.totalTasks} TASKS`);
           setUI('personal-days-disp', `${window.taskDuration} DAYS`);
           setUI('global-xp-display', `${window.baseXP} XP`);
@@ -1053,7 +1278,7 @@
                       
                       <div class="flex items-center gap-3 mt-1">
                          <p class="text-[10px] text-gray-500 font-medium flex items-center gap-1">
-                           <span class="text-[var(--accent-purple)]">🔒 Locked</span> • <span id="task-time-${i}">${task.time}</span>
+                           <span class="text-[var(--accent-purple)]">🔒 Locked</span> • <span id="task-time-${i}">${task.time || 'Anytime'}</span>
                          </p>
                          
                          <p class="text-[10px] font-bold text-orange-500 flex items-center gap-1 transition-all" id="personal-streak-ui-${i}">
@@ -1072,7 +1297,7 @@
               setUI('personal-tasks-list', taskHtml, true);
           }
 
-          // 5. RENDER DUAL TASKS (YOUR LIST)
+          // 5. RENDER DUAL TASKS
           if (window.challengerUid && window.dualMatrixData.length > 0) {
               setUI('dual-challenge-title-disp', window.challengeName);
               setUI('dual-days-disp', `${window.dualTaskDuration} DAYS`);
@@ -1250,6 +1475,11 @@
               window.fetchOpponentDualData();
           }
 
+          // --- TRIGGER LEVEL UP IF DURATION PASSED ---
+          if (daysPassed >= window.taskDuration) {
+              window.triggerLevelUpFlow();
+          }
+
       } catch (err) {
           console.error("Critical Boot Error:", err);
       } finally {
@@ -1259,7 +1489,7 @@
       }
     });
 
-    // --- SYNCHRONIZED OPPONENT DATA ENGINE ---
+    // --- OPPONENT DATA ENGINE ---
     window.fetchOpponentDualData = async function() {
         if(!window.challengerUid) return;
         try {
@@ -1272,7 +1502,6 @@
                 const dCompleted = oChecked.length;
                 const oPercent = Math.round((dCompleted / dTotal) * 100);
                 
-                // 1. Update Opponent Outer Ring
                 const oppCircle = document.getElementById('speedometer-dual-opp');
                 if(oppCircle) {
                     const offset = window.SVG_CIRC_DUAL_OUTER - (oPercent / 100) * window.SVG_CIRC_DUAL_OUTER;
@@ -1365,6 +1594,7 @@
             if(btn) { btn.innerText = "Terminating..."; btn.disabled = true; }
             
             try {
+                // Wipe Your Data
                 await updateDoc(doc(db, "users", user.uid), { 
                     challengerUid: null,
                     totalXP: window.baseXP,
@@ -1377,6 +1607,7 @@
                     dualTaskHistory: deleteField()
                 });
                 
+                // Wipe Opponent's Data
                 if(window.challengerUid) {
                     await updateDoc(doc(db, "users", window.challengerUid), { 
                         challengerUid: null, 
