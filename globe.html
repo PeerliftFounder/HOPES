@@ -98,7 +98,7 @@
       <div class="surface-card p-5 w-full max-w-xs transform scale-95 transition-transform duration-300" id="emoji-picker-content">
           <h4 class="text-xs font-black text-white mb-4 text-center uppercase tracking-widest border-b border-white/10 pb-3">Select Aesthetic</h4>
           <div class="grid grid-cols-5 gap-3 h-48 overflow-y-auto hide-scrollbar px-1" id="emoji-grid">
-              <!-- JS will accurately inject here now -->
+              <!-- JS Injects Emojis Here -->
           </div>
           <button onclick="closeEmojiPicker()" class="w-full mt-5 py-3 rounded-xl bg-white/10 text-[10px] font-extrabold text-white uppercase tracking-widest border border-white/5 hover:bg-white/20 transition-colors">Cancel</button>
       </div>
@@ -299,7 +299,7 @@
         }
     }
 
-    /* --- BUG FIX: EMOJI PICKER MODAL LOGIC --- */
+    /* --- EMOJI PICKER MODAL LOGIC --- */
     window.openEmojiPicker = function(slotId) {
         window.currentEmojiSlotId = slotId;
         const modal = document.getElementById('emoji-picker-modal');
@@ -307,7 +307,6 @@
         
         const grid = document.getElementById('emoji-grid');
         
-        // Correctly checks if buttons have been injected yet without failing on whitespace
         if(grid.children.length === 0) {
             let html = '';
             PREMIUM_EMOJIS.forEach(em => {
@@ -465,11 +464,17 @@
             if(userDoc.exists()) {
                 const data = userDoc.data();
                 window.currentUserName = user.displayName ? user.displayName.split(' ')[0] : 'Operator';
-                window.currentUserXP = data.totalXP || 0;
                 
+                // PERFECT LIVE XP CALCULATION
+                let personalEarned = (data.checkedTasks ? data.checkedTasks.length : 0) * 100;
+                let dualEarned = (data.dualCheckedTasks ? data.dualCheckedTasks.length : 0) * 100;
+                window.currentUserXP = (data.totalXP || 0) + personalEarned + dualEarned;
+                
+                // PERFECT LIVE STREAK CALCULATION
                 let setup = data.setupDate ? data.setupDate.toDate() : new Date();
                 let diff = new Date().setHours(0,0,0,0) - new Date(setup).setHours(0,0,0,0);
-                window.currentUserStreak = Math.min(Math.floor(diff / 86400000) + 1, data.duration || 7);
+                let daysPassed = Math.floor(diff / 86400000);
+                window.currentUserStreak = Math.min(Math.max(daysPassed, 0), (data.duration || 7) - 1) + 1;
                 
                 if(data.challengerUid) window.hasActiveDuel = true;
             }
@@ -505,10 +510,33 @@
                 return;
             }
 
-            querySnapshot.forEach((doc) => {
-                const c = doc.data();
-                c.id = doc.id;
+            // ITERATE THROUGH ALL CHALLENGES AND FETCH THE HOST'S LIVE DATA
+            for (const documentSnap of querySnapshot.docs) {
+                const c = documentSnap.data();
+                c.id = documentSnap.id;
                 window.loadedChallenges.push(c);
+
+                // Default to snapshot data
+                let liveHostXP = c.hostXP || 0;
+                let liveHostStreak = c.hostStreak || 1;
+
+                // Ping the host's actual profile to get live data
+                try {
+                    const hostDocRef = doc(db, "users", c.hostUid);
+                    const hostSnap = await getDoc(hostDocRef);
+                    if(hostSnap.exists()) {
+                        const hData = hostSnap.data();
+                        let baseXP = hData.totalXP || 0;
+                        let pEarned = (hData.checkedTasks ? hData.checkedTasks.length : 0) * 100;
+                        let dEarned = (hData.dualCheckedTasks ? hData.dualCheckedTasks.length : 0) * 100;
+                        liveHostXP = baseXP + pEarned + dEarned;
+
+                        let setup = hData.setupDate ? hData.setupDate.toDate() : new Date();
+                        let diff = new Date().setHours(0,0,0,0) - new Date(setup).setHours(0,0,0,0);
+                        let daysPassed = Math.floor(diff / 86400000);
+                        liveHostStreak = Math.min(Math.max(daysPassed, 0), (hData.duration || 7) - 1) + 1;
+                    }
+                } catch(e) { console.warn("Could not fetch live host data."); }
 
                 let tasksHtml = '';
                 if(c.tasks && c.tasks.length > 0) {
@@ -522,7 +550,7 @@
                     });
                 }
 
-                const rankName = getRankString(c.hostXP);
+                const rankName = getRankString(liveHostXP);
 
                 html += `
                 <div class="surface-card p-5 border border-[var(--accent-purple)]/20 relative overflow-hidden group hover:border-[var(--accent-mint)]/40 transition-colors">
@@ -541,8 +569,8 @@
                             </div>
                         </div>
                         <div class="text-right">
-                            <span class="block text-xs font-black text-white bg-white/10 px-2 py-1 rounded border border-white/5 mb-1">🏆 ${c.hostXP} XP</span>
-                            <span class="block text-[10px] font-bold text-orange-500 uppercase tracking-widest">🔥 Day ${c.hostStreak}</span>
+                            <span class="block text-xs font-black text-white bg-white/10 px-2 py-1 rounded border border-white/5 mb-1">🏆 ${liveHostXP} XP</span>
+                            <span class="block text-[10px] font-bold text-orange-500 uppercase tracking-widest">🔥 Day ${liveHostStreak}</span>
                         </div>
                     </div>
 
@@ -563,7 +591,7 @@
                     </div>
                 </div>
                 `;
-            });
+            }
 
             feedContainer.innerHTML = html;
 
